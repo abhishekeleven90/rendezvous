@@ -1,9 +1,15 @@
 #include "Headers.h"
 #include "ImageLoader.h"
 #include "MapNGrid.h"
-#include "Constants.h"
+#include "OpenGlHelper.h"
+#include "GeneralHelper.h"
 
 using namespace std;
+
+void initRendering();
+GLuint getTextureFromImage(string path);
+void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId);
+void drawScene();
 
 //Initializes 3D rendering
 void initRendering() {
@@ -40,6 +46,12 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
 	glEnd();
 }
 
+void putImageToCell(int row, int col, GLuint _textureId) {
+	GLfloat x = getXFromCell(col);
+	GLfloat y = getYFromCell(row);
+	putImageToGrid(x, y, _textureId);
+}
+
 //Draws the 3D scene
 void drawScene() {
 	//Clear information from last draw
@@ -49,12 +61,14 @@ void drawScene() {
 	glLoadIdentity(); //Reset the drawing perspective
 
 	GLuint _textureId = getTextureFromImage("data/images/bg.bmp");
-	for (GLfloat x = -2.0f; x < 2.0f; x += CELL_LENGTH) {
-		for (GLfloat y = -2.0f; y < 2.0f; y += CELL_LENGTH) {
-			putImageToGrid(x, y, _textureId);
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_GRID_COL; c <= END_GRID_COL; c++) {
+			putCharToGrid(r, c, GRASS);
+			putImageToCell(r, c, _textureId);
 		}
 	}
 
+	printGrid();
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
