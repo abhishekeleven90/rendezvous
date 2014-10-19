@@ -11,13 +11,15 @@ void initRendering() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void putImageToGrid(GLfloat x, GLfloat y, string path) {
+GLuint getTextureFromImage(string path) {
 	GLuint _textureId; //The id of the texture
-
-	Image* bgImage = loadBMP(path.c_str());
+	Image *bgImage = loadBMP(path.c_str());
 	_textureId = loadTexture(bgImage);
 	delete bgImage;
+	return _textureId;
+}
 
+void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
@@ -46,9 +48,10 @@ void drawScene() {
 	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
 
+	GLuint _textureId = getTextureFromImage("data/images/bg.bmp");
 	for (GLfloat x = -2.0f; x < 2.0f; x += CELL_LENGTH) {
 		for (GLfloat y = -2.0f; y < 2.0f; y += CELL_LENGTH) {
-			putImageToGrid(x, y, "data/images/bg.bmp");
+			putImageToGrid(x, y, _textureId);
 		}
 	}
 
