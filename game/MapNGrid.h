@@ -49,6 +49,7 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
 }
 
 GLuint grass_textureId;
+GLuint tree_textureId;
 
 void renderGrid() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -74,6 +75,7 @@ void renderGrid() {
 			case STONE:
 				break;
 			case TREE:
+				putImageToCell(r, c, tree_textureId);
 				break;
 			}
 		}

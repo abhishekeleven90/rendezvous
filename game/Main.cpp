@@ -14,12 +14,15 @@ void initRendering() {
 	glEnable(GL_DEPTH_TEST);
 
 	grass_textureId = getTextureFromImage("data/images/bg.bmp");
+	tree_textureId = getTextureFromImage("data/images/tree.bmp");
 	//TODO - loadAlltextures to a new fxn
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_GRID_COL; c <= END_GRID_COL; c++) {
 			putCharToGrid(r, c, GRASS);
 		}
 	}
+	//TODO-temp
+	putCharToGrid(10, 10, TREE);
 }
 
 //Draws the 3D scene
