@@ -1,7 +1,5 @@
 #include "Headers.h"
 
-using namespace std;
-
 void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -41,4 +39,5 @@ void printGrid() {
 		}
 		cout << "\n";
 	}
+
 }

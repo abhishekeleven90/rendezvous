@@ -26,3 +26,5 @@
 #define GLOBAL_ITEM_TIMER 3 //Time between taking two consecutive Items
 
 
+//TextureIds
+//TODO - place textures here

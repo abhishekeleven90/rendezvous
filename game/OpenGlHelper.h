@@ -1,4 +1,4 @@
-//GLuint _textureId; //The id of the texture
+#include "Headers.h"
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -43,3 +43,13 @@ void handleResize(int w, int h) {
 			1.0, //The near z clipping coordinate
 			200.0); //The far z clipping coordinate
 }
+
+GLuint getTextureFromImage(string path) {
+	GLuint _textureId; //The id of the texture
+	Image *bgImage = loadBMP(path.c_str());
+	_textureId = loadTexture(bgImage);
+	delete bgImage;
+	return _textureId;
+}
+
+//TODO - load all textures
