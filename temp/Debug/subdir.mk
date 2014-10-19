@@ -4,16 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../ImageLoader.cpp \
-../Main.cpp 
+../main.cpp 
 
 OBJS += \
-./ImageLoader.o \
-./Main.o 
+./main.o 
 
 CPP_DEPS += \
-./ImageLoader.d \
-./Main.d 
+./main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <fstream>
 
-#include "imageLoader.h"
+#include "ImageLoader.h"
 
 using namespace std;
 

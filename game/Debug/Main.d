@@ -1,5 +1,12 @@
-Main.d: ../Main.cpp ../Headers.h ../imageLoader.h
+Main.d: ../Main.cpp ../Headers.h ../ImageLoader.h ../MapNGrid.h \
+ ../OpenGlHelper.h ../Constants.h
 
 ../Headers.h:
 
-../imageLoader.h:
+../ImageLoader.h:
+
+../MapNGrid.h:
+
+../OpenGlHelper.h:
+
+../Constants.h:
