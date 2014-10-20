@@ -37,8 +37,23 @@ void initRendering() {
 		}
 	}
 
-	//spawn
+	//left spawn
+	int k = 1;
+	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
+		for (int j = 1; j <= k; j++) {
+			putCharToInnerGrid(i, j, SPAWN);
+		}
+		k++;
+	}
 
+	//right spawn
+	k = SPAWN_BLOCKS;
+	for (int i = END_INNER_GRID_COL; i >= END_INNER_GRID_COL - SPAWN_BLOCKS + 1; i--) {
+		for (int j = k; j >= 1; j--) {
+			putCharToInnerGrid(j, i, SPAWN);
+		}
+		k--;
+	}
 
 	//TODO-below line just for testing
 	putCharToInnerGrid(1, 1, TREE);
