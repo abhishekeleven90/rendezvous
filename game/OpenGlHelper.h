@@ -27,6 +27,21 @@ void handleKeypress(unsigned char key, //The key that was pressed
 	}
 }
 
+//TODO :::: needs to be implemented
+int prevMouseX, prevMouseY;
+void myMouseClickHandler(int button, int state, int x, int y) {
+
+	if (state == GLUT_DOWN) {
+		//printf("\nMouse down at %d, %d", x, y);
+		//prevMouseX = x;
+		//prevMouseY = y;
+
+	} else {
+		printf("\nMouse up at %d, %d", x, y);
+	}
+
+}
+
 //Called when the window is resized
 void handleResize(int w, int h) {
 	//Tell OpenGL how to convert from coordinates to pixel values

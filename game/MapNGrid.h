@@ -1,11 +1,68 @@
 #include "Headers.h"
 #include "Objects.h"
 
+void putAttributeSpace();
+void putGrass();
+void putSpawnLocation();
+void initMap();
 GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
 void putCharToInnerGrid(int row, int col, charCellType charType);
+void putCharToOuterGrid(int row, int col, charCellType charType);
+void putImageToCell(int row, int col, GLuint _textureId);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId);
 void renderGrid();
+
+void putAttributeSpace() {
+	//left attribute space
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
+			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
+		}
+	}
+	//right attribute space
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
+			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
+		}
+	}
+}
+
+void putGrass() {
+	//grass
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+			putCharToInnerGrid(r, c, GRASS);
+		}
+	}
+}
+
+void putSpawnLocation() {
+	//left spawn
+	int k = 1;
+	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
+		for (int j = 1; j <= k; j++) {
+			putCharToInnerGrid(i, j, SPAWN);
+		}
+		k++;
+	}
+	//right spawn
+	k = SPAWN_BLOCKS;
+	for (int i = END_INNER_GRID_COL; i >= END_INNER_GRID_COL - SPAWN_BLOCKS + 1; i--) {
+		for (int j = k; j >= 1; j--) {
+			putCharToInnerGrid(j, i, SPAWN);
+		}
+		k--;
+	}
+}
+
+void initMap() {
+	putAttributeSpace();
+	putGrass();
+	putSpawnLocation();
+
+	putCharToInnerGrid(19, 1, H_STUNNER);
+}
 
 GLfloat getXFromCell(int col) {
 	GLfloat x = MIN_XCELL + (col - 1) * CELL_LENGTH;

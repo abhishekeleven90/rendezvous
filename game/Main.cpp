@@ -15,46 +15,7 @@ void initRendering() {
 
 	//Loading all the textures from images to be used later
 	loadTextures();
-
-	//left attribute space
-	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
-			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
-		}
-	}
-
-	//right attribute space
-	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
-			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
-		}
-	}
-
-	//grass
-	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			putCharToInnerGrid(r, c, GRASS);
-		}
-	}
-
-	//left spawn
-	int k = 1;
-	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
-		for (int j = 1; j <= k; j++) {
-			putCharToInnerGrid(i, j, SPAWN);
-		}
-		k++;
-	}
-
-	//right spawn
-	k = SPAWN_BLOCKS;
-	for (int i = END_INNER_GRID_COL; i >= END_INNER_GRID_COL - SPAWN_BLOCKS + 1; i--) {
-		for (int j = k; j >= 1; j--) {
-			putCharToInnerGrid(j, i, SPAWN);
-		}
-		k--;
-	}
-
+	initMap();
 	//TODO-below line just for testing
 	putCharToInnerGrid(1, 1, TREE);
 }
@@ -82,12 +43,13 @@ int main(int argc, char** argv) {
 	glutCreateWindow("Rendezvous!!!");
 	initRendering(); //Initialize rendering
 
-	//Set handler functions for drawing, keypresses, and window resizes
+	//Set handler functions
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(handleKeypress);
 	glutReshapeFunc(handleResize);
+	glutMouseFunc(myMouseClickHandler);
 
-	glutTimerFunc(100, timer, 0); //TODO: keep refreshRate in constants
+	glutTimerFunc(REFRESH_RATE, timer, 0);
 	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
 	return 0; //This line is never reached
 }

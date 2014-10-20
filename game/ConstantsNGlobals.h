@@ -1,6 +1,8 @@
+//-------------------------CONSTANTS------------------
 #define CELL_LENGTH 0.2f
+#define REFRESH_RATE 2
 
-//---Grid related---
+//Grid related
 #define MAX_XCELL 1.0f
 #define MAX_YCELL 2.0f
 
@@ -24,7 +26,7 @@
 #define END_RIGHT_ATTRIBUTE_COL END_OUTER_GRID_COL
 #define START_RIGHT_ATTRIBUTE_COL END_RIGHT_ATTRIBUTE_COL-ATTRIBUTE_WIDTH+1
 
-//---Hero attributes related---
+//Hero attributes related
 #define MAX_HEALTH 100
 
 #define DEFAULT_STRENGTH 1
@@ -39,6 +41,7 @@
 //Spawn
 #define SPAWN_BLOCKS 3
 
+//------------------------GLOBALS-------------------
 //TextureIds
 GLuint grass_texId;
 GLuint spawn_texId;
@@ -53,6 +56,6 @@ GLuint t_demons_texId;
 
 GLuint h_stunner_texId; //hero_mario
 GLuint h_silencer_texId;
-GLuint h_snatcher_texId; //hero_soldeir
+GLuint h_snatcher_texId; //hero_soldier
 GLuint h_leecher_texId;
 
