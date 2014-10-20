@@ -3,13 +3,16 @@
 void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_GRID_COL; c <= END_GRID_COL; c++) {
+		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
 			switch (gridChar[r][c]) {
 			case GRASS:
 				cout << " GR";
 				break;
 			case SPAWN:
 				cout << " SP";
+				break;
+			case ATTRIBUTE_BG:
+				cout << " AB";
 				break;
 			case ANGELS_TEMPLE:
 				cout << " TA";
@@ -35,6 +38,8 @@ void printGrid() {
 			case TREE:
 				cout << " TR";
 				break;
+			default:
+				cout << " DD";
 			}
 		}
 		cout << "\n";

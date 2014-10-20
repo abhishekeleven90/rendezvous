@@ -1,11 +1,13 @@
-#include <string>
+#include "Headers.h"
+#include "ConstantsNGlobals.h"
 
-char gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_GRID_COL - START_GRID_COL
-		+ 2]; //+1 extra since taking 1-20
+char gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
+		- START_OUTER_GRID_COL + 2]; //+1 extra since taking 1-20
 
 enum charCellType {
 	GRASS,
 	SPAWN,
+	ATTRIBUTE_BG,
 	ANGELS_TEMPLE,
 	DEMONS_TEMPLE,
 	H_STUNNER,

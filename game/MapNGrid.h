@@ -3,7 +3,7 @@
 
 GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
-void putCharToGrid(int row, int col, charCellType charType);
+void putCharToInnerGrid(int row, int col, charCellType charType);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId);
 void renderGrid();
 
@@ -17,7 +17,15 @@ GLfloat getYFromCell(int row) {
 	return y;
 }
 
-void putCharToGrid(int row, int col, charCellType charType) {
+void putCharToInnerGrid(int row, int col, charCellType charType) {
+	row = row;
+	col = col + ATTRIBUTE_WIDTH;
+	gridChar[row][col] = charType;
+}
+
+//Avoid using : use only in case of attributeSpace
+//TODO: check whether we can have a specific function for attribute space
+void putCharToOuterGrid(int row, int col, charCellType charType) {
 	gridChar[row][col] = charType;
 }
 
@@ -48,35 +56,46 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
 	glEnd();
 }
 
-GLuint grass_textureId;
-GLuint tree_textureId;
-
 void renderGrid() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_GRID_COL; c <= END_GRID_COL; c++) {
+		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
+
 			switch (gridChar[r][c]) {
 			case GRASS:
-				putImageToCell(r, c, grass_textureId);
+				putImageToCell(r, c, grass_texId);
 				break;
 			case SPAWN:
+				putImageToCell(r, c, spawn_texId);
+				break;
+			case ATTRIBUTE_BG:
+				putImageToCell(r, c, attribute_bg_texId);
 				break;
 			case ANGELS_TEMPLE:
+				putImageToCell(r, c, t_angels_texId);
 				break;
 			case DEMONS_TEMPLE:
+				putImageToCell(r, c, t_demons_texId);
 				break;
 			case H_STUNNER:
+				putImageToCell(r, c, h_stunner_texId);
 				break;
 			case H_SILENCER:
+				putImageToCell(r, c, h_silencer_texId);
 				break;
 			case H_SNATCHER:
+				putImageToCell(r, c, h_snatcher_texId);
 				break;
 			case H_LEECHER:
+				putImageToCell(r, c, h_leecher_texId);
 				break;
 			case STONE:
+				putImageToCell(r, c, stone_texId);
 				break;
 			case TREE:
-				putImageToCell(r, c, tree_textureId);
+				putImageToCell(r, c, tree_texId);
 				break;
+			default:
+				cout << "--SOMETHING WENT WRONG while rendering grid--" << endl;
 			}
 		}
 	}

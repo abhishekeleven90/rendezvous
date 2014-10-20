@@ -5,6 +5,4 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 
-#include"ConstantsNGlobals.h"
-
 using namespace std;

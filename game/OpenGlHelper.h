@@ -32,7 +32,7 @@ void handleResize(int w, int h) {
 	//Tell OpenGL how to convert from coordinates to pixel values
 	glViewport(0, 0, w, h);
 
-	glMatrixMode( GL_PROJECTION); //Switch to setting the camera perspective
+	glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
 
 	glPushMatrix();
 
@@ -52,4 +52,17 @@ GLuint getTextureFromImage(string path) {
 	return _textureId;
 }
 
-//TODO - load all textures
+void loadTextures() {
+	grass_texId = getTextureFromImage("data/images/bg.bmp");
+	spawn_texId = getTextureFromImage("data/images/spawn.bmp");
+
+	attribute_bg_texId = getTextureFromImage("data/images/attribute_bg.bmp");
+
+	tree_texId = getTextureFromImage("data/images/tree.bmp");
+	stone_texId = getTextureFromImage("data/images/stone.bmp");
+
+	t_demons_texId = getTextureFromImage("data/images/temple_demons.bmp");
+
+	h_stunner_texId = getTextureFromImage("data/images/hero_mario.bmp");
+	h_snatcher_texId = getTextureFromImage("data/images/hero_soldier.bmp");
+}

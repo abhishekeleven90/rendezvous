@@ -13,16 +13,35 @@ void initRendering() {
 	//Makes 3D drawing work when something is in front of something else
 	glEnable(GL_DEPTH_TEST);
 
-	grass_textureId = getTextureFromImage("data/images/bg.bmp");
-	tree_textureId = getTextureFromImage("data/images/tree.bmp");
-	//TODO - loadAlltextures to a new fxn
+	//Loading all the textures from images to be used later
+	loadTextures();
+
+	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_GRID_COL; c <= END_GRID_COL; c++) {
-			putCharToGrid(r, c, GRASS);
+		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
+			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
 		}
 	}
-	//TODO-temp
-	putCharToGrid(10, 10, TREE);
+
+	//right attribute space
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
+			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
+		}
+	}
+
+	//grass
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+			putCharToInnerGrid(r, c, GRASS);
+		}
+	}
+
+	//spawn
+
+
+	//TODO-below line just for testing
+	putCharToInnerGrid(1, 1, TREE);
 }
 
 //Draws the 3D scene
@@ -42,7 +61,7 @@ int main(int argc, char** argv) {
 	//Initialize GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(700, 700); //Set the window size
+	glutInitWindowSize(850, 700); //Set the window size
 
 	//Create the window
 	glutCreateWindow("Rendezvous!!!");
