@@ -1,6 +1,6 @@
 //-------------------------CONSTANTS------------------
 #define CELL_LENGTH 0.2f
-#define REFRESH_RATE 2
+#define REFRESH_RATE 300
 
 //Grid related
 #define MAX_XCELL 1.0f
@@ -39,7 +39,7 @@
 #define ATTACK_VISIBILITY 1
 
 //Spawn
-#define SPAWN_BLOCKS 6
+#define SPAWN_BLOCKS 3
 
 //Number of Blocks
 #define TEMPLE_BLOCKS 2
@@ -57,8 +57,7 @@ GLuint stone_texId;
 GLuint t_angels_texId; //temples
 GLuint t_demons_texId;
 
-GLuint h_stunner_texId; //hero_mario
-GLuint h_silencer_texId;
-GLuint h_snatcher_texId; //hero_soldier
-GLuint h_leecher_texId;
-
+GLuint h_disabler_texId;
+GLuint h_slower_texId; //hero_mario
+GLuint h_burster_texId; //hero_soldier
+GLuint h_stunner_texId;

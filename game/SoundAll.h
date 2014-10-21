@@ -2,30 +2,27 @@
 
 using namespace sf;
 
-//have to be global
-Sound mainSound;
-SoundBuffer mainBuffer;
-
-//whenever an event happens, can use these
-Sound eventSound;
-SoundBuffer eventBuffer;
-
-Music mainMusic;
+Music music;
+Music eventMusic;
 
 void startMainSound() {
 	int loaded = 1;
 
-	//TODO gives error(writes on cmd line) if no file
-	if (!mainBuffer.loadFromFile("data/sounds/bg_sound.wav"))
-		loaded = -1;
-
+	if (!music.openFromFile("data/sounds/mario_theme.ogg"))
+		loaded = -1; // error
 	if (loaded) {
-		//play now
-		mainSound.setBuffer(mainBuffer);
-		mainSound.play();
-		mainSound.setLoop(true);
-
-		//no need of while loop as glutMainLoop doesn't return
+		music.setLoop(true);
+		music.play();
 		//while(1);
+	}
+}
+
+void playEventSound() {
+
+	int loaded = 1;
+	if (!eventMusic.openFromFile("data/sounds/event.wav"))
+		loaded = -1; // error
+	if (loaded) {
+		eventMusic.play();
 	}
 }

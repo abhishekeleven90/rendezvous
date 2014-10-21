@@ -20,17 +20,17 @@ void printGrid() {
 			case TEMPLE_DEMONS:
 				cout << " TEd";
 				break;
-			case H_STUNNER:
-				cout << " Hst";
+			case H_DISABLER:
+				cout << " Hdi";
 				break;
 			case H_SLOWER:
-				cout << " Hsi";
-				break;
-			case H_DISABLER:
-				cout << " Hsn";
+				cout << " Hsl";
 				break;
 			case H_BURSTER:
-				cout << " Hle";
+				cout << " Hbu";
+				break;
+			case H_STUNNER:
+				cout << " Hst";
 				break;
 			case STONE:
 				cout << " STO";

@@ -48,12 +48,7 @@ enum teamName {
 
 struct Item {
 	itemType item_type;
-	int ItemUsetimer;
-
-	// Used for one-time-items (like maybe Strength - don't want to have again)
-	// Low priority, remove if not required
-	bool isOneTimeItem;
-	bool isDisplayed;
+	int itemUsetimer;
 };
 
 struct Temple {

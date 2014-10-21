@@ -77,6 +77,6 @@ void loadTextures() {
 
 	t_demons_texId = getTextureFromImage("data/images/temple_demons.bmp");
 
-	h_stunner_texId = getTextureFromImage("data/images/hero_mario.bmp");
-	h_snatcher_texId = getTextureFromImage("data/images/hero_soldier.bmp");
+	h_slower_texId = getTextureFromImage("data/images/hero_mario.bmp");
+	h_burster_texId = getTextureFromImage("data/images/hero_soldier.bmp");
 }

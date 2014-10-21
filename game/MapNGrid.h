@@ -63,7 +63,19 @@ void initMap() {
 	putSpawnLocation();
 	putTemple();
 
-	putCharToInnerGrid(19, 1, H_STUNNER);
+	putCharToInnerGrid(19, 1, H_SLOWER);
+}
+
+//TODO- temp for motion of the H_STUNNER
+void tempStunnerLocation() {
+	static int lastRow = 14;
+	static int lastCol = 1;
+	//TODO - will have to have a basic init grid always for replacing
+	putCharToInnerGrid(lastRow, lastCol, GRASS);
+	lastCol++;
+	if (lastCol > 20)
+		lastCol = 1;
+	putCharToInnerGrid(lastRow, lastCol, H_SLOWER);
 }
 
 GLfloat getXFromCell(int col) {
@@ -143,6 +155,8 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 }
 
 void renderGrid() {
+	//TODO - rmove this method call from here and put in a thread or something
+	tempStunnerLocation();
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 
@@ -162,17 +176,17 @@ void renderGrid() {
 			case TEMPLE_DEMONS:
 				putImageToCell(r, c, t_demons_texId, TEMPLE_BLOCKS);
 				break;
-			case H_STUNNER:
-				putImageToCell(r, c, h_stunner_texId);
+			case H_DISABLER:
+				putImageToCell(r, c, h_disabler_texId);
 				break;
 			case H_SLOWER:
-				putImageToCell(r, c, h_silencer_texId);
-				break;
-			case H_DISABLER:
-				putImageToCell(r, c, h_snatcher_texId);
+				putImageToCell(r, c, h_slower_texId);
 				break;
 			case H_BURSTER:
-				putImageToCell(r, c, h_leecher_texId);
+				putImageToCell(r, c, h_burster_texId);
+				break;
+			case H_STUNNER:
+				putImageToCell(r, c, h_stunner_texId);
 				break;
 			case STONE:
 				putImageToCell(r, c, stone_texId);
