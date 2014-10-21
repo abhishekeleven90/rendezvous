@@ -167,7 +167,6 @@ void initMap() {
 }
 
 //copies the state of the initial map to another array
-<<<<<<< HEAD
 //not modifiable now, as discussed
 void copyInit()
 {
