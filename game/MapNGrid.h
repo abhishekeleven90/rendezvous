@@ -1,5 +1,6 @@
 #include "Headers.h"
 #include "Objects.h"
+#include "Validations.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -7,10 +8,9 @@ void putSpawnLocation();
 void initMap();
 GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
-void putCharToInnerGrid(int row, int col, charCellType charType);
-void putCharToOuterGrid(int row, int col, charCellType charType);
-void putMultipleCharToInnerGrid(int row, int col, charCellType charType,
-		charCellType backChar, int blocks);
+void putCharToGrid(int row, int col, charCellType charType, bool isInner);
+void putMultipleCharToGrid(int row, int col, charCellType charType,
+		charCellType backChar, int blocks, bool isInner);
 void putImageToCell(int row, int col, GLuint _textureId, int blocks);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
@@ -20,22 +20,21 @@ void putAttributeSpace() {
 	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
-			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
+			putCharToGrid(r, c, ATTRIBUTE_BG, false);
 		}
 	}
 	//right attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
-			putCharToOuterGrid(r, c, ATTRIBUTE_BG);
+			putCharToGrid(r, c, ATTRIBUTE_BG, false);
 		}
 	}
 }
 
 void putGrass() {
-	//grass
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			putCharToInnerGrid(r, c, GRASS);
+			putCharToGrid(r, c, GRASS, true);
 		}
 	}
 }
@@ -44,126 +43,88 @@ void putSpawnLocation() {
 	int k = 1;
 	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
 		for (int j = 1; j <= k; j++) {
-			putCharToInnerGrid(i, j, SPAWN);
-			putCharToInnerGrid(j, i, SPAWN);
+			putCharToGrid(i, j, SPAWN, true);
+			putCharToGrid(j, i, SPAWN, true);
 		}
 		k++;
 	}
 }
 
+void putWarGround() {
+	int numOtherDiag = (DIAGONAL_BLOCKS - 1) / 2;
+
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+			if (r == c) {
+				for (int k = numOtherDiag; k >= 0; k--) {
+					putCharToGrid(r + k, c, WAR_GROUND, true);
+					putCharToGrid(r, c + k, WAR_GROUND, true);
+				}
+			}
+		}
+	}
+}
+
 void putTemple() {
-	putMultipleCharToInnerGrid(5, 4, TEMPLE_ANGELS, T_ANGELS_BACK,
-			TEMPLE_BLOCKS);
-	putMultipleCharToInnerGrid(17, 16, TEMPLE_DEMONS, T_DEMONS_BACK,
-			TEMPLE_BLOCKS);
+	putMultipleCharToGrid(5, 4, TEMPLE_ANGELS, T_ANGELS_BACK, TEMPLE_BLOCKS,
+			true);
+	putMultipleCharToGrid(17, 16, TEMPLE_DEMONS, T_DEMONS_BACK, TEMPLE_BLOCKS,
+			true);
+}
+
+void putToGridFromFile(string filePath, charCellType charCellType,
+		bool isTeamArea, bool isInner) {
+	ifstream infile(filePath.c_str());
+	string line;
+	while (getline(infile, line)) {
+		istringstream iss(line);
+		int a, b;
+		if (!(iss >> a >> b)) {
+			break;
+		} // error
+
+		putCharToGrid(a, b, charCellType, isInner);
+		if (isTeamArea) {
+			putCharToGrid(b, a, charCellType, isInner);
+		}
+	}
 }
 
 void putStonesInTeamArea() {
-	putCharToInnerGrid(11, 1, STONE);
-	putCharToInnerGrid(11, 2, STONE);
-	putCharToInnerGrid(12, 4, STONE);
-	putCharToInnerGrid(13, 5, STONE);
-	putCharToInnerGrid(15, 2, STONE);
-	putCharToInnerGrid(16, 3, STONE);
-	putCharToInnerGrid(19, 5, STONE);
-	putCharToInnerGrid(11, 8, STONE);
-	putCharToInnerGrid(12, 8, STONE);
-	putCharToInnerGrid(12, 9, STONE);
-	putCharToInnerGrid(16, 12, STONE);
-	putCharToInnerGrid(19, 4, STONE);
-	putCharToInnerGrid(20, 11, STONE);
-	putCharToInnerGrid(20, 13, STONE);
-	putCharToInnerGrid(20, 14, STONE);
-	putCharToInnerGrid(20, 15, STONE);
+	putToGridFromFile(PATH_LOC_STONES_TEAM, STONE, true, true);
 }
 
 void putTreesInTeamArea() {
-	putCharToInnerGrid(4, 1, TREE);
-	putCharToInnerGrid(5, 1, TREE);
-	putCharToInnerGrid(5, 2, TREE);
-	putCharToInnerGrid(6, 1, TREE);
-	putCharToInnerGrid(6, 2, TREE);
-	putCharToInnerGrid(8, 3, TREE);
-	putCharToInnerGrid(8, 4, TREE);
-	putCharToInnerGrid(9, 3, TREE);
-	putCharToInnerGrid(9, 4, TREE);
-	putCharToInnerGrid(12, 6, TREE);
-	putCharToInnerGrid(13, 6, TREE);
-	putCharToInnerGrid(14, 6, TREE);
-	putCharToInnerGrid(15, 6, TREE);
-	putCharToInnerGrid(16, 6, TREE);
-	putCharToInnerGrid(17, 6, TREE);
-	putCharToInnerGrid(18, 6, TREE);
-	putCharToInnerGrid(19, 6, TREE);
-	putCharToInnerGrid(19, 5, TREE);
-	putCharToInnerGrid(15, 3, TREE);
-	putCharToInnerGrid(16, 2, TREE);
-	putCharToInnerGrid(15, 7, TREE);
-	putCharToInnerGrid(15, 8, TREE);
-	putCharToInnerGrid(16, 7, TREE);
-	putCharToInnerGrid(16, 8, TREE);
-	putCharToInnerGrid(20, 8, TREE);
-	putCharToInnerGrid(19, 16, TREE);
-	putCharToInnerGrid(20, 16, TREE);
-	putCharToInnerGrid(20, 17, TREE);
-	putCharToInnerGrid(13, 8, TREE);
-	putCharToInnerGrid(13, 9, TREE);
-	putCharToInnerGrid(13, 10, TREE);
-	putCharToInnerGrid(15, 10, TREE);
-	putCharToInnerGrid(16, 10, TREE);
-	putCharToInnerGrid(17, 10, TREE);
-	putCharToInnerGrid(18, 10, TREE);
-	putCharToInnerGrid(18, 8, TREE);
-	putCharToInnerGrid(18, 9, TREE);
-	putCharToInnerGrid(19, 9, TREE);
-	putCharToInnerGrid(19, 9, TREE);
+	putToGridFromFile(PATH_LOC_TREES_TEAM, TREE, true, true);
 }
 
 void putStonesInCommonArea() {
-	putCharToInnerGrid(7, 6, STONE);
-	putCharToInnerGrid(7, 8, STONE);
-	putCharToInnerGrid(8, 8, STONE);
-	putCharToInnerGrid(9, 10, STONE);
-	putCharToInnerGrid(10, 10, STONE);
-	putCharToInnerGrid(11, 12, STONE);
-	putCharToInnerGrid(12, 12, STONE);
-	putCharToInnerGrid(13, 14, STONE);
-	putCharToInnerGrid(14, 14, STONE);
+	putToGridFromFile(PATH_LOC_STONES_COMMON, STONE, false, true);
 }
 
 void putTreesInCommonArea() {
-	putCharToInnerGrid(1, 1, TREE);
-	putCharToInnerGrid(1, 2, TREE);
-	putCharToInnerGrid(1, 3, TREE);
-	putCharToInnerGrid(2, 1, TREE);
-	putCharToInnerGrid(2, 2, TREE);
-	putCharToInnerGrid(3, 1, TREE);
-	putCharToInnerGrid(8, 6, TREE);
-	putCharToInnerGrid(9, 8, TREE);
-	putCharToInnerGrid(11, 10, TREE);
-	putCharToInnerGrid(13, 12, TREE);
-	putCharToInnerGrid(15, 14, TREE);
-	putCharToInnerGrid(18, 20, TREE);
-	putCharToInnerGrid(19, 19, TREE);
-	putCharToInnerGrid(19, 20, TREE);
-	putCharToInnerGrid(20, 18, TREE);
-	putCharToInnerGrid(20, 19, TREE);
-	putCharToInnerGrid(20, 20, TREE);
+	putToGridFromFile(PATH_LOC_TREES_COMMON, TREE, false, true);
 }
 
-void initMap() {
-	putAttributeSpace();
-	putGrass();
-	putSpawnLocation();
-	putTemple();
-
+void putStonesNTrees() {
 	putStonesInTeamArea();
 	putTreesInTeamArea();
 	putStonesInCommonArea();
 	putTreesInCommonArea();
+}
 
-	copyInit(); //DISCLAIMER: TO BE CALLED BEFORE ITEM PUT AND HERO PUT!!!
-	putCharToInnerGrid(19, 1, H_SLOWER);
+void initMap() {
+	//Maintain the sequence
+	putGrass();
+	putAttributeSpace();
+	putSpawnLocation();
+	putWarGround();
+	putTemple();
+
+	putStonesNTrees();
+
+	copyInit(); //Disclaimer: toe be called before item put & hero put!!!
+	putCharToGrid(19, 1, H_SLOWER, true);
 }
 
 //copies the state of the initial map to another array
@@ -176,17 +137,17 @@ void copyInit() {
 	}
 }
 
-//TODO - temp for motion of the H_STUNNER
+//TODO - temp for motion of the H_SLOWER
 void tempStunnerLocation() {
 	static int lastRow = 20;
 	static int lastCol = 1;
 	//replacing with initial grid char
-	putCharToInnerGrid(lastRow, lastCol,
-			initialGridChar[lastRow][lastCol + ATTRIBUTE_WIDTH]);
+	putCharToGrid(lastRow, lastCol,
+			initialGridChar[lastRow][lastCol + ATTRIBUTE_WIDTH], true);
 	lastCol++;
 	if (lastCol > 20)
 		lastCol = 1;
-	putCharToInnerGrid(lastRow, lastCol, H_SLOWER);
+	putCharToGrid(lastRow, lastCol, H_SLOWER, true);
 }
 
 GLfloat getXFromCell(int col) {
@@ -199,42 +160,31 @@ GLfloat getYFromCell(int row) {
 	return y;
 }
 
-//Function shall not be used directly- use either 'putMultipleCharToInnerGrid' or 'putMultipleCharToOuterGrid
-void putMultipleCharToGrid(int blocks, int row, int col, charCellType backChar,
-		charCellType charType) {
+void putMultipleCharToGrid(int row, int col, charCellType charType,
+		charCellType backChar, int blocks, bool isInner) {
+
 	//Adding 'back' characters - required in case of covering multiple cells
 	for (int i = 0; i < blocks; i++) {
 		for (int j = 0; j < blocks; j++) {
-			gridChar[row - i][col + j] = backChar;
+			putCharToGrid(row - i, col + j, backChar, isInner);
 		}
 	}
 
 	//The first position(bottom-left) should be actual character
+	putCharToGrid(row, col, charType, isInner);
+}
+
+void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
+	if (!isValidRowNColIndex(row, col, isInner)) {
+		return;
+	}
+
+	if (isInner) {
+		row = row;
+		col = col + ATTRIBUTE_WIDTH;
+	}
+
 	gridChar[row][col] = charType;
-}
-
-void putCharToInnerGrid(int row, int col, charCellType charType) {
-	row = row;
-	col = col + ATTRIBUTE_WIDTH;
-	gridChar[row][col] = charType;
-}
-
-//to be used only in case of attributeSpace
-void putCharToOuterGrid(int row, int col, charCellType charType) {
-	gridChar[row][col] = charType;
-}
-
-void putMultipleCharToInnerGrid(int row, int col, charCellType charType,
-		charCellType backChar, int blocks = 1) {
-	row = row;
-	col = col + ATTRIBUTE_WIDTH;
-	putMultipleCharToGrid(blocks, row, col, backChar, charType);
-}
-
-//to be used only in case of attributeSpace
-void putMultipleCharToOuterGrid(int row, int col, charCellType charType,
-		charCellType backChar, int blocks = 1) {
-	putMultipleCharToGrid(blocks, row, col, backChar, charType);
 }
 
 void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1) {
@@ -266,7 +216,7 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 }
 
 void renderGrid() {
-	//TODO - rmove this method call from here and put in a thread or something
+	//TODO - remove this method call from here and put in a thread or something
 	tempStunnerLocation();
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
@@ -277,6 +227,9 @@ void renderGrid() {
 				break;
 			case SPAWN:
 				putImageToCell(r, c, spawn_texId);
+				break;
+			case WAR_GROUND:
+				putImageToCell(r, c, war_texId);
 				break;
 			case ATTRIBUTE_BG:
 				putImageToCell(r, c, attribute_bg_texId);

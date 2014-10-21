@@ -11,6 +11,9 @@ void printGrid() {
 			case SPAWN:
 				cout << " SPA";
 				break;
+			case WAR_GROUND:
+				cout << " war";
+				break;
 			case ATTRIBUTE_BG:
 				cout << " ATT";
 				break;

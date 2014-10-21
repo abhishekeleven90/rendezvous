@@ -9,8 +9,6 @@
 #define MIN_XCELL -2.4f
 #define MIN_YCELL -2.0f
 
-#define ATTRIBUTE_WIDTH 2
-
 #define START_GRID_ROW 1
 #define END_GRID_ROW 20
 
@@ -38,16 +36,17 @@
 #define GLOBAL_ITEM_TIMER 3 //Time between taking two consecutive Items
 #define ATTACK_VISIBILITY 1
 
-//Spawn
-#define SPAWN_BLOCKS 3
-
 //Number of Blocks
+#define SPAWN_BLOCKS 3
+#define ATTRIBUTE_WIDTH 2
 #define TEMPLE_BLOCKS 2
+#define DIAGONAL_BLOCKS 5 //shall be 2*n+1(principal_diag)
 
 //------------------------GLOBALS-------------------
 //TextureIds
 GLuint grass_texId;
 GLuint spawn_texId;
+GLuint war_texId;
 
 GLuint attribute_bg_texId;
 

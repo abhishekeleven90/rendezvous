@@ -1,28 +1,26 @@
 #include <SFML/Audio.hpp>
+#include "FilePaths.h"
 
 using namespace sf;
 
 Music music;
 Music eventMusic;
 
-void startMainSound() {
+void playSound(std::string soundPath, bool setLoop) {
 	int loaded = 1;
-
-	if (!music.openFromFile("data/sounds/mario_theme.ogg"))
+	if (!music.openFromFile(soundPath)) {
 		loaded = -1; // error
+	}
 	if (loaded) {
-		music.setLoop(true);
+		music.setLoop(setLoop);
 		music.play();
-		//while(1);
 	}
 }
 
-void playEventSound() {
+void startMainSound() {
+	playSound(PATH_SOUND_MARIO_THEME, true);
+}
 
-	int loaded = 1;
-	if (!eventMusic.openFromFile("data/sounds/event.wav"))
-		loaded = -1; // error
-	if (loaded) {
-		eventMusic.play();
-	}
+void playEventSound() {
+	playSound(PATH_SOUND_EVENT, false);
 }
