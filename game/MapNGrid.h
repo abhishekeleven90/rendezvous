@@ -58,11 +58,109 @@ void putTemple() {
 			TEMPLE_BLOCKS);
 }
 
+void putStonesInTeamArea() {
+	putCharToInnerGrid(11, 1, STONE);
+	putCharToInnerGrid(11, 2, STONE);
+	putCharToInnerGrid(12, 4, STONE);
+	putCharToInnerGrid(13, 5, STONE);
+	putCharToInnerGrid(15, 2, STONE);
+	putCharToInnerGrid(16, 3, STONE);
+	putCharToInnerGrid(19, 5, STONE);
+	putCharToInnerGrid(11, 8, STONE);
+	putCharToInnerGrid(12, 8, STONE);
+	putCharToInnerGrid(12, 9, STONE);
+	putCharToInnerGrid(16, 12, STONE);
+	putCharToInnerGrid(19, 4, STONE);
+	putCharToInnerGrid(20, 11, STONE);
+	putCharToInnerGrid(20, 13, STONE);
+	putCharToInnerGrid(20, 14, STONE);
+	putCharToInnerGrid(20, 15, STONE);
+}
+
+void putTreesInTeamArea() {
+	putCharToInnerGrid(4, 1, TREE);
+	putCharToInnerGrid(5, 1, TREE);
+	putCharToInnerGrid(5, 2, TREE);
+	putCharToInnerGrid(6, 1, TREE);
+	putCharToInnerGrid(6, 2, TREE);
+	putCharToInnerGrid(8, 3, TREE);
+	putCharToInnerGrid(8, 4, TREE);
+	putCharToInnerGrid(9, 3, TREE);
+	putCharToInnerGrid(9, 4, TREE);
+	putCharToInnerGrid(12, 6, TREE);
+	putCharToInnerGrid(13, 6, TREE);
+	putCharToInnerGrid(14, 6, TREE);
+	putCharToInnerGrid(15, 6, TREE);
+	putCharToInnerGrid(16, 6, TREE);
+	putCharToInnerGrid(17, 6, TREE);
+	putCharToInnerGrid(18, 6, TREE);
+	putCharToInnerGrid(19, 6, TREE);
+	putCharToInnerGrid(19, 5, TREE);
+	putCharToInnerGrid(15, 3, TREE);
+	putCharToInnerGrid(16, 2, TREE);
+	putCharToInnerGrid(15, 7, TREE);
+	putCharToInnerGrid(15, 8, TREE);
+	putCharToInnerGrid(16, 7, TREE);
+	putCharToInnerGrid(16, 8, TREE);
+	putCharToInnerGrid(20, 8, TREE);
+	putCharToInnerGrid(19, 16, TREE);
+	putCharToInnerGrid(20, 16, TREE);
+	putCharToInnerGrid(20, 17, TREE);
+	putCharToInnerGrid(13, 8, TREE);
+	putCharToInnerGrid(13, 9, TREE);
+	putCharToInnerGrid(13, 10, TREE);
+	putCharToInnerGrid(15, 10, TREE);
+	putCharToInnerGrid(16, 10, TREE);
+	putCharToInnerGrid(17, 10, TREE);
+	putCharToInnerGrid(18, 10, TREE);
+	putCharToInnerGrid(18, 8, TREE);
+	putCharToInnerGrid(18, 9, TREE);
+	putCharToInnerGrid(19, 9, TREE);
+	putCharToInnerGrid(19, 9, TREE);
+}
+
+void putStonesInCommonArea() {
+	putCharToInnerGrid(7, 6, STONE);
+	putCharToInnerGrid(7, 8, STONE);
+	putCharToInnerGrid(8, 8, STONE);
+	putCharToInnerGrid(9, 10, STONE);
+	putCharToInnerGrid(10, 10, STONE);
+	putCharToInnerGrid(11, 12, STONE);
+	putCharToInnerGrid(12, 12, STONE);
+	putCharToInnerGrid(13, 14, STONE);
+	putCharToInnerGrid(14, 14, STONE);
+}
+
+void putTreesInCommonArea() {
+	putCharToInnerGrid(1, 1, TREE);
+	putCharToInnerGrid(1, 2, TREE);
+	putCharToInnerGrid(1, 3, TREE);
+	putCharToInnerGrid(2, 1, TREE);
+	putCharToInnerGrid(2, 2, TREE);
+	putCharToInnerGrid(3, 1, TREE);
+	putCharToInnerGrid(8, 6, TREE);
+	putCharToInnerGrid(9, 8, TREE);
+	putCharToInnerGrid(11, 10, TREE);
+	putCharToInnerGrid(13, 12, TREE);
+	putCharToInnerGrid(15, 14, TREE);
+	putCharToInnerGrid(18, 20, TREE);
+	putCharToInnerGrid(19, 19, TREE);
+	putCharToInnerGrid(19, 20, TREE);
+	putCharToInnerGrid(20, 18, TREE);
+	putCharToInnerGrid(20, 19, TREE);
+	putCharToInnerGrid(20, 20, TREE);
+}
+
 void initMap() {
 	putAttributeSpace();
 	putGrass();
 	putSpawnLocation();
 	putTemple();
+
+	putStonesInTeamArea();
+	putTreesInTeamArea();
+	putStonesInCommonArea();
+	putTreesInCommonArea();
 
 	copyInit(); //DISCLAIMER: TO BE CALLED BEFORE ITEM PUT AND HERO PUT!!!
 	putCharToInnerGrid(19, 1, H_SLOWER);

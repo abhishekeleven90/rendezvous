@@ -18,7 +18,7 @@ void initRendering() {
 	loadTextures();
 	initMap();
 	//TODO-below line just for testing
-	putCharToInnerGrid(2, 1, TREE);
+	//putCharToInnerGrid(2, 1, TREE);
 }
 
 //Draws the 3D scene
