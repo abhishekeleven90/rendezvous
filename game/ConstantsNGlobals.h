@@ -57,8 +57,7 @@ GLuint stone_texId;
 GLuint t_angels_texId; //temples
 GLuint t_demons_texId;
 
-GLuint h_stunner_texId; //hero_mario
-GLuint h_silencer_texId;
-GLuint h_snatcher_texId; //hero_soldier
-GLuint h_leecher_texId;
-
+GLuint h_disabler_texId;
+GLuint h_slower_texId; //hero_mario
+GLuint h_burster_texId; //hero_soldier
+GLuint h_stunner_texId;

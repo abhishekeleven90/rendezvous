@@ -7,10 +7,10 @@ enum charCellType {
 	ATTRIBUTE_BG,
 	TEMPLE_ANGELS,
 	TEMPLE_DEMONS,
+	H_DISABLER,
+	H_SLOWER,
+	H_BURSTER,
 	H_STUNNER,
-	H_SILENCER,
-	H_SNATCHER,
-	H_LEECHER,
 	STONE,
 	TREE,
 	TREE_BACK,
@@ -22,27 +22,20 @@ enum charCellType {
 charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
-charCellType initialGridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
-		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
+charCellType
+		initialGridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
+				- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
 enum heroes {
-	STUNNER, SILENCER, SNATCHER, LEECHER
+	DISABLER, SLOWER, BURSTER, STUNNER
 };
 
 enum magicPower {
-	STUN, SILENCE, SNATCH, LEECH
+	DISABLE, SLOW, BURST, STUN
 };
 
 enum itemType {
-	PISTOL_AMMO,
-	STRENGTH,
-	HEALTH,
-	TELEPORT,
-	BOMB,
-	GOD_MODE,
-	SPEED,
-	TEMPLE_HEALER,
-	ATTACK_RANGE
+	SPEED_MOVE, SPEED_ATTACK, HEALTH, DAMAGE, TEMPLE_HEALER
 };
 
 enum teamName {
@@ -51,12 +44,7 @@ enum teamName {
 
 struct Item {
 	itemType item_type;
-	int ItemUsetimer;
-
-	// Used for one-time-items (like maybe Strength - don't want to have again)
-	// Low priority, remove if not required
-	bool isOneTimeItem;
-	bool isDisplayed;
+	int itemUsetimer;
 };
 
 struct Temple {
@@ -66,16 +54,18 @@ struct Temple {
 
 struct Hero {
 	teamName team_name;
-	//string pic_path;
-
-	int health;
-
-	int pistol_ammo;
+	string pic_path;
 
 	magicPower magic_power;
+
+	int strength;
+	int health;
+	int speedAttack;
+	int speedMove;
+
+	itemType itemsBag[];
+
 	int magicSpellTime;
-
-	//TODO - pending item attributes
-
+	int globalItemTime;
 };
 

@@ -19,7 +19,6 @@ void initRendering() {
 	initMap();
 	//TODO-below line just for testing
 	//putCharToInnerGrid(2, 1, TREE);
-	putMultipleCharToInnerGrid(10, 1, TREE, DEFAULT, 2);
 }
 
 //Draws the 3D scene
