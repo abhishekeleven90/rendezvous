@@ -14,6 +14,7 @@ void putMultipleCharToInnerGrid(int row, int col, charCellType charType,
 void putImageToCell(int row, int col, GLuint _textureId, int blocks);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
+void copyInit();
 
 void putAttributeSpace() {
 	//left attribute space
@@ -70,8 +71,19 @@ void initMap() {
 	putGrass();
 	putSpawnLocation();
 	putTemple();
-
+	copyInit(); //DISCLAIMER: TO BE CALLED BEFORE ITEM PUT AND HERO PUT!!!
 	putCharToInnerGrid(19, 1, H_STUNNER);
+}
+
+//copies the state of the initial map to another array
+//this is modifiable as item changes
+void copyInit()
+{
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+			for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
+				initialGridChar[r][c]=gridChar[r][c];
+			}
+	}
 }
 
 //TODO
@@ -79,9 +91,8 @@ void initMap() {
 void tempStunnerLocation() {
 	static int lastRow = 14;
 	static int lastCol = 1;
-	//TODO
-	//will have to have a basic init grid always for replacing
-	putCharToInnerGrid(lastRow, lastCol, GRASS);
+	//replacing with initial grid char
+	putCharToInnerGrid(lastRow, lastCol, initialGridChar[lastRow][lastCol + ATTRIBUTE_WIDTH]);
 	lastCol++;
 	if (lastCol > 20)
 		lastCol = 1;

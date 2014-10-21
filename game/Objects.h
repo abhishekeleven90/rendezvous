@@ -22,6 +22,9 @@ enum charCellType {
 charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
+charCellType initialGridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
+		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
+
 enum heroes {
 	STUNNER, SILENCER, SNATCHER, LEECHER
 };
