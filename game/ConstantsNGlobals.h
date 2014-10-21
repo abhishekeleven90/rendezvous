@@ -39,7 +39,7 @@
 #define ATTACK_VISIBILITY 1
 
 //Spawn
-#define SPAWN_BLOCKS 3
+#define SPAWN_BLOCKS 6
 
 //Number of Blocks
 #define TEMPLE_BLOCKS 2

@@ -40,21 +40,13 @@ void putGrass() {
 }
 
 void putSpawnLocation() {
-	//left spawn
 	int k = 1;
 	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
 		for (int j = 1; j <= k; j++) {
 			putCharToInnerGrid(i, j, SPAWN);
-		}
-		k++;
-	}
-	//right spawn
-	k = SPAWN_BLOCKS;
-	for (int i = END_INNER_GRID_COL; i >= END_INNER_GRID_COL - SPAWN_BLOCKS + 1; i--) {
-		for (int j = k; j >= 1; j--) {
 			putCharToInnerGrid(j, i, SPAWN);
 		}
-		k--;
+		k++;
 	}
 }
 
@@ -173,13 +165,13 @@ void renderGrid() {
 			case H_STUNNER:
 				putImageToCell(r, c, h_stunner_texId);
 				break;
-			case H_SILENCER:
+			case H_SLOWER:
 				putImageToCell(r, c, h_silencer_texId);
 				break;
-			case H_SNATCHER:
+			case H_DISABLER:
 				putImageToCell(r, c, h_snatcher_texId);
 				break;
-			case H_LEECHER:
+			case H_BURSTER:
 				putImageToCell(r, c, h_leecher_texId);
 				break;
 			case STONE:

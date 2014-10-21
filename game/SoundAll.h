@@ -16,7 +16,7 @@ void startMainSound() {
 	int loaded = 1;
 
 	//TODO gives error(writes on cmd line) if no file
-	if (!mainBuffer.loadFromFile("data/sounds/trial.wav"))
+	if (!mainBuffer.loadFromFile("data/sounds/bg_sound.wav"))
 		loaded = -1;
 
 	if (loaded) {

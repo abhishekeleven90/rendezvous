@@ -23,13 +23,13 @@ void printGrid() {
 			case H_STUNNER:
 				cout << " Hst";
 				break;
-			case H_SILENCER:
+			case H_SLOWER:
 				cout << " Hsi";
 				break;
-			case H_SNATCHER:
+			case H_DISABLER:
 				cout << " Hsn";
 				break;
-			case H_LEECHER:
+			case H_BURSTER:
 				cout << " Hle";
 				break;
 			case STONE:
