@@ -128,8 +128,9 @@ void initMap() {
 }
 
 //copies the state of the initial map to another array
-//this is modifiable as item changes
-void copyInit() {
+//not modifiable now, as discussed
+void copyInit()
+{
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			initialGridChar[r][c] = gridChar[r][c];
