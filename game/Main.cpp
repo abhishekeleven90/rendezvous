@@ -3,6 +3,7 @@
 #include "OpenGlHelper.h"
 #include "GeneralHelper.h"
 #include "Timer.h"
+#include "SoundAll.h"
 
 void initRendering();
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId);
@@ -52,6 +53,7 @@ int main(int argc, char** argv) {
 	glutMouseFunc(myMouseClickHandler);
 
 	glutTimerFunc(REFRESH_RATE, timer, 0);
+	startMainSound();
 	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
 	return 0; //This line is never reached
 }
