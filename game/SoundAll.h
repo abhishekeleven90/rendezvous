@@ -13,7 +13,6 @@ SoundBuffer eventBuffer;
 Music mainMusic;
 
 void startMainSound() {
-
 	int loaded = 1;
 
 	//TODO gives error(writes on cmd line) if no file
