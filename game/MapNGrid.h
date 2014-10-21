@@ -9,8 +9,10 @@ GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
 void putCharToInnerGrid(int row, int col, charCellType charType);
 void putCharToOuterGrid(int row, int col, charCellType charType);
-void putImageToCell(int row, int col, GLuint _textureId);
-void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId);
+void putMultipleCharToInnerGrid(int row, int col, charCellType charType,
+		charCellType backChar, int blocks);
+void putImageToCell(int row, int col, GLuint _textureId, int blocks);
+void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
 
 void putAttributeSpace() {
@@ -56,10 +58,18 @@ void putSpawnLocation() {
 	}
 }
 
+void putTemple() {
+	putMultipleCharToInnerGrid(5, 4, TEMPLE_ANGELS, T_ANGELS_BACK,
+			TEMPLE_BLOCKS);
+	putMultipleCharToInnerGrid(17, 16, TEMPLE_DEMONS, T_DEMONS_BACK,
+			TEMPLE_BLOCKS);
+}
+
 void initMap() {
 	putAttributeSpace();
 	putGrass();
 	putSpawnLocation();
+	putTemple();
 
 	putCharToInnerGrid(19, 1, H_STUNNER);
 }
@@ -74,25 +84,52 @@ GLfloat getYFromCell(int row) {
 	return y;
 }
 
+//Function shall not be used directly- use either 'putMultipleCharToInnerGrid' or 'putMultipleCharToOuterGrid
+void putMultipleCharToGrid(int blocks, int row, int col, charCellType backChar,
+		charCellType charType) {
+	//Adding 'back' characters - required in case of covering multiple cells
+	for (int i = 0; i < blocks; i++) {
+		for (int j = 0; j < blocks; j++) {
+			gridChar[row - i][col + j] = backChar;
+		}
+	}
+
+	//The first position(bottom-left) should be actual character
+	gridChar[row][col] = charType;
+}
+
 void putCharToInnerGrid(int row, int col, charCellType charType) {
 	row = row;
 	col = col + ATTRIBUTE_WIDTH;
 	gridChar[row][col] = charType;
 }
 
-//Avoid using : use only in case of attributeSpace
-//TODO: check whether we can have a specific function for attribute space
+//to be used only in case of attributeSpace
 void putCharToOuterGrid(int row, int col, charCellType charType) {
 	gridChar[row][col] = charType;
 }
 
-void putImageToCell(int row, int col, GLuint _textureId) {
-	GLfloat x = getXFromCell(col);
-	GLfloat y = getYFromCell(row);
-	putImageToGrid(x, y, _textureId);
+void putMultipleCharToInnerGrid(int row, int col, charCellType charType,
+		charCellType backChar, int blocks = 1) {
+	row = row;
+	col = col + ATTRIBUTE_WIDTH;
+	putMultipleCharToGrid(blocks, row, col, backChar, charType);
 }
 
-void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
+//to be used only in case of attributeSpace
+void putMultipleCharToOuterGrid(int row, int col, charCellType charType,
+		charCellType backChar, int blocks = 1) {
+	putMultipleCharToGrid(blocks, row, col, backChar, charType);
+}
+
+void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1) {
+	GLfloat x = getXFromCell(col);
+	GLfloat y = getYFromCell(row);
+	putImageToGrid(x, y, _textureId, blocks);
+}
+
+void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
+	GLfloat size1D = blocks * CELL_LENGTH;
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
@@ -104,11 +141,11 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId) {
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(x, y, -5.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(x, y + CELL_LENGTH, -5.0f);
+	glVertex3f(x, y + size1D, -5.0f);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(x + CELL_LENGTH, y + CELL_LENGTH, -5.0f);
+	glVertex3f(x + size1D, y + size1D, -5.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(x + CELL_LENGTH, y, -5.0f);
+	glVertex3f(x + size1D, y, -5.0f);
 
 	glEnd();
 }
@@ -127,11 +164,11 @@ void renderGrid() {
 			case ATTRIBUTE_BG:
 				putImageToCell(r, c, attribute_bg_texId);
 				break;
-			case ANGELS_TEMPLE:
-				putImageToCell(r, c, t_angels_texId);
+			case TEMPLE_ANGELS:
+				putImageToCell(r, c, t_angels_texId, TEMPLE_BLOCKS);
 				break;
-			case DEMONS_TEMPLE:
-				putImageToCell(r, c, t_demons_texId);
+			case TEMPLE_DEMONS:
+				putImageToCell(r, c, t_demons_texId, TEMPLE_BLOCKS);
 				break;
 			case H_STUNNER:
 				putImageToCell(r, c, h_stunner_texId);
@@ -149,10 +186,19 @@ void renderGrid() {
 				putImageToCell(r, c, stone_texId);
 				break;
 			case TREE:
-				putImageToCell(r, c, tree_texId);
+				putImageToCell(r, c, tree_texId, 2);
+				break;
+			case TREE_BACK:
+				break;
+			case T_ANGELS_BACK:
+				break;
+			case T_DEMONS_BACK:
+				break;
+			case DEFAULT:
 				break;
 			default:
 				cout << "--SOMETHING WENT WRONG while rendering grid--" << endl;
+				break;
 			}
 		}
 	}

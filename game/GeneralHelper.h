@@ -3,43 +3,55 @@
 void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			switch (gridChar[r][c]) {
 			case GRASS:
-				cout << " GR";
+				cout << " GRA";
 				break;
 			case SPAWN:
-				cout << " SP";
+				cout << " SPA";
 				break;
 			case ATTRIBUTE_BG:
-				cout << " AB";
+				cout << " ATT";
 				break;
-			case ANGELS_TEMPLE:
-				cout << " TA";
+			case TEMPLE_ANGELS:
+				cout << " TEa";
 				break;
-			case DEMONS_TEMPLE:
-				cout << " TD";
+			case TEMPLE_DEMONS:
+				cout << " TEd";
 				break;
 			case H_STUNNER:
-				cout << " HX";
+				cout << " Hst";
 				break;
 			case H_SILENCER:
-				cout << " HS";
+				cout << " Hsi";
 				break;
 			case H_SNATCHER:
-				cout << " HN";
+				cout << " Hsn";
 				break;
 			case H_LEECHER:
-				cout << " HL";
+				cout << " Hle";
 				break;
 			case STONE:
-				cout << " ST";
+				cout << " STO";
 				break;
 			case TREE:
-				cout << " TR";
+				cout << " TRE";
+				break;
+			case TREE_BACK:
+				cout << " TRb";
+				break;
+			case T_ANGELS_BACK:
+				cout << " Tab";
+				break;
+			case T_DEMONS_BACK:
+				cout << " Tdb";
+				break;
+			case DEFAULT:
+				cout << " DEF";
 				break;
 			default:
-				cout << " DD";
+				cout << " DDD";
 			}
 		}
 		cout << "\n";

@@ -39,7 +39,6 @@ void myMouseClickHandler(int button, int state, int x, int y) {
 	} else {
 		printf("\nMouse up at %d, %d", x, y);
 	}
-
 }
 
 //Called when the window is resized

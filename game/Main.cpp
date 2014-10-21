@@ -17,7 +17,8 @@ void initRendering() {
 	loadTextures();
 	initMap();
 	//TODO-below line just for testing
-	putCharToInnerGrid(1, 1, TREE);
+	//putCharToInnerGrid(2, 1, TREE);
+	putMultipleCharToInnerGrid(10, 1, TREE, DEFAULT, 2);
 }
 
 //Draws the 3D scene
@@ -31,6 +32,7 @@ void drawScene() {
 	//printGrid();
 	renderGrid();
 	glutSwapBuffers(); //Send the 3D scene to the screen
+	//cout << "inside draw scene" << endl;
 }
 
 int main(int argc, char** argv) {

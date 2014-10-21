@@ -41,6 +41,9 @@
 //Spawn
 #define SPAWN_BLOCKS 3
 
+//Number of Blocks
+#define TEMPLE_BLOCKS 2
+
 //------------------------GLOBALS-------------------
 //TextureIds
 GLuint grass_texId;
