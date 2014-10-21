@@ -74,6 +74,20 @@ void initMap() {
 	putCharToInnerGrid(19, 1, H_STUNNER);
 }
 
+//TODO
+//temp for motion of the H_STUNNER
+void tempStunnerLocation() {
+	static int lastRow = 14;
+	static int lastCol = 1;
+	//TODO
+	//will have to have a basic init grid always for replacing
+	putCharToInnerGrid(lastRow, lastCol, GRASS);
+	lastCol++;
+	if (lastCol > 20)
+		lastCol = 1;
+	putCharToInnerGrid(lastRow, lastCol, H_STUNNER);
+}
+
 GLfloat getXFromCell(int col) {
 	GLfloat x = MIN_XCELL + (col - 1) * CELL_LENGTH;
 	return x;
@@ -151,6 +165,9 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 }
 
 void renderGrid() {
+	//TODO
+	//rmove this method call from here and put in a thread or something
+	tempStunnerLocation();
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 

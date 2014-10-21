@@ -1,6 +1,6 @@
 //-------------------------CONSTANTS------------------
 #define CELL_LENGTH 0.2f
-#define REFRESH_RATE 2
+#define REFRESH_RATE 300
 
 //Grid related
 #define MAX_XCELL 1.0f
