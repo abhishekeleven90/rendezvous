@@ -1,5 +1,14 @@
+#ifndef GENERAL_HELPER_H
+#define GENERAL_HELPER_H
+
+#include "Globals.h"
 #include "OpenGlHelper.h"
-#include "Headers.h"
+#include "FilePaths.h"
+#include "CustomVectorStruct.h"
+#include "Constants.h"
+#include "Objects.h"
+#include "MapNGrid.h"
+#include "HandleGridCharSwitch.h"
 
 void loadTextures() {
 	grass_texId = getTextureFromImage(PATH_IMG_BG);
@@ -54,5 +63,6 @@ void printGrid() {
 		}
 		cout << "\n";
 	}
-
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef SOUND_ALL_H
+#define SOUND_ALL_H
+
 #include <SFML/Audio.hpp>
 #include "FilePaths.h"
 
@@ -20,7 +23,12 @@ void playBgSound() {
 }
 
 void playEventSound(std::string eventSoundPath) {
-	bgMusic.pause();
+	bool isBgMusicPlaying = false;
+
+	if (bgMusic.getStatus() == bgMusic.Playing) {
+		isBgMusicPlaying = true;
+		bgMusic.pause();
+	}
 
 	int loaded = 1;
 
@@ -32,5 +40,9 @@ void playEventSound(std::string eventSoundPath) {
 		eventMusic.play();
 	}
 
-	bgMusic.play();
+	if (isBgMusicPlaying) {
+		bgMusic.play();
+	}
 }
+
+#endif

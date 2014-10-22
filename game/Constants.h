@@ -1,3 +1,6 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 //-------------------------CONSTANTS------------------
 
 #define ITEM_MAP_COUNT 3
@@ -45,3 +48,4 @@
 #define ATTRIBUTE_WIDTH 2
 #define TEMPLE_BLOCKS 2
 #define DIAGONAL_BLOCKS 5 //shall be 2*n+1(principal_diag)
+#endif

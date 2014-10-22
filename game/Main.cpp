@@ -1,7 +1,10 @@
-#include "ImageLoader.h"
 #include "Headers.h"
+#include "MapNGrid.h"
 #include "GeneralHelper.h"
-
+#include "OpenGlHelper.h"
+#include "Constants.h"
+#include "Objects.h"
+#include "SoundAll.h"
 #include "Timer.h"
 
 void initRendering();

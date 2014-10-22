@@ -1,6 +1,10 @@
-#include "CustomVectorStruct.h"
-#include "MapNGrid.h"
+#ifndef OPEN_GL_HELPER_H
+#define OPEN_GL_HELPER_H
+
+#include "ImageLoader.h"
+#include "Constants.h"
 #include "SoundAll.h"
+#include "HandleGridCharSwitch.h"
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -26,6 +30,16 @@ void handleKeypress(unsigned char key, //The key that was pressed
 	switch (key) {
 	case 27: //Escape key
 		exit(0); //Exit the program
+		break;
+
+	case 32: //Space bar
+
+		if (bgMusic.getStatus() == bgMusic.Paused) {
+			bgMusic.play();
+		} else {
+			bgMusic.pause();
+		}
+		break;
 	}
 }
 
@@ -52,8 +66,13 @@ Coordinate_openGl getOGLPos(int mX, int mY) {
 }
 
 Coordinate_grid downGrid;
-void processClick(charCellType charType) {
-	//handleGridCharSwitch( PROCESS_MOVE_CLICK);
+void processRightClick(Coordinate_grid grid) {
+
+	//TODO: remove below cout(s)
+	cout << " row: " << downGrid.row;
+	cout << " col: " << downGrid.col << endl;
+
+	handleGridCharSwitch(grid.row, grid.col, PROCESS_MOVE_CLICK);
 }
 
 void myMouseClickHandler(int button, int state, int x, int y) {
@@ -65,20 +84,12 @@ void myMouseClickHandler(int button, int state, int x, int y) {
 	}
 
 	if (!isValidCell(downGrid)) {
-		playEventSound(PATH_SOUND_WRONG_CLICK);
+		playEventSound( PATH_SOUND_WRONG_CLICK);
 		return;
 	}
 
-	if (button == GLUT_LEFT_BUTTON) { //used for moving
-
-		playEventSound(PATH_SOUND_WRONG_CLICK);
-
-		charCellType charType = getInnerGridChar(downGrid.row, downGrid.col);
-		processClick(charType);
-
-		//TODO: remove below cout(s)
-		cout << " row: " << downGrid.row;
-		cout << " col: " << downGrid.col << endl;
+	if (button == GLUT_RIGHT_BUTTON) { //used for moving
+		processRightClick(downGrid);
 	}
 }
 
@@ -106,3 +117,5 @@ GLuint getTextureFromImage(string path) {
 	delete bgImage;
 	return _textureId;
 }
+
+#endif

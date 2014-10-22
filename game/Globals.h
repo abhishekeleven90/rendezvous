@@ -1,3 +1,6 @@
+#ifndef GLOBALS_H
+#define GLOBALS_H
+
 #include "Objects.h"
 #include "Constants.h"
 
@@ -35,3 +38,5 @@ GLuint i_health_texId;
 GLuint i_templeHealer_texId;
 
 GLuint temp_texId;
+
+#endif

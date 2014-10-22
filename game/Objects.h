@@ -1,3 +1,6 @@
+#ifndef OBJECTS_H
+#define OBJECTS_H
+
 enum charCellType {
 	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE,
 
@@ -71,3 +74,4 @@ struct Hero {
 	int globalItemTime;
 };
 
+#endif

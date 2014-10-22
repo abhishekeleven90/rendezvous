@@ -1,3 +1,6 @@
+#ifndef CUSTOM_VECTOR_STRUCT_H
+#define CUSTOM_VECTOR_STRUCT_H
+
 struct Coordinate_openGl {
 public:
 
@@ -29,3 +32,5 @@ public:
 
 	int row, col;
 };
+
+#endif

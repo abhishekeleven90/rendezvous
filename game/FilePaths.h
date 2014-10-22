@@ -1,3 +1,6 @@
+#ifndef FILE_PATHS_H
+#define FILE_PATHS_H
+
 //locations
 #define PATH_LOC_STONES_COMMON "data/object_loc/stones_common_loc.txt"
 #define PATH_LOC_STONES_TEAM "data/object_loc/stones_team_loc.txt"
@@ -28,3 +31,5 @@
 #define PATH_IMG_ITEM_DAMAGE "data/images/item_damage.bmp"
 #define PATH_IMG_ITEM_HEALTH "data/images/item_health.bmp"
 #define PATH_IMG_ITEM_TEMPLE_HEALER "data/images/item_temple_healer.bmp"
+
+#endif

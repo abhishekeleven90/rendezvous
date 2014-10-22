@@ -1,3 +1,6 @@
+#ifndef HEADERS_H
+#define HEADERS_H
+
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "FilePaths.h"
 
 using namespace std;
+
+#endif

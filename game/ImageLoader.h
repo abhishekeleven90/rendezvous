@@ -1,5 +1,5 @@
-#ifndef IMAGE_LOADER_H_INCLUDED
-#define IMAGE_LOADER_H_INCLUDED
+#ifndef IMAGE_LOADER_H
+#define IMAGE_LOADER_H
 
 //Represents an image
 class Image {
