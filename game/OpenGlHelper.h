@@ -1,4 +1,5 @@
 #include "Headers.h"
+#include "MapNGrid.h"
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -27,17 +28,36 @@ void handleKeypress(unsigned char key, //The key that was pressed
 	}
 }
 
-//TODO :::: needs to be implemented
-int prevMouseX, prevMouseY;
+//converts window coordinates to openGL coordinates
+Coordinate_openGl getOGLPos(int mX, int mY) {
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLfloat winX, winY, winZ;
+	GLdouble posX, posY, posZ;
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	winX = (float) mX;
+	winY = (float) viewport[3] - (float) mY;
+	glReadPixels(mX, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+
+	gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX,
+			&posY, &posZ);
+
+	return Coordinate_openGl(posX, posY, posZ);
+}
+
 void myMouseClickHandler(int button, int state, int x, int y) {
 
 	if (state == GLUT_DOWN) {
-		//printf("\nMouse down at %d, %d", x, y);
-		//prevMouseX = x;
-		//prevMouseY = y;
+		Coordinate_openGl openGl = getOGLPos(x, y);
+		Coordinate_grid grid = getGridCoordinatesFromOpenGl(openGl);
 
-	} else {
-		printf("\nMouse up at %d, %d", x, y);
+		cout << "row: " << grid.row << endl;
+		cout << "col: " << grid.col << endl;
 	}
 }
 

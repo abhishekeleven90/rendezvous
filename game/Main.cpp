@@ -1,5 +1,4 @@
 #include "ImageLoader.h"
-#include "MapNGrid.h"
 #include "OpenGlHelper.h"
 #include "GeneralHelper.h"
 #include "Timer.h"

@@ -1,6 +1,7 @@
 #include "Headers.h"
 #include "Objects.h"
 #include "Validations.h"
+#include "customVectorStruct.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -129,8 +130,7 @@ void initMap() {
 
 //copies the state of the initial map to another array
 //not modifiable now, as discussed
-void copyInit()
-{
+void copyInit() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			initialGridChar[r][c] = gridChar[r][c];
@@ -151,14 +151,16 @@ void tempStunnerLocation() {
 	putCharToGrid(lastRow, lastCol, H_SLOWER, true);
 }
 
-GLfloat getXFromCell(int col) {
-	GLfloat x = MIN_XCELL + (col - 1) * CELL_LENGTH;
-	return x;
+Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
+	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
+	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
+	return Coordinate_openGl(x, y);
 }
 
-GLfloat getYFromCell(int row) {
-	GLfloat y = MAX_YCELL - (row * CELL_LENGTH);
-	return y;
+Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
+	int row = (MAX_YCELL - openGl.y) / CELL_LENGTH + 1;
+	int col = ((openGl.x - MIN_XCELL) / CELL_LENGTH) + 1;
+	return Coordinate_grid(row, col);
 }
 
 void putMultipleCharToGrid(int row, int col, charCellType charType,
@@ -189,9 +191,9 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 }
 
 void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1) {
-	GLfloat x = getXFromCell(col);
-	GLfloat y = getYFromCell(row);
-	putImageToGrid(x, y, _textureId, blocks);
+	Coordinate_grid grid = Coordinate_grid(row, col);
+	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
 }
 
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
