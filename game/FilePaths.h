@@ -27,3 +27,4 @@
 #define PATH_IMG_ITEM_MOVEMENT_SPEED "data/images/item_movement_speed.bmp"
 #define PATH_IMG_ITEM_DAMAGE "data/images/item_damage.bmp"
 #define PATH_IMG_ITEM_HEALTH "data/images/item_health.bmp"
+#define PATH_IMG_ITEM_TEMPLE_HEALER "data/images/item_temple_healer.bmp"

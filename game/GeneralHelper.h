@@ -20,6 +20,7 @@ void loadTextures() {
 	i_speedAttack_texId = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
 	i_damage_texId = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
 	i_health_texId = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
+	i_templeHealer_texId = getTextureFromImage(PATH_IMG_ITEM_TEMPLE_HEALER);
 }
 
 Coordinate_grid getRandomCoordinatesForItem() {

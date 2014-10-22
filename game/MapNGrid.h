@@ -275,6 +275,9 @@ void renderGrid() {
 			case I_DAMAGE:
 				putImageToCell(r, c, i_damage_texId);
 				break;
+			case I_TEMPLE_HEALER:
+				putImageToCell(r, c, i_templeHealer_texId);
+				break;
 
 			case TREE_BACK:
 				break;
