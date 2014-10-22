@@ -32,7 +32,7 @@ Coordinate_grid getRandomCoordinatesForItem() {
 		randomCol = (rand() % (END_INNER_GRID_COL - START_INNER_GRID_COL + 1))
 				+ 1;
 
-		if (gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH] == BG_GRASS) { //assuming that items can come only on 'grass'
+		if (getInnerGridChar(randomRow, randomCol) == BG_GRASS) { //assuming that items can come only on 'grass'
 			break;
 		}
 	}
@@ -50,58 +50,7 @@ void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
-			switch (gridChar[r][c]) {
-			case BG_GRASS:
-				cout << " GRA";
-				break;
-			case BG_SPAWN:
-				cout << " SPA";
-				break;
-			case BG_WAR:
-				cout << " war";
-				break;
-			case BG_ATTRIBUTE:
-				cout << " ATT";
-				break;
-			case TEMPLE_ANGELS:
-				cout << " TEa";
-				break;
-			case TEMPLE_DEMONS:
-				cout << " TEd";
-				break;
-			case H_DISABLER:
-				cout << " Hdi";
-				break;
-			case H_SLOWER:
-				cout << " Hsl";
-				break;
-			case H_BURSTER:
-				cout << " Hbu";
-				break;
-			case H_STUNNER:
-				cout << " Hst";
-				break;
-			case STONE:
-				cout << " STO";
-				break;
-			case TREE:
-				cout << " TRE";
-				break;
-			case TREE_BACK:
-				cout << " TRb";
-				break;
-			case T_ANGELS_BACK:
-				cout << " Tab";
-				break;
-			case T_DEMONS_BACK:
-				cout << " Tdb";
-				break;
-			case DEFAULT:
-				cout << " DEF";
-				break;
-			default:
-				cout << " DDD";
-			}
+			handleGridCharSwitch(r, c, PRINT_GRID);
 		}
 		cout << "\n";
 	}

@@ -33,3 +33,5 @@ GLuint i_speedAttack_texId;
 GLuint i_damage_texId;
 GLuint i_health_texId;
 GLuint i_templeHealer_texId;
+
+GLuint temp_texId;

@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Validations.h"
+#include "HandleGridCharSwitch.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -10,11 +11,109 @@ GLfloat getYFromCell(int row);
 void putCharToGrid(int row, int col, charCellType charType, bool isInner);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int blocks, bool isInner);
-void putImageToCell(int row, int col, GLuint _textureId, int blocks);
+void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
 void copyInit();
 
+//------------------start
+enum switchCallType {
+	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID
+};
+
+void processCase(switchCallType callType, int r, int c, GLuint texId,
+		string toPrint, void( f)(void)) {
+
+	switch (callType) {
+	case PRINT_GRID:
+		cout << " " << toPrint;
+		break;
+	case PROCESS_MOVE_CLICK:
+		break;
+	case RENDER_GRID:
+		putImageToCell(r, c, texId);
+		break;
+	}
+}
+
+void f() {
+
+}
+
+void handleGridCharSwitch(int r, int c, switchCallType callType) {
+
+	switch (gridChar[r][c]) {
+	case BG_GRASS:
+		processCase(callType, r, c, grass_texId, "Gra", f);
+		break;
+	case BG_SPAWN:
+		processCase(callType, r, c, spawn_texId, "BSp", f);
+		break;
+	case BG_WAR:
+		processCase(callType, r, c, war_texId, "BWa", f);
+		break;
+	case BG_ATTRIBUTE:
+		processCase(callType, r, c, attribute_bg_texId, "BAt", f);
+		break;
+
+	case STONE:
+		processCase(callType, r, c, stone_texId, "Sto", f);
+		break;
+	case TREE:
+		processCase(callType, r, c, tree_texId, "Tre", f);
+		break;
+
+	case TEMPLE_ANGELS:
+		processCase(callType, r, c, t_angels_texId, "TAn", f);
+		break;
+	case TEMPLE_DEMONS:
+		processCase(callType, r, c, t_demons_texId, "TDe", f);
+		break;
+
+	case H_DISABLER:
+		processCase(callType, r, c, h_disabler_texId, "HDi", f);
+		break;
+	case H_SLOWER:
+		processCase(callType, r, c, h_slower_texId, "HSl", f);
+		break;
+	case H_BURSTER:
+		processCase(callType, r, c, h_burster_texId, "HBu", f);
+		break;
+	case H_STUNNER:
+		processCase(callType, r, c, h_stunner_texId, "HSt", f);
+		break;
+
+	case I_SPEED_MOVE:
+		processCase(callType, r, c, i_speedMov_texId, "ISM", f);
+		break;
+	case I_SPEED_ATTACK:
+		processCase(callType, r, c, i_speedAttack_texId, "ISA", f);
+		break;
+	case I_HEALTH:
+		processCase(callType, r, c, i_health_texId, "IHe", f);
+		break;
+	case I_DAMAGE:
+		processCase(callType, r, c, i_damage_texId, "IDa", f);
+		break;
+	case I_TEMPLE_HEALER:
+		processCase(callType, r, c, i_templeHealer_texId, "ITH", f);
+		break;
+
+	case TREE_BACK:
+		processCase(callType, r, c, temp_texId, "TBa", f);
+		break;
+	case T_ANGELS_BACK:
+		processCase(callType, r, c, temp_texId, "TAB", f);
+		break;
+	case T_DEMONS_BACK:
+		processCase(callType, r, c, temp_texId, "TDB", f);
+		break;
+
+	default:
+		cout << "should not happen - something's wrong";
+	}
+}
+//----------------------------------------------------end
 void putAttributeSpace() {
 	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -160,6 +259,10 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 	return Coordinate_grid(row, col);
 }
 
+charCellType getInnerGridChar(int randomRow, int randomCol) {
+	return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
+}
+
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int blocks, bool isInner) {
 
@@ -188,7 +291,7 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	gridChar[row][col] = charType;
 }
 
-void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1) {
+void putImageToCell(int row, int col, GLuint _textureId, int blocks) {
 	Coordinate_grid grid = Coordinate_grid(row, col);
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
@@ -219,79 +322,11 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 void renderGrid() {
 	//TODO - remove this method call from here and put in a thread or something
 	tempStunnerLocation();
+
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
-
-			switch (gridChar[r][c]) {
-			case BG_GRASS:
-				putImageToCell(r, c, grass_texId);
-				break;
-			case BG_SPAWN:
-				putImageToCell(r, c, spawn_texId);
-				break;
-			case BG_WAR:
-				putImageToCell(r, c, war_texId);
-				break;
-			case BG_ATTRIBUTE:
-				putImageToCell(r, c, attribute_bg_texId);
-				break;
-
-			case STONE:
-				putImageToCell(r, c, stone_texId);
-				break;
-			case TREE:
-				putImageToCell(r, c, tree_texId);
-				break;
-
-			case TEMPLE_ANGELS:
-				putImageToCell(r, c, t_angels_texId, TEMPLE_BLOCKS);
-				break;
-			case TEMPLE_DEMONS:
-				putImageToCell(r, c, t_demons_texId, TEMPLE_BLOCKS);
-				break;
-
-			case H_DISABLER:
-				putImageToCell(r, c, h_disabler_texId);
-				break;
-			case H_SLOWER:
-				putImageToCell(r, c, h_slower_texId);
-				break;
-			case H_BURSTER:
-				putImageToCell(r, c, h_burster_texId);
-				break;
-			case H_STUNNER:
-				putImageToCell(r, c, h_stunner_texId);
-				break;
-
-			case I_SPEED_MOVE:
-				putImageToCell(r, c, i_speedMov_texId);
-				break;
-			case I_SPEED_ATTACK:
-				putImageToCell(r, c, i_speedAttack_texId);
-				break;
-			case I_HEALTH:
-				putImageToCell(r, c, i_health_texId);
-				break;
-			case I_DAMAGE:
-				putImageToCell(r, c, i_damage_texId);
-				break;
-			case I_TEMPLE_HEALER:
-				putImageToCell(r, c, i_templeHealer_texId);
-				break;
-
-			case TREE_BACK:
-				break;
-			case T_ANGELS_BACK:
-				break;
-			case T_DEMONS_BACK:
-				break;
-
-			case DEFAULT:
-				break;
-			default:
-				cout << "--SOMETHING WENT WRONG while rendering grid--" << endl;
-				break;
-			}
+			handleGridCharSwitch(r, c, RENDER_GRID);
 		}
 	}
 }
+

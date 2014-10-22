@@ -1,6 +1,6 @@
 //-------------------------CONSTANTS------------------
 
-#define ITEM_MAP_COUNT 6
+#define ITEM_MAP_COUNT 3
 #define CELL_LENGTH 0.2f
 #define REFRESH_RATE 300
 

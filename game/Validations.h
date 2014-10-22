@@ -32,13 +32,3 @@ bool isValidCell(Coordinate_grid grid) {
 	return true;
 }
 
-bool isValidMovePos(Coordinate_grid grid) {
-	char cellChar = gridChar[grid.row][grid.col];
-
-	if (cellChar == TREE || cellChar == STONE) {
-		return false;
-	}
-
-	return true;
-}
-

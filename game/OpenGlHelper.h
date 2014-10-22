@@ -52,29 +52,33 @@ Coordinate_openGl getOGLPos(int mX, int mY) {
 }
 
 Coordinate_grid downGrid;
+void processClick(charCellType charType) {
+	//handleGridCharSwitch( PROCESS_MOVE_CLICK);
+}
+
 void myMouseClickHandler(int button, int state, int x, int y) {
 
-	if (state == GLUT_UP) {
-
-		if (!isValidCell(downGrid)) {
-			playEventSound(PATH_SOUND_WRONG_CLICK);
-			return;
-		}
-
-		//Check if the destination pos is not already occupied
-		if (!isValidMovePos(downGrid)) {
-			playEventSound(PATH_SOUND_WRONG_CLICK);
-			return;
-		}
-
-		cout << " row: " << downGrid.row;
-		cout << " col: " << downGrid.col << endl;
-	}
-
-	else {
-		//state - GLUT_DOWN : saving the state on mouse down
+	if (state == GLUT_DOWN) { //saving just the state, action is performed on GLUT_UP
 		Coordinate_openGl openGl = getOGLPos(x, y);
 		downGrid = getGridCoordinatesFromOpenGl(openGl);
+		return;
+	}
+
+	if (!isValidCell(downGrid)) {
+		playEventSound(PATH_SOUND_WRONG_CLICK);
+		return;
+	}
+
+	if (button == GLUT_LEFT_BUTTON) { //used for moving
+
+		playEventSound(PATH_SOUND_WRONG_CLICK);
+
+		charCellType charType = getInnerGridChar(downGrid.row, downGrid.col);
+		processClick(charType);
+
+		//TODO: remove below cout(s)
+		cout << " row: " << downGrid.row;
+		cout << " col: " << downGrid.col << endl;
 	}
 }
 
@@ -83,7 +87,7 @@ void handleResize(int w, int h) {
 	//Tell OpenGL how to convert from coordinates to pixel values
 	glViewport(0, 0, w, h);
 
-	glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
+	glMatrixMode( GL_PROJECTION); //Switch to setting the camera perspective
 
 	glPushMatrix();
 
