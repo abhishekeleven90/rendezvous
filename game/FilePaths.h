@@ -7,6 +7,7 @@
 //sounds
 #define PATH_SOUND_EVENT "data/sounds/event.wav"
 #define PATH_SOUND_MARIO_THEME "data/sounds/mario_theme.ogg"
+#define PATH_SOUND_WRONG_CLICK "data/sounds/wrong_click.ogg"
 
 //images
 #define PATH_IMG_BG "data/images/bg.bmp"

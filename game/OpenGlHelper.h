@@ -1,5 +1,6 @@
 #include "Headers.h"
 #include "MapNGrid.h"
+#include "SoundAll.h"
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -50,14 +51,30 @@ Coordinate_openGl getOGLPos(int mX, int mY) {
 	return Coordinate_openGl(posX, posY, posZ);
 }
 
+Coordinate_grid downGrid;
 void myMouseClickHandler(int button, int state, int x, int y) {
 
-	if (state == GLUT_DOWN) {
-		Coordinate_openGl openGl = getOGLPos(x, y);
-		Coordinate_grid grid = getGridCoordinatesFromOpenGl(openGl);
+	if (state == GLUT_UP) {
 
-		cout << "row: " << grid.row << endl;
-		cout << "col: " << grid.col << endl;
+		if (!isValidCell(downGrid)) {
+			playEventSound(PATH_SOUND_WRONG_CLICK);
+			return;
+		}
+
+		//Check if the destination pos is not already occupied
+		if (!isValidMovePos(downGrid)) {
+			playEventSound(PATH_SOUND_WRONG_CLICK);
+			return;
+		}
+
+		cout << "row: " << downGrid.row << endl;
+		cout << "col: " << downGrid.col << endl;
+	}
+
+	else {
+		//state - GLUT_DOWN : saving the state on mouse down
+		Coordinate_openGl openGl = getOGLPos(x, y);
+		downGrid = getGridCoordinatesFromOpenGl(openGl);
 	}
 }
 

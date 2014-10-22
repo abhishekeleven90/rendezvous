@@ -3,24 +3,34 @@
 
 using namespace sf;
 
-Music music;
+Music bgMusic;
 Music eventMusic;
 
-void playSound(std::string soundPath, bool setLoop) {
+void playBgSound() {
 	int loaded = 1;
-	if (!music.openFromFile(soundPath)) {
+
+	if (!bgMusic.openFromFile(PATH_SOUND_MARIO_THEME)) {
 		loaded = -1; // error
 	}
+
 	if (loaded) {
-		music.setLoop(setLoop);
-		music.play();
+		bgMusic.setLoop(true);
+		bgMusic.play();
 	}
 }
 
-void startMainSound() {
-	playSound(PATH_SOUND_MARIO_THEME, true);
-}
+void playEventSound(std::string eventSoundPath) {
+	bgMusic.pause();
 
-void playEventSound() {
-	playSound(PATH_SOUND_EVENT, false);
+	int loaded = 1;
+
+	if (!eventMusic.openFromFile(eventSoundPath)) {
+		loaded = -1; // error
+	}
+
+	if (loaded) {
+		eventMusic.play();
+	}
+
+	bgMusic.play();
 }
