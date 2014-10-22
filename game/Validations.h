@@ -1,5 +1,4 @@
 #include "Constants.h"
-#include "Objects.h"
 
 bool isValidRowNColIndex(int row, int col, int isInner) {
 	if (row < START_GRID_ROW || row > END_GRID_ROW) {

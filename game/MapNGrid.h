@@ -19,13 +19,13 @@ void putAttributeSpace() {
 	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
-			putCharToGrid(r, c, ATTRIBUTE_BG, false);
+			putCharToGrid(r, c, BG_ATTRIBUTE, false);
 		}
 	}
 	//right attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
-			putCharToGrid(r, c, ATTRIBUTE_BG, false);
+			putCharToGrid(r, c, BG_ATTRIBUTE, false);
 		}
 	}
 }
@@ -33,7 +33,7 @@ void putAttributeSpace() {
 void putGrass() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			putCharToGrid(r, c, GRASS, true);
+			putCharToGrid(r, c, BG_GRASS, true);
 		}
 	}
 }
@@ -42,8 +42,8 @@ void putSpawnLocation() {
 	int k = 1;
 	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
 		for (int j = 1; j <= k; j++) {
-			putCharToGrid(i, j, SPAWN, true);
-			putCharToGrid(j, i, SPAWN, true);
+			putCharToGrid(i, j, BG_SPAWN, true);
+			putCharToGrid(j, i, BG_SPAWN, true);
 		}
 		k++;
 	}
@@ -56,8 +56,8 @@ void putWarGround() {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
 			if (r == c) {
 				for (int k = numOtherDiag; k >= 0; k--) {
-					putCharToGrid(r + k, c, WAR_GROUND, true);
-					putCharToGrid(r, c + k, WAR_GROUND, true);
+					putCharToGrid(r + k, c, BG_WAR, true);
+					putCharToGrid(r, c + k, BG_WAR, true);
 				}
 			}
 		}
@@ -122,8 +122,7 @@ void initMap() {
 
 	putStonesNTrees();
 
-	copyInit(); //Disclaimer: toe be called before item put & hero put!!!
-	putCharToGrid(19, 1, H_SLOWER, true);
+	copyInit(); //Disclaimer: to be called before item put & hero put!!!
 }
 
 //copies the state of the initial map to another array
@@ -175,6 +174,7 @@ void putMultipleCharToGrid(int row, int col, charCellType charType,
 	putCharToGrid(row, col, charType, isInner);
 }
 
+//In case some new charis added to grid, remember to add the some in renderGrid
 void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	if (!isValidRowNColIndex(row, col, isInner)) {
 		return;
@@ -196,13 +196,13 @@ void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1) {
 
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 	GLfloat size1D = blocks * CELL_LENGTH;
-	glEnable(GL_TEXTURE_2D);
+	glEnable( GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBegin(GL_QUADS);
+	glBegin( GL_QUADS);
 
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(x, y, -5.0f);
@@ -223,24 +223,33 @@ void renderGrid() {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 
 			switch (gridChar[r][c]) {
-			case GRASS:
+			case BG_GRASS:
 				putImageToCell(r, c, grass_texId);
 				break;
-			case SPAWN:
+			case BG_SPAWN:
 				putImageToCell(r, c, spawn_texId);
 				break;
-			case WAR_GROUND:
+			case BG_WAR:
 				putImageToCell(r, c, war_texId);
 				break;
-			case ATTRIBUTE_BG:
+			case BG_ATTRIBUTE:
 				putImageToCell(r, c, attribute_bg_texId);
 				break;
+
+			case STONE:
+				putImageToCell(r, c, stone_texId);
+				break;
+			case TREE:
+				putImageToCell(r, c, tree_texId);
+				break;
+
 			case TEMPLE_ANGELS:
 				putImageToCell(r, c, t_angels_texId, TEMPLE_BLOCKS);
 				break;
 			case TEMPLE_DEMONS:
 				putImageToCell(r, c, t_demons_texId, TEMPLE_BLOCKS);
 				break;
+
 			case H_DISABLER:
 				putImageToCell(r, c, h_disabler_texId);
 				break;
@@ -253,18 +262,27 @@ void renderGrid() {
 			case H_STUNNER:
 				putImageToCell(r, c, h_stunner_texId);
 				break;
-			case STONE:
-				putImageToCell(r, c, stone_texId);
+
+			case I_SPEED_MOVE:
+				putImageToCell(r, c, i_speedMov_texId);
 				break;
-			case TREE:
-				putImageToCell(r, c, tree_texId);
+			case I_SPEED_ATTACK:
+				putImageToCell(r, c, i_speedAttack_texId);
 				break;
+			case I_HEALTH:
+				putImageToCell(r, c, i_health_texId);
+				break;
+			case I_DAMAGE:
+				putImageToCell(r, c, i_damage_texId);
+				break;
+
 			case TREE_BACK:
 				break;
 			case T_ANGELS_BACK:
 				break;
 			case T_DEMONS_BACK:
 				break;
+
 			case DEFAULT:
 				break;
 			default:

@@ -1,6 +1,10 @@
 //-------------------------CONSTANTS------------------
+
+#define ITEM_MAP_COUNT 3
 #define CELL_LENGTH 0.2f
 #define REFRESH_RATE 300
+
+#define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
 
 //Grid related
 #define MAX_XCELL 1.0f

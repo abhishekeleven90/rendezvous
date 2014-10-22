@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stdlib.h> //Needed for "exit" function
+#include <stdlib.h>
 #include <stdio.h>
 
 #include <GL/glut.h>

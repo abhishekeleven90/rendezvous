@@ -16,8 +16,11 @@ void initRendering() {
 	//Loading all the textures from images to be used later
 	loadTextures();
 	initMap();
-	//TODO-below line just for testing
-	//putCharToInnerGrid(2, 1, TREE);
+
+	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
+		placeItemAtRandomPos();
+	}
+	putCharToGrid(19, 1, H_SLOWER, true);
 }
 
 //Draws the 3D scene

@@ -1,3 +1,5 @@
+#define timer_item_global 5
+#define timer_magic_spell 3
 
 void timer(int value) {
 

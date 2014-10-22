@@ -1,4 +1,5 @@
 #include "OpenGlHelper.h"
+#include "Headers.h"
 
 void loadTextures() {
 	grass_texId = getTextureFromImage(PATH_IMG_BG);
@@ -15,10 +16,33 @@ void loadTextures() {
 	h_slower_texId = getTextureFromImage(PATH_IMG_HERO_MARIO);
 	h_burster_texId = getTextureFromImage(PATH_IMG_HERO_SOLDIER);
 
-	i_movSpeed_texId = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	i_attackSpeed_texId = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
+	i_speedMov_texId = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
+	i_speedAttack_texId = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
 	i_damage_texId = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
 	i_health_texId = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
+}
+
+Coordinate_grid getRandomCoordinatesForItem() {
+	int randomRow;
+	int randomCol;
+
+	while (true) {
+		randomRow = (rand() % (END_GRID_ROW - START_GRID_ROW + 1)) + 1; //1 extra since we want it to start from 1
+		randomCol = (rand() % (END_INNER_GRID_COL - START_INNER_GRID_COL + 1))
+				+ 1;
+
+		if (gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH] == BG_GRASS) { //assuming that items can come only on 'grass'
+			break;
+		}
+	}
+	return Coordinate_grid(randomRow, randomCol);
+}
+
+void placeItemAtRandomPos() {
+	Coordinate_grid grid = getRandomCoordinatesForItem();
+	putCharToGrid(grid.row, grid.col, itemCharCell[global_item_index], true);
+	putCharToGrid(grid.col, grid.row, itemCharCell[global_item_index], true);
+	global_item_index = (global_item_index + 1) % ARRAY_SIZE(itemCharCell);
 }
 
 void printGrid() {
@@ -26,16 +50,16 @@ void printGrid() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			switch (gridChar[r][c]) {
-			case GRASS:
+			case BG_GRASS:
 				cout << " GRA";
 				break;
-			case SPAWN:
+			case BG_SPAWN:
 				cout << " SPA";
 				break;
-			case WAR_GROUND:
+			case BG_WAR:
 				cout << " war";
 				break;
-			case ATTRIBUTE_BG:
+			case BG_ATTRIBUTE:
 				cout << " ATT";
 				break;
 			case TEMPLE_ANGELS:

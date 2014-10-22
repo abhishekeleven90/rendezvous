@@ -1,29 +1,21 @@
-
 enum charCellType {
-	GRASS,
-	SPAWN,
-	WAR_GROUND,
-	ATTRIBUTE_BG,
-	TEMPLE_ANGELS,
-	TEMPLE_DEMONS,
-	H_DISABLER,
-	H_SLOWER,
-	H_BURSTER,
-	H_STUNNER,
-	STONE,
-	TREE,
-	TREE_BACK,
-	T_ANGELS_BACK,
-	T_DEMONS_BACK,
+	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE,
+
+	STONE, TREE,
+
+	TEMPLE_ANGELS, TEMPLE_DEMONS,
+
+	H_DISABLER, H_SLOWER, H_BURSTER, H_STUNNER,
+
+	I_SPEED_MOVE, I_SPEED_ATTACK, I_HEALTH, I_DAMAGE, I_TEMPLE_HEALER,
+
+	TREE_BACK, T_ANGELS_BACK, T_DEMONS_BACK,
+
 	DEFAULT
 };
 
-charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
-		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
-
-charCellType
-		initialGridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
-				- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
+charCellType itemCharCell[] = { I_SPEED_MOVE, I_SPEED_ATTACK, I_HEALTH,
+		I_DAMAGE, I_TEMPLE_HEALER };
 
 enum heroes {
 	DISABLER, SLOWER, BURSTER, STUNNER
@@ -33,8 +25,10 @@ enum magicPower {
 	DISABLE, SLOW, BURST, STUN
 };
 
+//TODO : check if required
 enum itemType {
-	SPEED_MOVE, SPEED_ATTACK, HEALTH, DAMAGE, TEMPLE_HEALER
+	SPEED_MOVE, SPEED_ATTACK, HEALTH, DAMAGE, TEMPLE_HEALER, ITEM_COUNT
+//ITEM_COUNT helps to get the number of items, no other purpose
 };
 
 enum teamName {
@@ -42,8 +36,19 @@ enum teamName {
 };
 
 struct Item {
+public:
+	Item() {
+
+	}
+
+	Item(itemType type) {
+		item_type = type;
+	}
+
 	itemType item_type;
-	int itemUsetimer;
+
+	//TODO: check if required
+	//int itemUsetimer;
 };
 
 struct Temple {
