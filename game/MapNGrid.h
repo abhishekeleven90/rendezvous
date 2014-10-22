@@ -1,5 +1,4 @@
-#include "Headers.h"
-#include "Objects.h"
+#include "Globals.h"
 #include "Validations.h"
 
 void putAttributeSpace();

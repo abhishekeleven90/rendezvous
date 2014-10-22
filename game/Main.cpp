@@ -1,6 +1,7 @@
 #include "ImageLoader.h"
-#include "OpenGlHelper.h"
+#include "Headers.h"
 #include "GeneralHelper.h"
+
 #include "Timer.h"
 
 void initRendering();

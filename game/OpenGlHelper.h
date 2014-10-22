@@ -1,4 +1,4 @@
-#include "Headers.h"
+#include "CustomVectorStruct.h"
 #include "MapNGrid.h"
 #include "SoundAll.h"
 
@@ -67,8 +67,8 @@ void myMouseClickHandler(int button, int state, int x, int y) {
 			return;
 		}
 
-		cout << "row: " << downGrid.row << endl;
-		cout << "col: " << downGrid.col << endl;
+		cout << " row: " << downGrid.row;
+		cout << " col: " << downGrid.col << endl;
 	}
 
 	else {
@@ -101,20 +101,4 @@ GLuint getTextureFromImage(string path) {
 	_textureId = loadTexture(bgImage);
 	delete bgImage;
 	return _textureId;
-}
-
-void loadTextures() {
-	grass_texId = getTextureFromImage(PATH_IMG_BG);
-	spawn_texId = getTextureFromImage(PATH_IMG_SPAWN);
-	war_texId = getTextureFromImage(PATH_IMG_WAR_GND);
-
-	attribute_bg_texId = getTextureFromImage(PATH_IMG_ATTRIBUTE_BG);
-
-	tree_texId = getTextureFromImage(PATH_IMG_TREE);
-	stone_texId = getTextureFromImage(PATH_IMG_STONE);
-
-	t_demons_texId = getTextureFromImage(PATH_IMG_TEMPLE_DEMONS);
-
-	h_slower_texId = getTextureFromImage(PATH_IMG_HERO_MARIO);
-	h_burster_texId = getTextureFromImage(PATH_IMG_HERO_SOLDIER);
 }

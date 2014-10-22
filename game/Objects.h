@@ -1,5 +1,3 @@
-#include "Headers.h"
-#include "ConstantsNGlobals.h"
 
 enum charCellType {
 	GRASS,
