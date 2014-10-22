@@ -6,44 +6,65 @@
 #include "Objects.h"
 #include "Constants.h"
 #include "CustomVectorStruct.h"
+#include "MapNGrid.h"
+
+Coordinate_grid getRandomCoordinatesForItem(teamName name) {
+	int randomRow;
+	int randomCol;
+
+	while (true) {
+		randomRow = (rand() % (END_GRID_ROW - START_GRID_ROW + 1)) + 1; //1 extra since we want it to start from 1
+		randomCol = (rand() % (END_INNER_GRID_COL - START_INNER_GRID_COL + 1))
+				+ 1;
+
+		if (name == ANGELS && randomRow < randomCol) {
+			continue;
+		}
+
+		if (name == DEMONS && randomRow > randomCol) {
+			continue;
+		}
+
+		if (getInnerGridChar(randomRow, randomCol) == BG_GRASS) { //assuming that items can come only on 'grass'
+			break;
+		}
+	}
+
+	return Coordinate_grid(randomRow, randomCol);
+}
+
+void placeItemAtRandomPos(teamName name) {
+	Coordinate_grid grid = getRandomCoordinatesForItem(name);
+	int r = grid.row;
+	int c = grid.col;
+
+	switch (name) {
+	case ANGELS:
+		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
+		break;
+
+	case DEMONS:
+		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true);
+		break;
+
+	case BOTH:
+		if (r > c) {
+			putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
+			putCharToGrid(c, r, itemCharCell[g_item_index_demons++], true);
+		} else {
+			putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true);
+			putCharToGrid(c, r, itemCharCell[g_item_index_angels++], true);
+		}
+		break;
+	}
+
+	g_item_index_angels = g_item_index_angels % ARRAY_SIZE(itemCharCell);
+	g_item_index_demons = g_item_index_demons % ARRAY_SIZE(itemCharCell);
+}
 
 enum switchCallType {
 	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID
 };
-
-Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
-	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
-	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
-	return Coordinate_openGl(x, y);
-}
-
-void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
-	GLfloat size1D = blocks * CELL_LENGTH;
-	glEnable( GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBegin( GL_QUADS);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(x, y, -5.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(x, y + size1D, -5.0f);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(x + size1D, y + size1D, -5.0f);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(x + size1D, y, -5.0f);
-
-	glEnd();
-}
-
-void putImageToCell(int row, int col, GLuint _textureId, int blocks) {
-	Coordinate_grid grid = Coordinate_grid(row, col);
-	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
-	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
-}
 
 void processCase(switchCallType callType, int r, int c, GLuint texId,
 		string toPrint, void( f)(void), bool isBackChar, int blocks = 1) {
@@ -67,12 +88,27 @@ void wrong() {
 	playEventSound(PATH_SOUND_WRONG_CLICK);
 }
 
+int row, col;
+
 void f() {
 
 }
 
-void handleGridCharSwitch(int r, int c, switchCallType callType) {
+void takeItem() {
+	//TODO: logic to check if the global_item_timer expires
+	putCharToGrid(row, col, BG_GRASS, false);
+	if (row > col) {
+		placeItemAtRandomPos( ANGELS);
+	}
+	if (row < col) {
+		placeItemAtRandomPos( DEMONS);
+	}
 
+}
+
+void handleGridCharSwitch(int r, int c, switchCallType callType) {
+	row = r; //TODO : remove, just for testing
+	col = c;
 	switch (gridChar[r][c]) {
 	case BG_GRASS:
 		processCase(callType, r, c, grass_texId, "Gra", f, false);
@@ -115,21 +151,20 @@ void handleGridCharSwitch(int r, int c, switchCallType callType) {
 	case H_STUNNER:
 		processCase(callType, r, c, h_stunner_texId, "HSt", wrong, false);
 		break;
-
 	case I_SPEED_MOVE:
-		processCase(callType, r, c, i_speedMov_texId, "ISM", f, false);
+		processCase(callType, r, c, i_speedMov_texId, "ISM", takeItem, false);
 		break;
 	case I_SPEED_ATTACK:
-		processCase(callType, r, c, i_speedAttack_texId, "ISA", f, false);
+		processCase(callType, r, c, i_speedAttack_texId, "ISA", takeItem, false);
 		break;
 	case I_HEALTH:
-		processCase(callType, r, c, i_health_texId, "IHe", f, false);
+		processCase(callType, r, c, i_health_texId, "IHe", takeItem, false);
 		break;
 	case I_DAMAGE:
-		processCase(callType, r, c, i_damage_texId, "IDa", f, false);
+		processCase(callType, r, c, i_damage_texId, "IDa", takeItem, false);
 		break;
 	case I_TEMPLE_HEALER:
-		processCase(callType, r, c, i_templeHealer_texId, "ITH", f, false);
+		processCase(callType, r, c, i_tHealer_texId, "ITH", takeItem, false);
 		break;
 
 	case TREE_BACK:
@@ -143,7 +178,7 @@ void handleGridCharSwitch(int r, int c, switchCallType callType) {
 		break;
 
 	default:
-		cout << "should not happen - something's wrong";
+		cout << "should not happen - something's wrong" << endl;
 	}
 }
 

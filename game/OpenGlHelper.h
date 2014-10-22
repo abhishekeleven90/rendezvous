@@ -84,7 +84,7 @@ void myMouseClickHandler(int button, int state, int x, int y) {
 	}
 
 	if (!isValidCell(downGrid)) {
-		playEventSound( PATH_SOUND_WRONG_CLICK);
+		playEventSound(PATH_SOUND_WRONG_CLICK);
 		return;
 	}
 

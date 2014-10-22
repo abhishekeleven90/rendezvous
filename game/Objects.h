@@ -32,8 +32,9 @@ enum itemType {
 //ITEM_COUNT helps to get the number of items, no other purpose
 };
 
+//Angels - left, Demons - right
 enum teamName {
-	ANGELS, DEMONS
+	ANGELS, DEMONS, BOTH
 };
 
 struct Item {

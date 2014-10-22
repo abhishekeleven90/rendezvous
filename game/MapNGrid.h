@@ -1,7 +1,6 @@
 #ifndef MAP_N_GRID_H
 #define MAP_N_GRID_H
 
-#include "HandleGridCharSwitch.h"
 #include "Constants.h"
 #include "Objects.h"
 #include "FilePaths.h"
@@ -165,6 +164,40 @@ charCellType getInnerGridChar(int randomRow, int randomCol) {
 	return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
 }
 
+Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
+	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
+	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
+	return Coordinate_openGl(x, y);
+}
+
+void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
+	GLfloat size1D = blocks * CELL_LENGTH;
+	glEnable( GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBegin( GL_QUADS);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(x, y, -5.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(x, y + size1D, -5.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(x + size1D, y + size1D, -5.0f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(x + size1D, y, -5.0f);
+
+	glEnd();
+}
+
+void putImageToCell(int row, int col, GLuint _textureId, int blocks) {
+	Coordinate_grid grid = Coordinate_grid(row, col);
+	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
+}
+
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int blocks, bool isInner) {
 
@@ -191,17 +224,6 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	}
 
 	gridChar[row][col] = charType;
-}
-
-void renderGrid() {
-	//TODO - remove this method call from here and put in a thread or something
-	tempStunnerLocation();
-
-	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
-		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
-			handleGridCharSwitch(r, c, RENDER_GRID);
-		}
-	}
 }
 
 #endif

@@ -11,7 +11,8 @@ charCellType
 		initialGridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 				- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
-int global_item_index = 0; //holds the index of next item to be placed
+int g_item_index_angels = 0; //holds the global index of next item to be placed
+int g_item_index_demons = 0;
 
 //TextureIds
 GLuint grass_texId;
@@ -35,7 +36,7 @@ GLuint i_speedMov_texId;
 GLuint i_speedAttack_texId;
 GLuint i_damage_texId;
 GLuint i_health_texId;
-GLuint i_templeHealer_texId;
+GLuint i_tHealer_texId;
 
 GLuint temp_texId;
 

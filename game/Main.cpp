@@ -21,7 +21,7 @@ void initRendering() {
 	initMap();
 
 	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
-		placeItemAtRandomPos();
+		placeItemAtRandomPos(BOTH);
 	}
 	putCharToGrid(19, 1, H_SLOWER, true);
 }
