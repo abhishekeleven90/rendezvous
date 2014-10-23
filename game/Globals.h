@@ -14,6 +14,8 @@ charCellType
 int g_item_index_angels = 0; //holds the global index of next item to be placed
 int g_item_index_demons = 0;
 
+teamName team_name = ANGELS;//holds the name of the team the player belongs to
+
 //TextureIds
 GLuint grass_texId;
 GLuint spawn_texId;

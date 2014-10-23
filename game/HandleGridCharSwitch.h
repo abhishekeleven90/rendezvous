@@ -74,6 +74,10 @@ void processCase(switchCallType callType, int r, int c, GLuint texId,
 		cout << " " << toPrint;
 		break;
 	case PROCESS_MOVE_CLICK:
+		/*if (!isValidCellForTeam()) { // check if the cell clicked
+		 wrong();
+		 return;
+		 }*/
 		f();
 		break;
 	case RENDER_GRID:
@@ -96,6 +100,8 @@ void f() {
 
 void takeItem() {
 	//TODO: logic to check if the global_item_timer expires
+
+
 	putCharToGrid(row, col, BG_GRASS, false);
 	if (row > col) {
 		placeItemAtRandomPos( ANGELS);

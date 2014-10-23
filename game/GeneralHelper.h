@@ -53,4 +53,16 @@ void renderGrid() {
 	}
 }
 
+bool isValidCellForTeam(Coordinate_grid grid) {
+	if (team_name == ANGELS && !(grid.col >= grid.row + DIAGONAL_BLOCKS + 1)) {
+		return true;
+	}
+
+	if (team_name == DEMONS && !(grid.row >= grid.col + DIAGONAL_BLOCKS + 1)) {
+		return true;
+	}
+
+	return false;
+}
+
 #endif
