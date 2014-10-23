@@ -1,13 +1,41 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#define timer_item_global 5
-#define timer_magic_spell 3
+#define TIMER_ITEM_GLOBAL 5000
+#define TIMER_MAGIC_SPELL 3
+#define REFRESH_RATE 300
 
-void timer(int value) {
+bool isTimerItemGlobalRunning = false;
+bool isTimerMagicSpellRunning = false;
+
+void timerRefresh(int value) {
 
 	glutPostRedisplay();
-	glutTimerFunc(REFRESH_RATE, timer, 0); //TODO: ensure this is not commented
+	glutTimerFunc(REFRESH_RATE, timerRefresh, 0); //TODO: ensure this is not commented
+}
+
+void timerItemGlobal(int value) {
+
+	if (!isTimerItemGlobalRunning) {
+		cout << "starting timerItemGlobal" << endl;
+		isTimerItemGlobalRunning = true;
+		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, 0);
+	} else {
+		cout << "stopping timerItemGlobal" << endl;
+		isTimerItemGlobalRunning = false;
+	}
+}
+
+void timerMagicSpell(int value) {
+
+	if (!isTimerMagicSpellRunning) {
+		cout << "starting timerMagicSpell" << endl;
+		isTimerMagicSpellRunning = true;
+		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, 0);
+	} else {
+		cout << "stopping timerMagicSpell" << endl;
+		isTimerMagicSpellRunning = false;
+	}
 }
 
 #endif

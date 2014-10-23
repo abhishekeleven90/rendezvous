@@ -26,8 +26,8 @@ void initRendering() {
 	}
 
 	Coordinate_grid location;
-	location.row=19;
-	location.col=1;
+	location.row = 19;
+	location.col = 1;
 	//assuming the type is H_SLOWER in moveHero also
 	putCharToGrid(19, 1, H_SLOWER, true);
 	setHeroLocation(1, location);
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(handleResize);
 	glutMouseFunc(myMouseClickHandler);
 
-	glutTimerFunc(REFRESH_RATE, timer, 0);
+	timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
 	playBgSound();
 	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
 	return 0; //This line is never reached

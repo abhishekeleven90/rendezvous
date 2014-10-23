@@ -18,11 +18,11 @@ int g_item_index_demons = 0;
 teamName team_name = ANGELS;//holds the name of the team the player belongs to
 
 //TextureIds
-GLuint grass_texId;
-GLuint spawn_texId;
-GLuint war_texId;
+GLuint bg_grass_texId;
+GLuint bg_spawn_texId;
+GLuint bg_war_texId;
 
-GLuint attribute_bg_texId;
+GLuint bg_attribute_texId;
 
 GLuint tree_texId;
 GLuint stone_texId;

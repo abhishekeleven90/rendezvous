@@ -11,11 +11,10 @@
 #include "HandleGridCharSwitch.h"
 
 void loadTextures() {
-	grass_texId = getTextureFromImage(PATH_IMG_BG);
-	spawn_texId = getTextureFromImage(PATH_IMG_SPAWN);
-	war_texId = getTextureFromImage(PATH_IMG_WAR_GND);
-
-	attribute_bg_texId = getTextureFromImage(PATH_IMG_ATTRIBUTE_BG);
+	bg_grass_texId = getTextureFromImage(PATH_IMG_BG);
+	bg_spawn_texId = getTextureFromImage(PATH_IMG_BG_SPAWN);
+	bg_war_texId = getTextureFromImage(PATH_IMG_BG_WAR);
+	bg_attribute_texId = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
 
 	tree_texId = getTextureFromImage(PATH_IMG_TREE);
 	stone_texId = getTextureFromImage(PATH_IMG_STONE);

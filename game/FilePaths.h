@@ -14,9 +14,10 @@
 
 //images
 #define PATH_IMG_BG "data/images/bg.bmp"
-#define PATH_IMG_SPAWN "data/images/bg_spawn.bmp"
-#define PATH_IMG_WAR_GND "data/images/bg_war.bmp"
-#define PATH_IMG_ATTRIBUTE_BG "data/images/bg_attribute.bmp"
+#define PATH_IMG_BG_SPAWN "data/images/bg_spawn.bmp"
+#define PATH_IMG_BG_WAR "data/images/bg_war.bmp"
+#define PATH_IMG_BG_ATTRIBUTE "data/images/bg_attribute.bmp"
+#define PATH_IMG_BG_BLOCKED "data/images/bg_blocked.bmp"
 
 #define PATH_IMG_TREE "data/images/tree.bmp"
 #define PATH_IMG_STONE "data/images/stone.bmp"

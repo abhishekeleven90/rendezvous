@@ -8,6 +8,7 @@
 #include "CustomVectorStruct.h"
 #include "MapNGrid.h"
 #include "AStar.h"
+#include "Timer.h"
 
 Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 	int randomRow;
@@ -99,7 +100,6 @@ void f() {
 
 }
 
-//use downGrid
 void aStarMove() {
 
 	//TODO: eliminate if outerGrid click
@@ -124,15 +124,22 @@ void aStarMove() {
 }
 
 void takeItem() {
-	//TODO: logic to check if the global_item_timer expires
-
-
+	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
 	putCharToGrid(targetCell.row, targetCell.col, BG_GRASS, false);
 	if (targetCell.row > targetCell.col) {
 		placeItemAtRandomPos( ANGELS);
 	}
 	if (targetCell.row < targetCell.col) {
 		placeItemAtRandomPos( DEMONS);
+	}
+
+	//In actual, not taking the item if globalItemTimer is running
+	if (!isTimerItemGlobalRunning) {
+		cout << "Item taken" << endl;
+		timerItemGlobal(0);
+		//TODO: update hero attributes, notify & display in attribute space
+	} else {
+		cout << "Item not taken" << endl;
 	}
 
 }
@@ -142,16 +149,16 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, grass_texId, "Gra", aStarMove, false);
+		processCase(callType, grid, bg_grass_texId, "Gra", aStarMove, false);
 		break;
 	case BG_SPAWN:
-		processCase(callType, grid, spawn_texId, "BSp", aStarMove, false);
+		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMove, false);
 		break;
 	case BG_WAR:
-		processCase(callType, grid, war_texId, "BWa", aStarMove, false);
+		processCase(callType, grid, bg_war_texId, "BWa", aStarMove, false);
 		break;
 	case BG_ATTRIBUTE:
-		processCase(callType, grid, attribute_bg_texId, "BAt", wrong, false);
+		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, false);
 		break;
 
 	case STONE:
