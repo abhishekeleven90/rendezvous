@@ -15,11 +15,25 @@ void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
 void copyInit();
+void setHeroLocation(int which, Coordinate_grid loc);
 
+void moveHeroMine(int type);
+Node* findLocToMove(Coordinate_grid curr);
+bool isBlockedSite(int r, int c);
 //------------------start
 enum switchCallType {
 	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID
 };
+
+void setHeroLocation(int which, Coordinate_grid loc) {
+	if (which == 1) {
+		HERO_MINE_1_LOC.row = loc.row;
+		HERO_MINE_1_LOC.col = loc.col;
+	} else {
+		HERO_MINE_2_LOC.row = loc.row;
+		HERO_MINE_2_LOC.col = loc.col;
+	}
+}
 
 void processCase(switchCallType callType, int r, int c, GLuint texId,
 		string toPrint, void( f)(void)) {
@@ -232,6 +246,7 @@ void copyInit() {
 			initialGridChar[r][c] = gridChar[r][c];
 		}
 	}
+
 }
 
 //TODO - temp for motion of the H_SLOWER
@@ -245,6 +260,56 @@ void tempStunnerLocation() {
 	if (lastCol > 20)
 		lastCol = 1;
 	putCharToGrid(lastRow, lastCol, H_SLOWER, true);
+}
+
+Node* findLocToMove(Coordinate_grid curr) {
+	Node* neighbours[4];
+	neighbours[0] = getNodeFromGrid(curr.row + 1, curr.col);
+	neighbours[1] = getNodeFromGrid(curr.row - 1, curr.col);
+	neighbours[2] = getNodeFromGrid(curr.row, curr.col + 1);
+	neighbours[3] = getNodeFromGrid(curr.row, curr.col - 1);
+
+	Node* toReturn = NULL;
+
+	if (neighbours[0] != NULL && neighbours[0]->onPath)
+		toReturn = neighbours[0];
+	else if (neighbours[1] != NULL && neighbours[1]->onPath)
+		toReturn = neighbours[1];
+	else if (neighbours[2] != NULL && neighbours[2]->onPath)
+		toReturn = neighbours[2];
+	else if (neighbours[3] != NULL && neighbours[3]->onPath)
+		toReturn = neighbours[3];
+
+	if (toReturn != NULL)
+		getNodeFromGrid(curr.row, curr.col)->onPath = false;//So that it doesn't loop back
+
+	return toReturn;
+}
+
+//call this from the render function periodically
+void moveHeroMine(int type) {
+	//TODO:for all type of players
+	if (type == 1)//move player 1
+	{
+		Node* toMove = findLocToMove(HERO_MINE_1_LOC);
+		if (toMove == NULL)
+			return; //nothing to move
+
+		//TODO:check if the place it is moving too is an item
+		//remove the item
+		//if item can be taken, take it
+		//else generate the same item to a random location
+
+		putCharToGrid(
+				HERO_MINE_1_LOC.row,
+				HERO_MINE_1_LOC.col,
+				initialGridChar[HERO_MINE_1_LOC.row][HERO_MINE_1_LOC.col
+						+ ATTRIBUTE_WIDTH], true);
+
+		HERO_MINE_1_LOC.row = toMove->row;
+		HERO_MINE_1_LOC.col = toMove->col;
+		putCharToGrid(HERO_MINE_1_LOC.row, HERO_MINE_1_LOC.col, H_SLOWER, true);
+	}
 }
 
 Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
@@ -322,6 +387,7 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 void renderGrid() {
 	//TODO - remove this method call from here and put in a thread or something
 	tempStunnerLocation();
+	moveHeroMine(1);
 
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
@@ -330,3 +396,25 @@ void renderGrid() {
 	}
 }
 
+//TODO: gray area for second player area
+bool isBlockedSite(int r, int c) {
+	charCellType type = getInnerGridChar(r, c);
+	switch (type) {
+	case BG_GRASS:
+	case BG_SPAWN:
+	case BG_WAR:
+	case TEMPLE_ANGELS:
+	case TEMPLE_DEMONS:
+	case T_ANGELS_BACK:
+	case T_DEMONS_BACK:
+	case I_SPEED_MOVE:
+	case I_SPEED_ATTACK:
+	case I_HEALTH:
+	case I_DAMAGE:
+	case I_TEMPLE_HEALER:
+		return false;//open
+	default:
+		break;
+	}
+	return true; //Open
+}

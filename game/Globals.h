@@ -35,3 +35,6 @@ GLuint i_health_texId;
 GLuint i_templeHealer_texId;
 
 GLuint temp_texId;
+
+Coordinate_grid HERO_MINE_1_LOC;
+Coordinate_grid HERO_MINE_2_LOC;

@@ -1,4 +1,5 @@
 #include "CustomVectorStruct.h"
+#include "AStar.h"
 #include "MapNGrid.h"
 #include "SoundAll.h"
 
@@ -56,6 +57,34 @@ void processClick(charCellType charType) {
 	//handleGridCharSwitch( PROCESS_MOVE_CLICK);
 }
 
+//use downGrid
+void processClickForAStar() {
+
+	//TODO: eliminate if outerGrid click
+	//assuming : the click is valid and AStar needs to be called
+	//have to handle block status here istelf! phew :(
+
+	for(int i=START_GRID_ROW;i<=END_GRID_ROW;i++)
+	{
+		for(int j=START_INNER_GRID_COL;j<=END_INNER_GRID_COL;j++)
+		{
+			if(isBlockedSite(i,j))
+			{
+				blockSiteAStarGrid(i,j);
+			}
+			else{
+				openSiteAStarGrid(i,j);
+			}
+		}
+
+	}
+	initAStar(HERO_MINE_1_LOC, downGrid);//source and target given
+	AStar();
+	//TODO:through or just to target!
+	//now move his ass periodically
+
+}
+
 void myMouseClickHandler(int button, int state, int x, int y) {
 
 	if (state == GLUT_DOWN) { //saving just the state, action is performed on GLUT_UP
@@ -79,6 +108,8 @@ void myMouseClickHandler(int button, int state, int x, int y) {
 		//TODO: remove below cout(s)
 		cout << " row: " << downGrid.row;
 		cout << " col: " << downGrid.col << endl;
+
+		processClickForAStar();
 	}
 }
 
