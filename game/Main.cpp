@@ -19,11 +19,18 @@ void initRendering() {
 	//Loading all the textures from images to be used later
 	loadTextures();
 	initMap();
+	firstInitAStar();
 
 	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
 		placeItemAtRandomPos(BOTH);
 	}
+
+	Coordinate_grid location;
+	location.row=19;
+	location.col=1;
+	//assuming the type is H_SLOWER in moveHero also
 	putCharToGrid(19, 1, H_SLOWER, true);
+	setHeroLocation(1, location);
 }
 
 //Draws the 3D scene

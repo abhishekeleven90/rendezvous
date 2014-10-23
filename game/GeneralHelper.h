@@ -36,7 +36,7 @@ void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
-			handleGridCharSwitch(r, c, PRINT_GRID);
+			handleGridCharSwitch(Coordinate_grid(r, c), PRINT_GRID);
 		}
 		cout << "\n";
 	}
@@ -45,10 +45,11 @@ void printGrid() {
 void renderGrid() {
 	//TODO - remove this method call from here and put in a thread or something
 	tempStunnerLocation();
+	moveHeroMine(1);
 
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
-			handleGridCharSwitch(r, c, RENDER_GRID);
+			handleGridCharSwitch(Coordinate_grid(r, c), RENDER_GRID);
 		}
 	}
 }

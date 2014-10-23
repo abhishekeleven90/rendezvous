@@ -3,6 +3,7 @@
 
 #include "Objects.h"
 #include "Constants.h"
+#include "CustomVectorStruct.h"
 
 charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
@@ -41,5 +42,8 @@ GLuint i_health_texId;
 GLuint i_tHealer_texId;
 
 GLuint temp_texId;
+
+Coordinate_grid HERO_MINE_1_LOC;
+Coordinate_grid HERO_MINE_2_LOC;
 
 #endif

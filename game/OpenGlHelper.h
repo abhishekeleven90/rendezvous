@@ -3,6 +3,9 @@
 
 #include "ImageLoader.h"
 #include "Constants.h"
+#include "CustomVectorStruct.h"
+#include "AStar.h"
+#include "MapNGrid.h"
 #include "SoundAll.h"
 #include "HandleGridCharSwitch.h"
 
@@ -72,7 +75,7 @@ void processRightClick(Coordinate_grid grid) {
 	cout << " row: " << downGrid.row;
 	cout << " col: " << downGrid.col << endl;
 
-	handleGridCharSwitch(grid.row, grid.col, PROCESS_MOVE_CLICK);
+	handleGridCharSwitch(downGrid, PROCESS_MOVE_CLICK);
 }
 
 void myMouseClickHandler(int button, int state, int x, int y) {

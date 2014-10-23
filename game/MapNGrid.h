@@ -6,6 +6,8 @@
 #include "FilePaths.h"
 #include "Globals.h"
 #include "Validations.h"
+#include "Node.h"
+#include "AStar.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -16,10 +18,25 @@ GLfloat getYFromCell(int row);
 void putCharToGrid(int row, int col, charCellType charType, bool isInner);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int blocks, bool isInner);
-void putImageToCell(int row, int col, GLuint _textureId, int blocks = 1);
+void putImageToCell(Coordinate_grid grid, GLuint _textureId, int blocks = 1);
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
 void renderGrid();
 void copyInit();
+void setHeroLocation(int which, Coordinate_grid loc);
+
+void moveHeroMine(int type);
+Node* findLocToMove(Coordinate_grid curr);
+bool isBlockedSite(int r, int c);
+
+void setHeroLocation(int which, Coordinate_grid loc) {
+	if (which == 1) {
+		HERO_MINE_1_LOC.row = loc.row;
+		HERO_MINE_1_LOC.col = loc.col;
+	} else {
+		HERO_MINE_2_LOC.row = loc.row;
+		HERO_MINE_2_LOC.col = loc.col;
+	}
+}
 
 void putAttributeSpace() {
 	//left attribute space
@@ -137,6 +154,7 @@ void copyInit() {
 			initialGridChar[r][c] = gridChar[r][c];
 		}
 	}
+
 }
 
 //TODO - temp for motion of the H_SLOWER
@@ -152,6 +170,62 @@ void tempStunnerLocation() {
 	putCharToGrid(lastRow, lastCol, H_SLOWER, true);
 }
 
+Node* findLocToMove(Coordinate_grid curr) {
+	Node* neighbours[4];
+	neighbours[0] = getNodeFromGrid(curr.row + 1, curr.col);
+	neighbours[1] = getNodeFromGrid(curr.row - 1, curr.col);
+	neighbours[2] = getNodeFromGrid(curr.row, curr.col + 1);
+	neighbours[3] = getNodeFromGrid(curr.row, curr.col - 1);
+
+	Node* toReturn = NULL;
+
+	if (neighbours[0] != NULL && neighbours[0]->onPath)
+		toReturn = neighbours[0];
+	else if (neighbours[1] != NULL && neighbours[1]->onPath)
+		toReturn = neighbours[1];
+	else if (neighbours[2] != NULL && neighbours[2]->onPath)
+		toReturn = neighbours[2];
+	else if (neighbours[3] != NULL && neighbours[3]->onPath)
+		toReturn = neighbours[3];
+
+	if (toReturn != NULL)
+		getNodeFromGrid(curr.row, curr.col)->onPath = false;//So that it doesn't loop back
+
+	return toReturn;
+}
+
+//call this from the render function periodically
+void moveHeroMine(int type) {
+	//TODO:for all type of players
+	if (type == 1)//move player 1
+	{
+		Node* toMove = findLocToMove(HERO_MINE_1_LOC);
+		if (toMove == NULL)
+			return; //nothing to move
+
+		//TODO:check if the place it is moving too is an item
+		//remove the item
+		//if item can be taken, take it
+		//else generate the same item to a random location
+
+		putCharToGrid(
+				HERO_MINE_1_LOC.row,
+				HERO_MINE_1_LOC.col,
+				initialGridChar[HERO_MINE_1_LOC.row][HERO_MINE_1_LOC.col
+						+ ATTRIBUTE_WIDTH], true);
+
+		HERO_MINE_1_LOC.row = toMove->row;
+		HERO_MINE_1_LOC.col = toMove->col;
+		putCharToGrid(HERO_MINE_1_LOC.row, HERO_MINE_1_LOC.col, H_SLOWER, true);
+	}
+}
+
+Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
+	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
+	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
+	return Coordinate_openGl(x, y);
+}
+
 Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 	int row = (MAX_YCELL - openGl.y) / CELL_LENGTH + 1;
 	int col = ((openGl.x - MIN_XCELL) / CELL_LENGTH) + 1;
@@ -160,12 +234,6 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 
 charCellType getInnerGridChar(int randomRow, int randomCol) {
 	return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
-}
-
-Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
-	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
-	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
-	return Coordinate_openGl(x, y);
 }
 
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
@@ -190,8 +258,7 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 	glEnd();
 }
 
-void putImageToCell(int row, int col, GLuint _textureId, int blocks) {
-	Coordinate_grid grid = Coordinate_grid(row, col);
+void putImageToCell(Coordinate_grid grid, GLuint _textureId, int blocks) {
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
 }
@@ -222,6 +289,29 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	}
 
 	gridChar[row][col] = charType;
+}
+
+//TODO: gray area for second player area
+bool isBlockedSite(int r, int c) {
+	charCellType type = getInnerGridChar(r, c);
+	switch (type) {
+	case BG_GRASS:
+	case BG_SPAWN:
+	case BG_WAR:
+	case TEMPLE_ANGELS:
+	case TEMPLE_DEMONS:
+	case T_ANGELS_BACK:
+	case T_DEMONS_BACK:
+	case I_SPEED_MOVE:
+	case I_SPEED_ATTACK:
+	case I_HEALTH:
+	case I_DAMAGE:
+	case I_TEMPLE_HEALER:
+		return false;//open
+	default:
+		break;
+	}
+	return true; //Open
 }
 
 #endif
