@@ -1,6 +1,8 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
+#include "Headers.h"
+
 enum charCellType {
 	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE,
 
@@ -19,22 +21,29 @@ charCellType itemCharCell[] = { I_SPEED_MOVE, I_SPEED_ATTACK, I_HEALTH,
 		I_DAMAGE, I_TEMPLE_HEALER };
 
 enum heroes {
-	DISABLER, SLOWER, BURSTER, STUNNER
+	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
 };
 
 enum magicPower {
-	DISABLE, SLOW, BURST, STUN
+	MAGIC_DISABLE, MAGIC_SLOW, MAGIC_BURST, MAGIC_STUN
 };
 
 //TODO : check if required
 enum itemType {
-	SPEED_MOVE, SPEED_ATTACK, HEALTH, DAMAGE, TEMPLE_HEALER, ITEM_COUNT
-//ITEM_COUNT helps to get the number of items, no other purpose
+	ITEM_SPEED_MOVE,
+	ITEM_SPEED_ATTACK,
+	ITEM_HEALTH,
+	ITEM_DAMAGE,
+	ITEM_TEMPLE_HEALER
+};
+
+enum heroPower {
+	POWER_BASIC, POWER_MAGIC
 };
 
 //Angels - left, Demons - right
 enum teamName {
-	ANGELS, DEMONS, BOTH
+	TEAM_ANGELS, TEAM_DEMONS, TEAM_BOTH
 };
 
 struct Item {
@@ -58,21 +67,22 @@ struct Temple {
 	int health;
 };
 
-struct Hero {
-	teamName team_name;
-	string pic_path;
+struct Player {
+	teamName team;
+	heroes heroType;
 
+	string pic_path;
 	magicPower magic_power;
 
+	heroPower currentPower;
+	int heroHealth;
+	int templeHealth;
+
 	int strength;
-	int health;
 	int speedAttack;
 	int speedMove;
 
-	itemType itemsBag[];
-
-	int magicSpellTime;
-	int globalItemTime;
+	list<itemType*> itemsBag;
 };
 
 #endif

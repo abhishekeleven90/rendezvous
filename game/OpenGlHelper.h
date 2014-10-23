@@ -4,10 +4,9 @@
 #include "ImageLoader.h"
 #include "Constants.h"
 #include "CustomVectorStruct.h"
-#include "AStar.h"
-#include "MapNGrid.h"
 #include "SoundAll.h"
 #include "HandleGridCharSwitch.h"
+#include "Objects.h"
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -31,17 +30,28 @@ GLuint loadTexture(Image* image) {
 void handleKeypress(unsigned char key, //The key that was pressed
 		int x, int y) { //The current mouse coordinates
 	switch (key) {
-	case 27: //Escape key
-		exit(0); //Exit the program
+	case 27: //key - 'esc' : exits the program
+		exit(0);
 		break;
 
-	case 32: //Space bar
-
+	case 32: //key - 'space' : on/off bgMusic
 		if (bgMusic.getStatus() == bgMusic.Paused) {
 			bgMusic.play();
 		} else {
 			bgMusic.pause();
 		}
+		break;
+
+	case 49: //key - '1' : select basicPower
+		cout << "selected power_basic" << endl;
+		//TODO : show in attribute space
+		playerStats.currentPower = POWER_BASIC;
+		break;
+
+	case 50: //key - '2' : select magicPower
+		//TODO : show in attribute space
+		cout << "selected power_magic" << endl;
+		playerStats.currentPower = POWER_MAGIC;
 		break;
 	}
 }

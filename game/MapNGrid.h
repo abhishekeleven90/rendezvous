@@ -76,7 +76,7 @@ void putWarGround() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
 			if (r == c) {
-				for (int k = DIAGONAL_BLOCKS; k >= 0; k--) {
+				for (int k = DIAG_BLOCKS; k >= 0; k--) {
 					putCharToGrid(r + k, c, BG_WAR, true);
 					putCharToGrid(r, c + k, BG_WAR, true);
 				}

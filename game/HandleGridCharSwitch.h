@@ -19,11 +19,11 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 		randomCol = (rand() % (END_INNER_GRID_COL - START_INNER_GRID_COL + 1))
 				+ 1;
 
-		if (name == ANGELS && randomRow < randomCol) {
+		if (name == TEAM_ANGELS && randomRow < randomCol) {
 			continue;
 		}
 
-		if (name == DEMONS && randomRow > randomCol) {
+		if (name == TEAM_DEMONS && randomRow > randomCol) {
 			continue;
 		}
 
@@ -41,15 +41,15 @@ void placeItemAtRandomPos(teamName name) {
 	int c = grid.col;
 
 	switch (name) {
-	case ANGELS:
+	case TEAM_ANGELS:
 		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
 		break;
 
-	case DEMONS:
+	case TEAM_DEMONS:
 		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true);
 		break;
 
-	case BOTH:
+	case TEAM_BOTH:
 		if (r > c) {
 			putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
 			putCharToGrid(c, r, itemCharCell[g_item_index_demons++], true);
@@ -123,25 +123,73 @@ void aStarMove() {
 
 }
 
-void takeItem() {
-	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
-	putCharToGrid(targetCell.row, targetCell.col, BG_GRASS, false);
-	if (targetCell.row > targetCell.col) {
-		placeItemAtRandomPos( ANGELS);
+itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
+	charCellType charItem = gridChar[cellForChar.row][cellForChar.col];
+	itemType item;
+	switch (charItem) {
+	case I_DAMAGE:
+		item = ITEM_DAMAGE;
+		break;
+	case I_HEALTH:
+		item = ITEM_HEALTH;
+		break;
+	case I_SPEED_ATTACK:
+		item = ITEM_SPEED_ATTACK;
+		break;
+	case I_SPEED_MOVE:
+		item = ITEM_SPEED_MOVE;
+		break;
+	case I_TEMPLE_HEALER:
+		item = ITEM_TEMPLE_HEALER;
+		break;
 	}
-	if (targetCell.row < targetCell.col) {
-		placeItemAtRandomPos( DEMONS);
-	}
+	return item;
+}
 
+void updateHeroAttributesTakingItem() {
+	//TODO: update hero attributes properly, notify & display in attribute space
+	itemType itemTaken = getItemTypeFromCharItem(targetCell);
+	switch (itemTaken) {
+	case ITEM_DAMAGE:
+		cout << "item_damage taken" << endl;
+		playerStats.strength += GAIN_ITEM_DAMAGE;
+		break;
+	case ITEM_HEALTH:
+		cout << "item_health taken" << endl;
+		playerStats.heroHealth += GAIN_ITEM_HEALTH;
+		break;
+	case ITEM_SPEED_ATTACK:
+		cout << "item_speed_attack taken" << endl;
+		playerStats.speedAttack += GAIN_ITEM_SPEED_ATTACK;
+		break;
+	case ITEM_SPEED_MOVE:
+		cout << "item_speed_move taken" << endl;
+		playerStats.speedMove += GAIN_ITEM_SPEED_MOVE;
+		break;
+	case ITEM_TEMPLE_HEALER:
+		cout << "item_temple_healer taken" << endl;
+		playerStats.itemsBag.push_back(&itemTaken);
+		break;
+	}
+}
+
+void takeItem() {
 	//In actual, not taking the item if globalItemTimer is running
 	if (!isTimerItemGlobalRunning) {
-		cout << "Item taken" << endl;
 		timerItemGlobal(0);
-		//TODO: update hero attributes, notify & display in attribute space
+		updateHeroAttributesTakingItem();
 	} else {
 		cout << "Item not taken" << endl;
 	}
 
+	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
+	putCharToGrid(targetCell.row, targetCell.col, BG_GRASS, false);
+	if (targetCell.row > targetCell.col) {
+		placeItemAtRandomPos(TEAM_ANGELS);
+	}
+	if (targetCell.row < targetCell.col) {
+		placeItemAtRandomPos(TEAM_DEMONS);
+	}
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {

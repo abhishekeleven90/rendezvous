@@ -15,7 +15,7 @@ charCellType
 int g_item_index_angels = 0; //holds the global index of next item to be placed
 int g_item_index_demons = 0;
 
-teamName team_name = ANGELS;//holds the name of the team the player belongs to
+Player playerStats;
 
 //TextureIds
 GLuint bg_grass_texId;
@@ -30,10 +30,10 @@ GLuint stone_texId;
 GLuint t_angels_texId; //temples
 GLuint t_demons_texId;
 
+GLuint h_stunner_texId;
 GLuint h_disabler_texId;
 GLuint h_slower_texId; //hero_mario
 GLuint h_burster_texId; //hero_soldier
-GLuint h_stunner_texId;
 
 GLuint i_speedMov_texId;
 GLuint i_speedAttack_texId;
@@ -43,6 +43,7 @@ GLuint i_tHealer_texId;
 
 GLuint temp_texId;
 
+//used for A*
 Coordinate_grid HERO_MINE_1_LOC;
 Coordinate_grid HERO_MINE_2_LOC;
 

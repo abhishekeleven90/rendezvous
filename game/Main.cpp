@@ -18,13 +18,17 @@ void initRendering() {
 
 	//Loading all the textures from images to be used later
 	loadTextures();
+
 	initMap();
 	firstInitAStar();
 
+	//Placing items in the map
 	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
-		placeItemAtRandomPos(BOTH);
+		placeItemAtRandomPos(TEAM_BOTH);
 	}
 
+	loadPlayerSpecificAttributes();
+	//TODO: check if below required to move/modify
 	Coordinate_grid location;
 	location.row = 19;
 	location.col = 1;

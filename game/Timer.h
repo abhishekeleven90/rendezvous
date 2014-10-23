@@ -11,7 +11,7 @@ bool isTimerMagicSpellRunning = false;
 void timerRefresh(int value) {
 
 	glutPostRedisplay();
-	glutTimerFunc(REFRESH_RATE, timerRefresh, 0); //TODO: ensure this is not commented
+	glutTimerFunc(REFRESH_RATE, timerRefresh, 0);
 }
 
 void timerItemGlobal(int value) {
