@@ -29,12 +29,14 @@ void initRendering() {
 
 	loadPlayerSpecificAttributes();
 	//TODO: check if below required to move/modify
+	//modify to 19,3??
 	Coordinate_grid location;
 	location.row = 19;
 	location.col = 1;
+	setHeroLocation(1, location);
 	//assuming the type is H_SLOWER in moveHero also
 	putCharToGrid(19, 1, H_SLOWER, true);
-	setHeroLocation(1, location);
+
 }
 
 //Draws the 3D scene

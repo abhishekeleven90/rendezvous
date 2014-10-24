@@ -10,6 +10,30 @@
 #include "AStar.h"
 #include "Timer.h"
 
+Coordinate_grid targetCell;
+Coordinate_grid itemCell;
+
+void setItemCell(Coordinate_grid movingToCell) {
+	itemCell.row = movingToCell.row;
+	itemCell.col = movingToCell.col;
+}
+
+//TODO: if more items add or try to add to the complex handleGridCharSwitch
+bool isItem(Coordinate_grid cell) {
+	switch (gridChar[cell.row][cell.col]) {
+	case I_DAMAGE:
+	case I_HEALTH:
+	case I_SPEED_ATTACK:
+	case I_SPEED_MOVE:
+	case I_TEMPLE_HEALER:
+		return true;
+		break;
+	default:
+		return false;
+	}
+	return false;
+}
+
 Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 	int randomRow;
 	int randomCol;
@@ -65,7 +89,7 @@ void placeItemAtRandomPos(teamName name) {
 }
 
 enum switchCallType {
-	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID
+	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID, IS_ITEM
 };
 
 void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
@@ -94,18 +118,12 @@ void wrong() {
 	playEventSound(PATH_SOUND_WRONG_CLICK);
 }
 
-Coordinate_grid targetCell;
-
 void f() {
 
 }
 
-void aStarMove() {
-
-	//TODO: eliminate if outerGrid click
-	//assuming : the click is valid and AStar needs to be called
+void aStarMove(bool through) {
 	//have to handle block status here istelf! phew :(
-
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
@@ -114,13 +132,17 @@ void aStarMove() {
 				openSiteAStarGrid(i, j);
 			}
 		}
-
 	}
 	initAStar(HERO_MINE_1_LOC, targetCell);//source and target given
-	AStar();
-	//TODO:through or just to target!
-	//now move his ass periodically
+	AStar(through);
+}
 
+void aStarMoveThrough() {
+	aStarMove(true);
+}
+
+void aStarMoveNotThrough() {
+	aStarMove(false);
 }
 
 itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
@@ -148,7 +170,7 @@ itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
 
 void updateHeroAttributesTakingItem() {
 	//TODO: update hero attributes properly, notify & display in attribute space
-	itemType itemTaken = getItemTypeFromCharItem(targetCell);
+	itemType itemTaken = getItemTypeFromCharItem(itemCell);
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
@@ -183,11 +205,11 @@ void takeItem() {
 	}
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
-	putCharToGrid(targetCell.row, targetCell.col, BG_GRASS, false);
-	if (targetCell.row > targetCell.col) {
+	putCharToGrid(itemCell.row, itemCell.col, BG_GRASS, false);
+	if (itemCell.row > itemCell.col) {
 		placeItemAtRandomPos(TEAM_ANGELS);
 	}
-	if (targetCell.row < targetCell.col) {
+	if (itemCell.row < itemCell.col) {
 		placeItemAtRandomPos(TEAM_DEMONS);
 	}
 }
@@ -197,13 +219,16 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, bg_grass_texId, "Gra", aStarMove, false);
+		processCase(callType, grid, bg_grass_texId, "Gra", aStarMoveThrough,
+				false);
 		break;
 	case BG_SPAWN:
-		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMove, false);
+		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMoveThrough,
+				false);
 		break;
 	case BG_WAR:
-		processCase(callType, grid, bg_war_texId, "BWa", aStarMove, false);
+		processCase(callType, grid, bg_war_texId, "BWa", aStarMoveThrough,
+				false);
 		break;
 	case BG_ATTRIBUTE:
 		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, false);
@@ -240,20 +265,26 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 	case H_STUNNER:
 		processCase(callType, grid, h_stunner_texId, "HSt", wrong, false);
 		break;
+
 	case I_SPEED_MOVE:
-		processCase(callType, grid, i_speedMov_texId, "ISM", takeItem, false);
+		itemCell = Coordinate_grid(grid.row, grid.col);
+		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough, false);
 		break;
 	case I_SPEED_ATTACK:
-		processCase(callType, grid, i_speedAttack_texId, "ISA", takeItem, false);
+		itemCell = Coordinate_grid(grid.row, grid.col);
+		processCase(callType, grid, i_speedAttack_texId, "ISA", aStarMoveThrough, false);
 		break;
 	case I_HEALTH:
-		processCase(callType, grid, i_health_texId, "IHe", takeItem, false);
+		itemCell = Coordinate_grid(grid.row, grid.col);
+		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough, false);
 		break;
 	case I_DAMAGE:
-		processCase(callType, grid, i_damage_texId, "IDa", takeItem, false);
+		itemCell = Coordinate_grid(grid.row, grid.col);
+		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough, false);
 		break;
 	case I_TEMPLE_HEALER:
-		processCase(callType, grid, i_tHealer_texId, "ITH", takeItem, false);
+		itemCell = Coordinate_grid(grid.row, grid.col);
+		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough, false);
 		break;
 
 	case TREE_BACK:
