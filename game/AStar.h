@@ -110,10 +110,13 @@ bool isTarget(int i, int j) {
 }
 
 //does not put the source onPath
-void constructPath() {
+void constructPath(bool through) {
 	//TODO:change for walk through
-	//Node* curr = target;
-	Node* curr = target->parent;
+	Node* curr;
+	if (through)
+		curr = target;
+	else
+		curr = target->parent;
 	while (!(equals(source, curr))) {
 		curr->onPath = true;
 		curr = curr->parent;
@@ -162,7 +165,7 @@ void processNeighbours(Node* curr) {
 }
 
 //path always exists!
-void AStar() {
+void AStar(bool through) {
 	while (!openList.empty()) {
 		Node* curr = openList.top();
 		openList.pop();
@@ -170,7 +173,7 @@ void AStar() {
 		curr->onOpenList = false;
 
 		if (equals(curr, target)) {
-			constructPath();
+			constructPath(through);
 			// when we come to above point
 			// the parent of target is set by previous iteration
 			break;// vv imp

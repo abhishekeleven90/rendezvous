@@ -157,19 +157,6 @@ void copyInit() {
 
 }
 
-//TODO - temp for motion of the H_SLOWER
-void tempStunnerLocation() {
-	static int lastRow = 20;
-	static int lastCol = 1;
-	//replacing with initial grid char
-	putCharToGrid(lastRow, lastCol,
-			initialGridChar[lastRow][lastCol + ATTRIBUTE_WIDTH], true);
-	lastCol++;
-	if (lastCol > 20)
-		lastCol = 1;
-	putCharToGrid(lastRow, lastCol, H_SLOWER, true);
-}
-
 Node* findLocToMove(Coordinate_grid curr) {
 	Node* neighbours[4];
 	neighbours[0] = getNodeFromGrid(curr.row + 1, curr.col);
@@ -194,31 +181,7 @@ Node* findLocToMove(Coordinate_grid curr) {
 	return toReturn;
 }
 
-//call this from the render function periodically
-void moveHeroMine(int type) {
-	//TODO:for all type of players
-	if (type == 1)//move player 1
-	{
-		Node* toMove = findLocToMove(HERO_MINE_1_LOC);
-		if (toMove == NULL)
-			return; //nothing to move
 
-		//TODO:check if the place it is moving too is an item
-		//remove the item
-		//if item can be taken, take it
-		//else generate the same item to a random location
-
-		putCharToGrid(
-				HERO_MINE_1_LOC.row,
-				HERO_MINE_1_LOC.col,
-				initialGridChar[HERO_MINE_1_LOC.row][HERO_MINE_1_LOC.col
-						+ ATTRIBUTE_WIDTH], true);
-
-		HERO_MINE_1_LOC.row = toMove->row;
-		HERO_MINE_1_LOC.col = toMove->col;
-		putCharToGrid(HERO_MINE_1_LOC.row, HERO_MINE_1_LOC.col, H_SLOWER, true);
-	}
-}
 
 Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
 	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;

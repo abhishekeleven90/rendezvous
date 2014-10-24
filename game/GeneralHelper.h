@@ -103,9 +103,37 @@ void printGrid() {
 	}
 }
 
+//call this from the render function periodically
+void moveHeroMine(int type) {
+	//TODO:for all type of players
+	if (type == 1)//move player 1
+	{
+		Node* nodeToMove = findLocToMove(HERO_MINE_1_LOC);
+		if (nodeToMove == NULL)
+			return; //nothing to move
+
+		//TODO: target cell is item, then still not handled
+
+		Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
+				nodeToMove->col+ATTRIBUTE_WIDTH);//TODO: constant
+		if (isItem(celltoMove)) {
+			setItemCell(celltoMove);
+			takeItem();
+		}
+
+		putCharToGrid(
+				HERO_MINE_1_LOC.row,
+				HERO_MINE_1_LOC.col,
+				initialGridChar[HERO_MINE_1_LOC.row][HERO_MINE_1_LOC.col
+						+ ATTRIBUTE_WIDTH], true);
+
+		HERO_MINE_1_LOC.row = nodeToMove->row;
+		HERO_MINE_1_LOC.col = nodeToMove->col;
+		putCharToGrid(HERO_MINE_1_LOC.row, HERO_MINE_1_LOC.col, H_SLOWER, true);
+	}
+}
+
 void renderGrid() {
-	//TODO - remove this method call from here and put in a thread or something
-	tempStunnerLocation();
 	moveHeroMine(1);
 
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
