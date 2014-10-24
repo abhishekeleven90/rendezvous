@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(850, 700); //Set the window size
+	glutInitWindowPosition(10, 10);
 
 	//Create the window
 	windowId_main = glutCreateWindow("Rendezvous!!!");
