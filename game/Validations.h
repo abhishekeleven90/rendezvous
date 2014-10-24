@@ -35,4 +35,17 @@ bool isValidCell(Coordinate_grid grid) {
 	return true;
 }
 
+bool isOponentCellForTeam(Coordinate_grid grid) {
+	if (playerStats.team == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS
+			+ 1) {
+		return true;
+	}
+
+	if (playerStats.team == TEAM_DEMONS && grid.row >= grid.col + DIAG_BLOCKS
+			+ 1) {
+		return true;
+	}
+
+	return false;
+}
 #endif

@@ -21,6 +21,7 @@ Player playerStats;
 GLuint bg_grass_texId;
 GLuint bg_spawn_texId;
 GLuint bg_war_texId;
+GLuint bg_blocked_texId;
 
 GLuint bg_attribute_texId;
 

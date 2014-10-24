@@ -4,7 +4,7 @@
 #include "Headers.h"
 
 enum charCellType {
-	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE,
+	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE, BG_BLOCKED,
 
 	STONE, TREE,
 

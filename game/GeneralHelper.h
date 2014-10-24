@@ -9,6 +9,17 @@
 #include "Objects.h"
 #include "MapNGrid.h"
 #include "HandleGridCharSwitch.h"
+#include "Validations.h"
+
+void blockOponentsArea() {
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+			if (isOponentCellForTeam(Coordinate_grid(r, c))) {
+				putCharToGrid(r, c, BG_BLOCKED, true);
+			}
+		}
+	}
+}
 
 void loadPlayerSpecificAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
@@ -53,6 +64,8 @@ void loadPlayerSpecificAttributes() {
 		playerStats.speedMove = SPEED_MOVE_H_BURSTER;
 		break;
 	}
+
+	blockOponentsArea();
 }
 
 void loadTextures() {
@@ -60,6 +73,7 @@ void loadTextures() {
 	bg_spawn_texId = getTextureFromImage(PATH_IMG_BG_SPAWN);
 	bg_war_texId = getTextureFromImage(PATH_IMG_BG_WAR);
 	bg_attribute_texId = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
+	bg_blocked_texId = getTextureFromImage(PATH_IMG_BG_BLOCKED);
 
 	tree_texId = getTextureFromImage(PATH_IMG_TREE);
 	stone_texId = getTextureFromImage(PATH_IMG_STONE);
@@ -99,20 +113,6 @@ void renderGrid() {
 			handleGridCharSwitch(Coordinate_grid(r, c), RENDER_GRID);
 		}
 	}
-}
-
-bool isValidCellForTeam(Coordinate_grid grid) {
-	if (playerStats.team == TEAM_ANGELS && !(grid.col >= grid.row + DIAG_BLOCKS
-			+ 1)) {
-		return true;
-	}
-
-	if (playerStats.team == TEAM_DEMONS && !(grid.row >= grid.col + DIAG_BLOCKS
-			+ 1)) {
-		return true;
-	}
-
-	return false;
 }
 
 #endif

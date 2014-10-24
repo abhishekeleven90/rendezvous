@@ -208,6 +208,9 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 	case BG_ATTRIBUTE:
 		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, false);
 		break;
+	case BG_BLOCKED:
+		processCase(callType, grid, bg_blocked_texId, "BBl", wrong, false);
+		break;
 
 	case STONE:
 		processCase(callType, grid, stone_texId, "Sto", wrong, false);
