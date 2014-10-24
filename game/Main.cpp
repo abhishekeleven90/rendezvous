@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(850, 700); //Set the window size
 
 	//Create the window
-	glutCreateWindow("Rendezvous!!!");
+	windowId_main = glutCreateWindow("Rendezvous!!!");
 	initRendering(); //Initialize rendering
 
 	//Set handler functions

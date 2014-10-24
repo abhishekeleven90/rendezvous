@@ -48,4 +48,7 @@ GLuint temp_texId;
 Coordinate_grid HERO_MINE_1_LOC;
 Coordinate_grid HERO_MINE_2_LOC;
 
+//window Ids
+int windowId_main;
+
 #endif

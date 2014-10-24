@@ -26,6 +26,17 @@ GLuint loadTexture(Image* image) {
 	return textureId; //Returns the id of the texture
 }
 
+//TODO: temp function below, display/move
+void tempDrawScene() {
+	//Clear information from last draw
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
+	glLoadIdentity(); //Reset the drawing perspective
+
+	glutSwapBuffers(); //Send the 3D scene to the screen
+}
+
 //Called when a key is pressed
 void handleKeypress(unsigned char key, //The key that was pressed
 		int x, int y) { //The current mouse coordinates
@@ -52,6 +63,13 @@ void handleKeypress(unsigned char key, //The key that was pressed
 		//TODO : show in attribute space
 		cout << "selected power_magic" << endl;
 		playerStats.currentPower = POWER_MAGIC;
+		break;
+
+	case 51: //key - '3' //TODO:test=displays a new window
+		glutDestroyWindow(windowId_main);
+		glutCreateWindow("Temp_window!!!");
+		glutDisplayFunc(tempDrawScene);
+		glutMainLoop();
 		break;
 	}
 }
@@ -111,7 +129,7 @@ void handleResize(int w, int h) {
 	//Tell OpenGL how to convert from coordinates to pixel values
 	glViewport(0, 0, w, h);
 
-	glMatrixMode( GL_PROJECTION); //Switch to setting the camera perspective
+	glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
 
 	glPushMatrix();
 

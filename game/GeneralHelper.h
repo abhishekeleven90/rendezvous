@@ -23,7 +23,7 @@ void blockOponentsArea() {
 
 void loadPlayerSpecificAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
-	playerStats.team = TEAM_ANGELS;
+	playerStats.team = TEAM_DEMONS;
 	playerStats.heroType = HERO_SLOWER;
 
 	playerStats.currentPower = POWER_BASIC;
