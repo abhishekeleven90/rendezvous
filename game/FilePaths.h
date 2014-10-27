@@ -13,7 +13,9 @@
 #define PATH_SOUND_WRONG_CLICK "data/sounds/wrong_click.ogg"
 
 //images
-#define PATH_IMG_BG "data/images/bg.bmp"
+#define PATH_IMG_BTN_START "data/images/btn_start.bmp"
+
+#define PATH_IMG_BG_WINDOW_MAIN "data/images/bg_window_main.bmp"
 #define PATH_IMG_BG_SPAWN "data/images/bg_spawn.bmp"
 #define PATH_IMG_BG_WAR "data/images/bg_war.bmp"
 #define PATH_IMG_BG_ATTRIBUTE "data/images/bg_attribute.bmp"

@@ -18,6 +18,8 @@ int g_item_index_demons = 0;
 Player playerStats;
 
 //TextureIds
+GLuint btn_start_texId;
+
 GLuint bg_grass_texId;
 GLuint bg_spawn_texId;
 GLuint bg_war_texId;
@@ -48,7 +50,9 @@ GLuint temp_texId;
 Coordinate_grid HERO_MINE_1_LOC;
 Coordinate_grid HERO_MINE_2_LOC;
 
-//window Ids
-int windowId_main;
+//window IDs
+int windowId_current;
+
+Coordinate_grid downGrid_click; //used for clickHandler
 
 #endif

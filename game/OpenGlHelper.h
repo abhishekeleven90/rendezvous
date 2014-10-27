@@ -37,43 +37,6 @@ void tempDrawScene() {
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
-//Called when a key is pressed
-void handleKeypress(unsigned char key, //The key that was pressed
-		int x, int y) { //The current mouse coordinates
-	switch (key) {
-	case 27: //key - 'esc' : exits the program
-		exit(0);
-		break;
-
-	case 32: //key - 'space' : on/off bgMusic
-		if (bgMusic.getStatus() == bgMusic.Paused) {
-			bgMusic.play();
-		} else {
-			bgMusic.pause();
-		}
-		break;
-
-	case 49: //key - '1' : select basicPower
-		cout << "selected power_basic" << endl;
-		//TODO : show in attribute space
-		playerStats.currentPower = POWER_BASIC;
-		break;
-
-	case 50: //key - '2' : select magicPower
-		//TODO : show in attribute space
-		cout << "selected power_magic" << endl;
-		playerStats.currentPower = POWER_MAGIC;
-		break;
-
-	case 51: //key - '3' //TODO:test=displays a new window
-		glutDestroyWindow(windowId_main);
-		glutCreateWindow("Temp_window!!!");
-		glutDisplayFunc(tempDrawScene);
-		glutMainLoop();
-		break;
-	}
-}
-
 //converts window coordinates to openGL coordinates
 Coordinate_openGl getOGLPos(int mX, int mY) {
 	GLint viewport[4];
@@ -94,34 +57,6 @@ Coordinate_openGl getOGLPos(int mX, int mY) {
 			&posY, &posZ);
 
 	return Coordinate_openGl(posX, posY, posZ);
-}
-
-Coordinate_grid downGrid;
-void processRightClick(Coordinate_grid grid) {
-
-	//TODO: remove below cout(s)
-	cout << " row: " << downGrid.row;
-	cout << " col: " << downGrid.col << endl;
-
-	handleGridCharSwitch(downGrid, PROCESS_MOVE_CLICK);
-}
-
-void myMouseClickHandler(int button, int state, int x, int y) {
-
-	if (state == GLUT_DOWN) { //saving just the state, action is performed on GLUT_UP
-		Coordinate_openGl openGl = getOGLPos(x, y);
-		downGrid = getGridCoordinatesFromOpenGl(openGl);
-		return;
-	}
-
-	if (!isValidCell(downGrid)) {
-		playEventSound(PATH_SOUND_WRONG_CLICK);
-		return;
-	}
-
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving
-		processRightClick(downGrid);
-	}
 }
 
 //Called when the window is resized

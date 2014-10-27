@@ -68,31 +68,6 @@ void loadPlayerSpecificAttributes() {
 	blockOponentsArea();
 }
 
-void loadTextures() {
-	bg_grass_texId = getTextureFromImage(PATH_IMG_BG);
-	bg_spawn_texId = getTextureFromImage(PATH_IMG_BG_SPAWN);
-	bg_war_texId = getTextureFromImage(PATH_IMG_BG_WAR);
-	bg_attribute_texId = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
-	bg_blocked_texId = getTextureFromImage(PATH_IMG_BG_BLOCKED);
-
-	tree_texId = getTextureFromImage(PATH_IMG_TREE);
-	stone_texId = getTextureFromImage(PATH_IMG_STONE);
-
-	t_demons_texId = getTextureFromImage(PATH_IMG_TEMPLE_DEMONS);
-
-	//TODO: uncomment
-	//h_stunner_texId = getTextureFromImage(PATH_IMG_HERO_STUNNER);
-	//h_disabler_texId = getTextureFromImage(PATH_IMG_HERO_DISABLER);
-	h_slower_texId = getTextureFromImage(PATH_IMG_HERO_SLOWER);
-	h_burster_texId = getTextureFromImage(PATH_IMG_HERO_BURSTER);
-
-	i_speedMov_texId = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	i_speedAttack_texId = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
-	i_damage_texId = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
-	i_health_texId = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
-	i_tHealer_texId = getTextureFromImage(PATH_IMG_ITEM_TEMPLE_HEALER);
-}
-
 void printGrid() {
 	cout << "Printing grid" << "\n";
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -115,7 +90,7 @@ void moveHeroMine(int type) {
 		//TODO: target cell is item, then still not handled
 
 		Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
-				nodeToMove->col+ATTRIBUTE_WIDTH);//TODO: constant
+				nodeToMove->col + ATTRIBUTE_WIDTH);//TODO: constant
 		if (isItem(celltoMove)) {
 			setItemCell(celltoMove);
 			takeItem();
