@@ -12,13 +12,13 @@ enum charCellType {
 
 	H_DISABLER, H_SLOWER, H_BURSTER, H_STUNNER,
 
-	I_SPEED_MOVE, I_SPEED_ATTACK, I_HEALTH, I_DAMAGE, I_TEMPLE_HEALER,
+	I_SPEED_MOVE, I_HEALTH, I_DAMAGE, I_TEMPLE_HEALER,
 
 	TREE_BACK, T_ANGELS_BACK, T_DEMONS_BACK
 };
 
-charCellType itemCharCell[] = { I_SPEED_MOVE, I_SPEED_ATTACK, I_HEALTH,
-		I_DAMAGE, I_TEMPLE_HEALER };
+charCellType itemCharCell[] = { I_SPEED_MOVE, I_HEALTH, I_DAMAGE,
+		I_TEMPLE_HEALER };
 
 enum heroes {
 	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
@@ -30,11 +30,7 @@ enum magicPower {
 
 //TODO : check if required
 enum itemType {
-	ITEM_SPEED_MOVE,
-	ITEM_SPEED_ATTACK,
-	ITEM_HEALTH,
-	ITEM_DAMAGE,
-	ITEM_TEMPLE_HEALER
+	ITEM_SPEED_MOVE, ITEM_HEALTH, ITEM_DAMAGE, ITEM_TEMPLE_HEALER
 };
 
 enum heroPower {
@@ -46,6 +42,7 @@ enum teamName {
 	TEAM_ANGELS, TEAM_DEMONS, TEAM_BOTH
 };
 
+//TODO: check if required
 struct Item {
 public:
 	Item() {
@@ -79,10 +76,9 @@ struct Player {
 	int templeHealth;
 
 	int strength;
-	int speedAttack;
 	int speedMove;
 
-	list<itemType*> itemsBag;
+	//list<itemType*> itemsBag;
 };
 
 #endif

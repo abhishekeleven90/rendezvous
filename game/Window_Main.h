@@ -75,11 +75,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 32: //key - 'space' : on/off bgMusic
-		if (bgMusic.getStatus() == bgMusic.Paused) {
-			bgMusic.play();
-		} else {
-			bgMusic.pause();
-		}
+		toggleBgMusic();
 		break;
 
 	case 49: //key - '1' : select basicPower
@@ -102,7 +98,7 @@ void processRightClick_main(Coordinate_grid grid) {
 	cout << " row: " << downGrid_click.row;
 	cout << " col: " << downGrid_click.col << endl;
 
-	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_CLICK);
+	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
 }
 
 void myMouseClickHandler_main(int button, int state, int x, int y) {
@@ -118,7 +114,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving
+	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
 		processRightClick_main(downGrid_click);
 	}
 }

@@ -23,19 +23,11 @@ bool isValidRowNColIndex(int row, int col, int isInner) {
 	return true;
 }
 
-bool isValidCell(Coordinate_grid grid) {
-	if (grid.row < START_GRID_ROW || grid.row > END_GRID_ROW) {
-		return false;
-	}
-
-	if (grid.col < START_OUTER_GRID_COL || grid.col > END_OUTER_GRID_COL) {
-		return false;
-	}
-
-	return true;
+bool isValidCell(Coordinate_grid grid) { //Checking it's not in black screen
+	return isValidRowNColIndex(grid.row, grid.col, false);
 }
 
-bool isOponentCellForTeam(Coordinate_grid grid) {
+bool isOponentCellForTeam(Coordinate_grid grid) { //returns true if the passed cell lies in my opponent area
 	if (playerStats.team == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS
 			+ 1) {
 		return true;

@@ -9,6 +9,14 @@ using namespace sf;
 Music bgMusic;
 Music eventMusic;
 
+void toggleBgMusic() {
+	if (bgMusic.getStatus() == bgMusic.Paused) {
+		bgMusic.play();
+	} else {
+		bgMusic.pause();
+	}
+}
+
 void playBgSound() {
 	int loaded = 1;
 

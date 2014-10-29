@@ -23,7 +23,6 @@ bool isItem(Coordinate_grid cell) {
 	switch (gridChar[cell.row][cell.col]) {
 	case I_DAMAGE:
 	case I_HEALTH:
-	case I_SPEED_ATTACK:
 	case I_SPEED_MOVE:
 	case I_TEMPLE_HEALER:
 		return true;
@@ -89,7 +88,7 @@ void placeItemAtRandomPos(teamName name) {
 }
 
 enum switchCallType {
-	PRINT_GRID, PROCESS_MOVE_CLICK, RENDER_GRID, IS_ITEM
+	PRINT_GRID, PROCESS_MOVE_RIGHT_CLICK, RENDER_GRID
 };
 
 void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
@@ -99,7 +98,7 @@ void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 	case PRINT_GRID:
 		cout << " " << toPrint;
 		break;
-	case PROCESS_MOVE_CLICK:
+	case PROCESS_MOVE_RIGHT_CLICK:
 		/*if (!isValidCellForTeam()) { // check if the cell clicked
 		 wrong();
 		 return;
@@ -116,10 +115,6 @@ void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 
 void wrong() {
 	playEventSound(PATH_SOUND_WRONG_CLICK);
-}
-
-void f() {
-
 }
 
 void aStarMove(bool through) {
@@ -155,9 +150,6 @@ itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
 	case I_HEALTH:
 		item = ITEM_HEALTH;
 		break;
-	case I_SPEED_ATTACK:
-		item = ITEM_SPEED_ATTACK;
-		break;
 	case I_SPEED_MOVE:
 		item = ITEM_SPEED_MOVE;
 		break;
@@ -172,25 +164,22 @@ void updateHeroAttributesTakingItem() {
 	//TODO: update hero attributes properly, notify & display in attribute space
 	itemType itemTaken = getItemTypeFromCharItem(itemCell);
 	switch (itemTaken) {
-	case ITEM_DAMAGE:
+	case I_DAMAGE:
 		cout << "item_damage taken" << endl;
 		playerStats.strength += GAIN_ITEM_DAMAGE;
 		break;
-	case ITEM_HEALTH:
+	case I_HEALTH:
 		cout << "item_health taken" << endl;
 		playerStats.heroHealth += GAIN_ITEM_HEALTH;
 		break;
-	case ITEM_SPEED_ATTACK:
-		cout << "item_speed_attack taken" << endl;
-		playerStats.speedAttack += GAIN_ITEM_SPEED_ATTACK;
-		break;
-	case ITEM_SPEED_MOVE:
+	case I_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
 		playerStats.speedMove += GAIN_ITEM_SPEED_MOVE;
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;
-		playerStats.itemsBag.push_back(&itemTaken);
+		playerStats.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+		//playerStats.itemsBag.push_back(&itemTaken);
 		break;
 	}
 }
@@ -268,23 +257,23 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	case I_SPEED_MOVE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough, false);
-		break;
-	case I_SPEED_ATTACK:
-		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_speedAttack_texId, "ISA", aStarMoveThrough, false);
+		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough,
+				false);
 		break;
 	case I_HEALTH:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough, false);
+		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough,
+				false);
 		break;
 	case I_DAMAGE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough, false);
+		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough,
+				false);
 		break;
 	case I_TEMPLE_HEALER:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough, false);
+		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough,
+				false);
 		break;
 
 	case TREE_BACK:

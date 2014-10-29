@@ -3,7 +3,7 @@
 
 #define TIMER_ITEM_GLOBAL 5000
 #define TIMER_MAGIC_SPELL 3
-#define REFRESH_RATE 300
+#define REFRESH_RATE 100
 
 bool isTimerItemGlobalRunning = false;
 bool isTimerMagicSpellRunning = false;

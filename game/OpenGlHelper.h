@@ -5,7 +5,7 @@
 #include "Constants.h"
 #include "CustomVectorStruct.h"
 #include "SoundAll.h"
-#include "HandleGridCharSwitch.h"
+#include "ActionOnGrid.h"
 #include "Objects.h"
 
 //Makes the image into a texture, and returns the id of the texture
@@ -24,17 +24,6 @@ GLuint loadTexture(Image* image) {
 			//as unsigned numbers
 			image->pixels); //The actual pixel data
 	return textureId; //Returns the id of the texture
-}
-
-//TODO: temp function below, display/move
-void tempDrawScene() {
-	//Clear information from last draw
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
-	glLoadIdentity(); //Reset the drawing perspective
-
-	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
 //converts window coordinates to openGL coordinates

@@ -8,7 +8,7 @@
 #include "Constants.h"
 #include "Objects.h"
 #include "MapNGrid.h"
-#include "HandleGridCharSwitch.h"
+#include "ActionOnGrid.h"
 #include "Validations.h"
 
 void blockOponentsArea() {
@@ -33,10 +33,9 @@ void loadPlayerSpecificAttributes() {
 	switch (playerStats.heroType) {
 	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
 	case HERO_STUNNER:
-		playerStats.pic_path = PATH_IMG_HERO_STUNNER;
 		playerStats.magic_power = MAGIC_STUN;
+		playerStats.pic_path = PATH_IMG_HERO_STUNNER;
 		playerStats.strength = STRENGTH_H_STUNNER;
-		playerStats.speedAttack = SPEED_ATTACK_H_STUNNER;
 		playerStats.speedMove = SPEED_MOVE_H_STUNNER;
 		break;
 
@@ -44,7 +43,6 @@ void loadPlayerSpecificAttributes() {
 		playerStats.pic_path = PATH_IMG_HERO_DISABLER;
 		playerStats.magic_power = MAGIC_DISABLE;
 		playerStats.strength = STRENGTH_H_DISABLER;
-		playerStats.speedAttack = SPEED_ATTACK_H_DISABLER;
 		playerStats.speedMove = SPEED_MOVE_H_DISABLER;
 		break;
 
@@ -52,7 +50,6 @@ void loadPlayerSpecificAttributes() {
 		playerStats.pic_path = PATH_IMG_HERO_SLOWER;
 		playerStats.magic_power = MAGIC_SLOW;
 		playerStats.strength = STRENGTH_H_SLOWER;
-		playerStats.speedAttack = SPEED_ATTACK_H_SLOWER;
 		playerStats.speedMove = SPEED_MOVE_H_SLOWER;
 		break;
 
@@ -60,7 +57,6 @@ void loadPlayerSpecificAttributes() {
 		playerStats.pic_path = PATH_IMG_HERO_BURSTER;
 		playerStats.magic_power = MAGIC_BURST;
 		playerStats.strength = STRENGTH_H_BURSTER;
-		playerStats.speedAttack = SPEED_ATTACK_H_BURSTER;
 		playerStats.speedMove = SPEED_MOVE_H_BURSTER;
 		break;
 	}

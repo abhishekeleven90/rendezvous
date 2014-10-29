@@ -181,8 +181,6 @@ Node* findLocToMove(Coordinate_grid curr) {
 	return toReturn;
 }
 
-
-
 Coordinate_openGl getOpenGlCoordinatesFromGrid(Coordinate_grid grid) {
 	GLfloat x = MIN_XCELL + (grid.col - 1) * CELL_LENGTH;
 	GLfloat y = MAX_YCELL - (grid.row * CELL_LENGTH);
@@ -201,13 +199,13 @@ charCellType getInnerGridChar(int randomRow, int randomCol) {
 
 void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 	GLfloat size1D = blocks * CELL_LENGTH;
-	glEnable( GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBegin( GL_QUADS);
+	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(x, y, -5.0f);
@@ -266,7 +264,6 @@ bool isBlockedSite(int r, int c) {
 	case T_ANGELS_BACK:
 	case T_DEMONS_BACK:
 	case I_SPEED_MOVE:
-	case I_SPEED_ATTACK:
 	case I_HEALTH:
 	case I_DAMAGE:
 	case I_TEMPLE_HEALER:
