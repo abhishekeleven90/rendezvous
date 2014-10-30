@@ -5,6 +5,12 @@
 #include "Constants.h"
 #include "CustomVectorStruct.h"
 
+float windowWidth = 850, windowHeight = 700;
+
+float cellWidth = windowWidth
+		/ (END_OUTER_GRID_COL - START_OUTER_GRID_COL + 1);
+float cellHeight = windowHeight / (END_GRID_ROW - START_GRID_ROW + 1);
+
 charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
@@ -51,5 +57,5 @@ int windowId_current;
 
 Coordinate_grid downGrid_click; //used for clickHandler
 
-int currentPlayer=2;//by default, toggle by 'P'
+int currentPlayer = 2;//by default, toggle by 'P'
 #endif

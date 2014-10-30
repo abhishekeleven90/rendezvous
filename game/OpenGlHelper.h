@@ -7,6 +7,58 @@
 #include "SoundAll.h"
 #include "ActionOnGrid.h"
 #include "Objects.h"
+#include "Headers.h"
+
+#include "text3d.h"
+
+float t3dComputeScale(const char* str) {
+	float width = t3dDrawWidth(str);
+	return CELL_LENGTH / width;
+}
+
+/*void setOrthographicProjection() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0, windowWidth, 0, windowHeight);
+	glScalef(1, -1, 1);
+	glTranslatef(0, -windowHeight, 0);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void resetPerspectiveProjection() {
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+Coordinate_grid getGridCoordinatesFromWindow(Coordinate_window window) {
+	int col = ceil(window.x / cellWidth);
+	int row = ceil(window.y / cellHeight);
+	return Coordinate_grid(row, col);
+}
+
+Coordinate_window getWindowCoordinatesFromGrid(Coordinate_grid grid) {
+	float x = (grid.col - 1) * cellWidth;
+	float y = (grid.row) * cellHeight;
+	return Coordinate_window(x, y);
+}
+
+void renderBitmapString(Coordinate_grid grid, const char *string) {
+	Coordinate_window window = getWindowCoordinatesFromGrid(grid);
+	setOrthographicProjection();
+	glPushMatrix();
+	glLoadIdentity();
+
+	const char *c;
+	glRasterPos2f(window.x, window.y);
+	for (c = string; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c);
+	}
+
+	glPopMatrix();
+	resetPerspectiveProjection();
+}*/
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
@@ -27,7 +79,8 @@ GLuint loadTexture(Image* image) {
 }
 
 //converts window coordinates to openGL coordinates
-Coordinate_openGl getOGLPos(int mX, int mY) {
+//function not used now, but imp function : let it be here
+Coordinate_openGl getOGLPos(float mX, float mY) {
 	GLint viewport[4];
 	GLdouble modelview[16];
 	GLdouble projection[16];
@@ -49,18 +102,17 @@ Coordinate_openGl getOGLPos(int mX, int mY) {
 }
 
 //Called when the window is resized
-void handleResize(int w, int h) {
+void handleResize(int weight, int height) {
+	windowWidth = weight;
+	windowHeight = height;
 	//Tell OpenGL how to convert from coordinates to pixel values
-	glViewport(0, 0, w, h);
-
+	glViewport(0, 0, windowWidth, windowHeight);
 	glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
-
 	glPushMatrix();
-
 	//Set the camera perspective
 	glLoadIdentity(); //Reset the camera
 	gluPerspective(45.0, //The camera angle
-			(double) w / (double) h, //The width-to-height ratio
+			(double) weight / (double) height, //The width-to-height ratio
 			1.0, //The near z clipping coordinate
 			200.0); //The far z clipping coordinate
 }

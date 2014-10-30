@@ -1,10 +1,10 @@
 #ifndef A_STAR_CLASS
 #define A_STAR_CLASS
 
-#include<stdio.h>
-#include<iostream>
-#include<queue>
-#include"Node.h"
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include "Node.h"
 #include "CustomVectorStruct.h"
 
 //TODO uncomment

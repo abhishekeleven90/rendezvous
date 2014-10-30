@@ -25,12 +25,23 @@ public:
 
 	}
 
-	Coordinate_grid(int R, int C) {
-		row = R;
-		col = C;
+	Coordinate_grid(int r, int c) {
+		row = r;
+		col = c;
 	}
 
 	int row, col;
+};
+
+struct Coordinate_window {
+public:
+
+	Coordinate_window(float X, float Y) {
+		x = X;
+		y = Y;
+	}
+
+	int x, y;
 };
 
 #endif

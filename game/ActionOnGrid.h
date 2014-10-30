@@ -166,15 +166,15 @@ void updateHeroAttributesTakingItem() {
 	//TODO: update hero attributes properly, notify & display in attribute space
 	itemType itemTaken = getItemTypeFromCharItem(itemCell);
 	switch (itemTaken) {
-	case I_DAMAGE:
+	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
 		playerStats.strength += GAIN_ITEM_DAMAGE;
 		break;
-	case I_HEALTH:
+	case ITEM_HEALTH:
 		cout << "item_health taken" << endl;
 		playerStats.heroHealth += GAIN_ITEM_HEALTH;
 		break;
-	case I_SPEED_MOVE:
+	case ITEM_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
 		playerStats.speedMove += GAIN_ITEM_SPEED_MOVE;
 		break;
