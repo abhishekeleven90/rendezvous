@@ -30,7 +30,7 @@ bool isBlockedSite(int r, int c);
 void putHeros() {
 	myTeam.players[0].astar = new AStarClass();
 	myTeam.players[0].astar->firstInitAStar();
-	//TODO: Abhisek : player's location, move to playerStats?
+	//TODO: Abhisek : player's location, move to myTeam.players[currentPlayer - 1]?
 	Coordinate_grid location;
 	location.row = 19;
 	location.col = 1;

@@ -86,7 +86,6 @@ struct Player {
 	bool toAttackTemple;
 };
 
-//TODO: Abhishek to remove once corrected structure
 struct TeamStruct {
 	teamName team_name;
 	int health;//temple health

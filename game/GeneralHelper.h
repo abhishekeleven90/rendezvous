@@ -12,7 +12,6 @@
 #include "ActionOnGrid.h"
 #include "Validations.h"
 
-
 void blockOponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
@@ -23,60 +22,59 @@ void blockOponentsArea() {
 	}
 }
 
-void loadTeamAttributes()
-{
+void loadTeamAttributes() {
 	//TODO: Abhishek from other screens, or as decided
 
-	myTeam.team_name=TEAM_ANGELS;
-	myTeam.health=HEALTH_FULL_TEMPLE;
+	myTeam.team_name = TEAM_ANGELS;
+	myTeam.health = HEALTH_FULL_TEMPLE;
 	//first player load attributes yours, plus others
 	//first player may be the first player to join
 
-	enemyTeam.team_name=TEAM_DEMONS;
+	enemyTeam.team_name = TEAM_DEMONS;
 	//load attributes
 
-	enemyTeam.health=HEALTH_FULL_TEMPLE;
-	enemyTeam.team_name=TEAM_DEMONS;
+	enemyTeam.health = HEALTH_FULL_TEMPLE;
+	enemyTeam.team_name = TEAM_DEMONS;
 
 }
 
 void loadPlayerSpecificAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
-	playerStats.team = TEAM_ANGELS;
-	playerStats.heroType = HERO_SLOWER;
+	myTeam.players[currentPlayer - 1].team = TEAM_ANGELS;
+	myTeam.players[currentPlayer - 1].heroType = HERO_SLOWER;
 
-	playerStats.currentPower = POWER_BASIC;
-	playerStats.heroHealth = HEALTH_FULL_HERO;
-	playerStats.templeHealth = HEALTH_FULL_TEMPLE;
+	myTeam.players[currentPlayer - 1].currentPower = POWER_BASIC;
+	myTeam.players[currentPlayer - 1].heroHealth = HEALTH_FULL_HERO;
+	myTeam.players[currentPlayer - 1].templeHealth = HEALTH_FULL_TEMPLE;
 
-	switch (playerStats.heroType) {
+	switch (myTeam.players[currentPlayer - 1].heroType) {
 	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
 	case HERO_STUNNER:
-		playerStats.magic_power = MAGIC_STUN;
-		playerStats.pic_path = PATH_IMG_HERO_STUNNER;
-		playerStats.strength = STRENGTH_H_STUNNER;
-		playerStats.speedMove = SPEED_MOVE_H_STUNNER;
+		myTeam.players[currentPlayer - 1].magic_power = MAGIC_STUN;
+		myTeam.players[currentPlayer - 1].pic_path = PATH_IMG_HERO_STUNNER;
+		myTeam.players[currentPlayer - 1].strength = STRENGTH_H_STUNNER;
+		myTeam.players[currentPlayer - 1].speedMove = SPEED_MOVE_H_STUNNER;
 		break;
 
 	case HERO_DISABLER:
-		playerStats.pic_path = PATH_IMG_HERO_DISABLER;
-		playerStats.magic_power = MAGIC_DISABLE;
-		playerStats.strength = STRENGTH_H_DISABLER;
-		playerStats.speedMove = SPEED_MOVE_H_DISABLER;
+		myTeam.players[currentPlayer - 1].pic_path = PATH_IMG_HERO_DISABLER;
+		myTeam.players[currentPlayer - 1].magic_power = MAGIC_DISABLE;
+		myTeam.players[currentPlayer - 1].strength = STRENGTH_H_DISABLER;
+		myTeam.players[currentPlayer - 1].speedMove = SPEED_MOVE_H_DISABLER;
 		break;
 
 	case HERO_SLOWER:
-		playerStats.pic_path = PATH_IMG_HERO_SLOWER;
-		playerStats.magic_power = MAGIC_SLOW;
-		playerStats.strength = STRENGTH_H_SLOWER;
-		playerStats.speedMove = SPEED_MOVE_H_SLOWER;
+		myTeam.players[currentPlayer - 1].pic_path = PATH_IMG_HERO_SLOWER;
+		myTeam.players[currentPlayer - 1].magic_power = MAGIC_SLOW;
+		myTeam.players[currentPlayer - 1].strength = STRENGTH_H_SLOWER;
+		myTeam.players[currentPlayer - 1].speedMove = SPEED_MOVE_H_SLOWER;
 		break;
 
 	case HERO_BURSTER:
-		playerStats.pic_path = PATH_IMG_HERO_BURSTER;
-		playerStats.magic_power = MAGIC_BURST;
-		playerStats.strength = STRENGTH_H_BURSTER;
-		playerStats.speedMove = SPEED_MOVE_H_BURSTER;
+		myTeam.players[currentPlayer - 1].pic_path = PATH_IMG_HERO_BURSTER;
+		myTeam.players[currentPlayer - 1].magic_power = MAGIC_BURST;
+		myTeam.players[currentPlayer - 1].strength = STRENGTH_H_BURSTER;
+		myTeam.players[currentPlayer - 1].speedMove = SPEED_MOVE_H_BURSTER;
 		break;
 	}
 
@@ -96,9 +94,8 @@ void printGrid() {
 //call this from the render function periodically
 void moveHeroMine(int type) {
 	Node* nodeToMove = findLocToMove(myTeam.players[type - 1].location, type);
-	if (nodeToMove == NULL)
-	{
-		if(myTeam.players[type - 1].toAttackTemple)
+	if (nodeToMove == NULL) {
+		if (myTeam.players[type - 1].toAttackTemple)
 			decreaseEnemyTempleHealth();
 		return; //nothing to move
 	}
@@ -132,12 +129,10 @@ void renderGrid() {
 	}
 }
 
-void togglePlayer()
-{
-	if(currentPlayer==1)
-		currentPlayer=2;
+void togglePlayer() {
+	if (currentPlayer == 1)
+		currentPlayer = 2;
 	else
-		currentPlayer=1;
-	playerStats=myTeam.players[currentPlayer-1];
+		currentPlayer = 1;
 }
 #endif

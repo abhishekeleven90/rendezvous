@@ -15,9 +15,8 @@ charCellType
 int g_item_index_angels = 0; //holds the global index of next item to be placed
 int g_item_index_demons = 0;
 
-int currentPlayer=1;//by default
+int currentPlayer=1;//by default for first player of a team
 TeamStruct myTeam, enemyTeam;
-Player playerStats=myTeam.players[currentPlayer-1];
 
 //TextureIds
 GLuint btn_start_texId;

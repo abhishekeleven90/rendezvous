@@ -180,20 +180,20 @@ void updateHeroAttributesTakingItem() {
 	switch (itemTaken) {
 	case I_DAMAGE:
 		cout << "item_damage taken" << endl;
-		playerStats.strength += GAIN_ITEM_DAMAGE;
+		myTeam.players[currentPlayer - 1].strength += GAIN_ITEM_DAMAGE;
 		break;
 	case I_HEALTH:
 		cout << "item_health taken" << endl;
-		playerStats.heroHealth += GAIN_ITEM_HEALTH;
+		myTeam.players[currentPlayer - 1].heroHealth += GAIN_ITEM_HEALTH;
 		break;
 	case I_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
-		playerStats.speedMove += GAIN_ITEM_SPEED_MOVE;
+		myTeam.players[currentPlayer - 1].speedMove += GAIN_ITEM_SPEED_MOVE;
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;
-		playerStats.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
-		//playerStats.itemsBag.push_back(&itemTaken);
+		myTeam.players[currentPlayer - 1].templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+		//myTeam.players[currentPlayer - 1].itemsBag.push_back(&itemTaken);
 		break;
 	}
 }
