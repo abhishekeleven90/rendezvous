@@ -64,8 +64,4 @@ bool equals(Node* a, Node*b) {
 	return a->row == b->row && a->col == b->col;
 }
 
-bool getBlockStatus(int r, int c) {
-
-}
-
 #endif

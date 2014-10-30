@@ -57,7 +57,7 @@
 
 //Number of Blocks
 #define SPAWN_BLOCKS 3
-#define ATTRIBUTE_WIDTH 2
+#define ATTRIBUTE_WIDTH 3
 #define TEMPLE_BLOCKS 2
 #define DIAG_BLOCKS 2 //numOfDiagonals = 2*DIAGONAL_BLOCKS+1
 #endif

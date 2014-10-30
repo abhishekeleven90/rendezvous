@@ -87,13 +87,22 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_main(Coordinate_grid grid) {
+void processRightClick_main() {
 
 	//TODO: remove below cout(s)
 	cout << " row: " << downGrid_click.row;
 	cout << " col: " << downGrid_click.col << endl;
 
 	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
+}
+
+void processLeftClick_main() {
+
+	//TODO: remove below cout(s)
+	cout << " left click row: " << downGrid_click.row;
+	cout << " left click col: " << downGrid_click.col << endl;
+
+	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_LEFT_CLICK);
 }
 
 void myMouseClickHandler_main(int button, int state, int x, int y) {
@@ -110,7 +119,11 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 	}
 
 	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_main(downGrid_click);
+		processRightClick_main();
+	}
+	else
+	{
+		processLeftClick_main();
 	}
 }
 

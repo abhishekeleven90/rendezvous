@@ -30,17 +30,17 @@ bool isBlockedSite(int r, int c);
 void putHeros() {
 	myTeamPlayers[0].astar = new AStarClass();
 	myTeamPlayers[0].astar->firstInitAStar();
-	//TODO: player's location
+	//TODO: Abhisek : player's location, move to playerStats?
 	Coordinate_grid location;
 	location.row = 19;
 	location.col = 1;
 	setHeroLocation(1, location);
-	//assuming the type is H_SLOWER in moveHero also
+
 	putCharToGrid(19, 1, H_SLOWER, true);
 
 	myTeamPlayers[1].astar = new AStarClass();
 	myTeamPlayers[1].astar->firstInitAStar();
-	//TODO: player's location
+
 	Coordinate_grid location2;
 	location2.row = 20;
 	location2.col = 3;
@@ -268,17 +268,14 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	gridChar[row][col] = charType;
 }
 
-//TODO: gray area for second player area
+//TODO: Abhishek move to code to ActionOnGrid
+//gray area for second player area handled by Harinder's code
 bool isBlockedSite(int r, int c) {
 	charCellType type = getInnerGridChar(r, c);
 	switch (type) {
 	case BG_GRASS:
 	case BG_SPAWN:
 	case BG_WAR:
-	case TEMPLE_ANGELS:
-	case TEMPLE_DEMONS:
-	case T_ANGELS_BACK:
-	case T_DEMONS_BACK:
 	case I_SPEED_MOVE:
 	case I_HEALTH:
 	case I_DAMAGE:

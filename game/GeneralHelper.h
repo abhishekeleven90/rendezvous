@@ -82,7 +82,7 @@ void moveHeroMine(int type) {
 		return; //nothing to move
 
 	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
-			nodeToMove->col + ATTRIBUTE_WIDTH);//TODO: constant
+			nodeToMove->col + ATTRIBUTE_WIDTH);
 	if (isItem(celltoMove)) {
 		setItemCell(celltoMove);
 		takeItem();
