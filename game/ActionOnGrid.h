@@ -17,7 +17,7 @@ void setItemCell(Coordinate_grid movingToCell) {
 	itemCell.col = movingToCell.col;
 }
 
-//TODO: if more items add or try to add to the complex handleGridCharSwitch
+//TODO: Abhishek: if more items add or try to add to the complex handleGridCharSwitch
 bool isItem(Coordinate_grid cell) {
 	switch (gridChar[cell.row][cell.col]) {
 	case I_DAMAGE:
@@ -87,11 +87,12 @@ void placeItemAtRandomPos(teamName name) {
 }
 
 enum switchCallType {
-	PRINT_GRID, PROCESS_MOVE_RIGHT_CLICK, RENDER_GRID
+	PRINT_GRID, PROCESS_MOVE_RIGHT_CLICK, PROCESS_MOVE_LEFT_CLICK, RENDER_GRID
 };
 
 void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
-		string toPrint, void( f)(void), bool isBackChar, int blocks = 1) {
+		string toPrint, void( rightClick)(void), void( leftClick)(void),
+		bool isBackChar, int blocks = 1) {
 
 	switch (callType) {
 	case PRINT_GRID:
@@ -102,7 +103,14 @@ void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 		 wrong();
 		 return;
 		 }*/
-		f();
+		rightClick();
+		break;
+	case PROCESS_MOVE_LEFT_CLICK:
+		/*if (!isValidCellForTeam()) { // check if the cell clicked
+		 wrong();
+		 return;
+		 }*/
+		leftClick();
 		break;
 	case RENDER_GRID:
 		if (!isBackChar) {
@@ -117,21 +125,25 @@ void wrong() {
 }
 
 void aStarMove(bool through) {
-	//TODO:BOTH PLAYERS MOVE
-
 	//have to handle block status here istelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
-				myTeamPlayers[currentPlayer-1].astar->blockSiteAStarGrid(i, j);
+				myTeam.players[currentPlayer - 1].astar->blockSiteAStarGrid(i, j);
 			} else {
-				myTeamPlayers[currentPlayer-1].astar->openSiteAStarGrid(i, j);
+				myTeam.players[currentPlayer - 1].astar->openSiteAStarGrid(i, j);
 			}
 		}
 	}
-	//myTeamPlayers[0].astar->initAStar(HERO_MINE_1_LOC, targetCell);
-	myTeamPlayers[currentPlayer-1].astar->initAStar(myTeamPlayers[currentPlayer-1].location, targetCell);
-	myTeamPlayers[currentPlayer-1].astar->AStar(through);
+	//for the not through, the target could be blocked actually, change it locally!
+	if (!through) {
+		myTeam.players[currentPlayer - 1].astar->openSiteAStarGrid(
+				targetCell.row, targetCell.col - ATTRIBUTE_WIDTH);
+	}
+	myTeam.players[currentPlayer - 1].astar->initAStar(
+			myTeam.players[currentPlayer - 1].location, targetCell);
+	myTeam.players[currentPlayer - 1].astar->AStar(through);
+
 }
 
 void aStarMoveThrough() {
@@ -168,20 +180,20 @@ void updateHeroAttributesTakingItem() {
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
-		playerStats.strength += GAIN_ITEM_DAMAGE;
+		myTeam.players[currentPlayer - 1].strength += GAIN_ITEM_DAMAGE;
 		break;
 	case ITEM_HEALTH:
 		cout << "item_health taken" << endl;
-		playerStats.heroHealth += GAIN_ITEM_HEALTH;
+		myTeam.players[currentPlayer - 1].heroHealth += GAIN_ITEM_HEALTH;
 		break;
 	case ITEM_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
-		playerStats.speedMove += GAIN_ITEM_SPEED_MOVE;
+		myTeam.players[currentPlayer - 1].speedMove += GAIN_ITEM_SPEED_MOVE;
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;
-		playerStats.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
-		//playerStats.itemsBag.push_back(&itemTaken);
+		myTeam.players[currentPlayer - 1].templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+		//myTeam.players[currentPlayer - 1].itemsBag.push_back(&itemTaken);
 		break;
 	}
 }
@@ -205,87 +217,120 @@ void takeItem() {
 	}
 }
 
+void setAttackTemple(int player, bool value) {
+	myTeam.players[player - 1].toAttackTemple = value;
+}
+
+void decreaseEnemyTempleHealth() {
+
+	enemyTeam.health -= myTeam.players[currentPlayer - 1].strength;
+	if (enemyTeam.health < 0)
+		enemyTeam.health = 0;
+	setAttackTemple(currentPlayer, false);
+	cout << "Yayy decreased enemy temple health to " << enemyTeam.health
+			<< endl;
+}
+
+void attackEnemyTemple() {
+	cout << "Gear up! We are attacking opponent's temple!" << endl;
+	//TODO: Abhishek for both type of teams
+	//write now for demons
+	aStarMoveNotThrough();
+	setAttackTemple(currentPlayer, true);
+	//TODO: Abhishek play temple attack sound
+	//TODO: gif attack animation
+}
+
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 	targetCell = Coordinate_grid(grid.row, grid.col);
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
 		processCase(callType, grid, bg_grass_texId, "Gra", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case BG_SPAWN:
 		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case BG_WAR:
 		processCase(callType, grid, bg_war_texId, "BWa", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case BG_ATTRIBUTE:
-		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, false);
+		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, wrong,
+				false);
 		break;
 	case BG_BLOCKED:
-		processCase(callType, grid, bg_blocked_texId, "BBl", wrong, false);
+		processCase(callType, grid, bg_blocked_texId, "BBl", wrong, wrong,
+				false);
 		break;
 
 	case STONE:
-		processCase(callType, grid, stone_texId, "Sto", wrong, false);
+		processCase(callType, grid, stone_texId, "Sto", wrong, wrong, false);
 		break;
 	case TREE:
-		processCase(callType, grid, tree_texId, "Tre", wrong, false);
+		processCase(callType, grid, tree_texId, "Tre", wrong, wrong, false);
 		break;
 
 	case TEMPLE_ANGELS:
-		processCase(callType, grid, t_angels_texId, "TAn", wrong, false,
-				TEMPLE_BLOCKS);
-		break;
-	case TEMPLE_DEMONS:
-		processCase(callType, grid, t_demons_texId, "TDe", wrong, false,
+		processCase(callType, grid, t_angels_texId, "TAn", wrong, wrong, false,
 				TEMPLE_BLOCKS);
 		break;
 
+		//TODO: Abhishek: friend temple attack
+	case TEMPLE_DEMONS:
+		processCase(callType, grid, t_demons_texId, "TDe", wrong,
+				attackEnemyTemple, false, TEMPLE_BLOCKS);
+		break;
+
+		//TODO: Abhishek : leftClick on enemy and on friend and on on self
 	case H_DISABLER:
-		processCase(callType, grid, h_disabler_texId, "HDi", wrong, false);
+		processCase(callType, grid, h_disabler_texId, "HDi", wrong, wrong,
+				false);
 		break;
 	case H_SLOWER:
-		processCase(callType, grid, h_slower_texId, "HSl", wrong, false);
+		processCase(callType, grid, h_slower_texId, "HSl", wrong, wrong, false);
 		break;
 	case H_BURSTER:
-		processCase(callType, grid, h_burster_texId, "HBu", wrong, false);
+		processCase(callType, grid, h_burster_texId, "HBu", wrong, wrong, false);
 		break;
 	case H_STUNNER:
-		processCase(callType, grid, h_stunner_texId, "HSt", wrong, false);
+		processCase(callType, grid, h_stunner_texId, "HSt", wrong, wrong, false);
 		break;
 
 	case I_SPEED_MOVE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case I_HEALTH:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case I_DAMAGE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 	case I_TEMPLE_HEALER:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough,
-				false);
+				wrong, false);
 		break;
 
 	case TREE_BACK:
-		processCase(callType, grid, temp_texId, "TBa", wrong, true);
+		processCase(callType, grid, temp_texId, "TBa", wrong, wrong, true);
 		break;
+
+		//TODO: if else for demons and angels
 	case T_ANGELS_BACK:
-		processCase(callType, grid, temp_texId, "TAB", wrong, true);
+		processCase(callType, grid, temp_texId, "TAB", wrong, wrong, true);
 		break;
 	case T_DEMONS_BACK:
-		processCase(callType, grid, temp_texId, "TDB", wrong, true);
+		processCase(callType, grid, temp_texId, "TDB", wrong,
+				attackEnemyTemple, true);
 		break;
 
 	default:

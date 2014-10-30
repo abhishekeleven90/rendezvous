@@ -47,6 +47,7 @@ void initRendering_main() {
 		placeItemAtRandomPos(TEAM_BOTH);
 	}
 
+	loadTeamAttributes();
 	loadPlayerSpecificAttributes();
 
 	t3dInit();
@@ -95,24 +96,38 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	case 49: //key - '1' : select basicPower
 		cout << "selected power_basic" << endl;
 		//TODO : show in attribute space
-		playerStats.currentPower = POWER_BASIC;
+		myTeam.players[currentPlayer - 1].currentPower = POWER_BASIC;
 		break;
 
 	case 50: //key - '2' : select magicPower
 		//TODO : show in attribute space
 		cout << "selected power_magic" << endl;
-		playerStats.currentPower = POWER_MAGIC;
+		myTeam.players[currentPlayer - 1].currentPower = POWER_MAGIC;
+		break;
+
+	case 48:
+		cout<<"Switching player"<<endl;
+		togglePlayer();
 		break;
 	}
 }
 
-void processRightClick_main(Coordinate_grid grid) {
+void processRightClick_main() {
 
 	//TODO: remove below cout(s)
 	cout << " row: " << downGrid_click.row;
 	cout << " col: " << downGrid_click.col << endl;
 
 	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
+}
+
+void processLeftClick_main() {
+
+	//TODO: remove below cout(s)
+	cout << " left click row: " << downGrid_click.row;
+	cout << " left click col: " << downGrid_click.col << endl;
+
+	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_LEFT_CLICK);
 }
 
 void myMouseClickHandler_main(int button, int state, int x, int y) {
@@ -129,7 +144,9 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 	}
 
 	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_main(downGrid_click);
+		processRightClick_main();
+	} else {
+		processLeftClick_main();
 	}
 }
 
