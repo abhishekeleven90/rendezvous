@@ -2,6 +2,7 @@
 #define OBJECTS_H
 
 #include "Headers.h"
+#include "AStarClass.h"
 
 enum charCellType {
 	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE, BG_BLOCKED,
@@ -79,6 +80,9 @@ struct Player {
 	int speedMove;
 
 	//list<itemType*> itemsBag;
+	AStarClass *astar;
+	Coordinate_grid location;
 };
 
+Player myTeamPlayers[2];//0 for player 1 and 1 for player 2
 #endif

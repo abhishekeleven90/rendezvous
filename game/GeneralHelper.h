@@ -6,6 +6,7 @@
 #include "FilePaths.h"
 #include "CustomVectorStruct.h"
 #include "Constants.h"
+#include "AStarClass.h"
 #include "Objects.h"
 #include "MapNGrid.h"
 #include "ActionOnGrid.h"
@@ -76,42 +77,46 @@ void printGrid() {
 
 //call this from the render function periodically
 void moveHeroMine(int type) {
-	//TODO:for all type of players
-	if (type == 1)//move player 1
-	{
-		Node* nodeToMove = findLocToMove(HERO_MINE_1_LOC);
-		if (nodeToMove == NULL)
-			return; //nothing to move
+	Node* nodeToMove = findLocToMove(myTeamPlayers[type - 1].location, type);
+	if (nodeToMove == NULL)
+		return; //nothing to move
 
-		//TODO: target cell is item, then still not handled
-
-		Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
-				nodeToMove->col + ATTRIBUTE_WIDTH);//TODO: constant
-		if (isItem(celltoMove)) {
-			setItemCell(celltoMove);
-			takeItem();
-		}
-
-		putCharToGrid(
-				HERO_MINE_1_LOC.row,
-				HERO_MINE_1_LOC.col,
-				initialGridChar[HERO_MINE_1_LOC.row][HERO_MINE_1_LOC.col
-						+ ATTRIBUTE_WIDTH], true);
-
-		HERO_MINE_1_LOC.row = nodeToMove->row;
-		HERO_MINE_1_LOC.col = nodeToMove->col;
-		putCharToGrid(HERO_MINE_1_LOC.row, HERO_MINE_1_LOC.col, H_SLOWER, true);
+	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
+			nodeToMove->col + ATTRIBUTE_WIDTH);//TODO: constant
+	if (isItem(celltoMove)) {
+		setItemCell(celltoMove);
+		takeItem();
 	}
+
+	putCharToGrid(
+			myTeamPlayers[type - 1].location.row,
+			myTeamPlayers[type - 1].location.col,
+			initialGridChar[myTeamPlayers[type - 1].location.row][myTeamPlayers[type
+					- 1].location.col + ATTRIBUTE_WIDTH], true);
+
+	myTeamPlayers[type - 1].location.row = nodeToMove->row;
+	myTeamPlayers[type - 1].location.col = nodeToMove->col;
+	putCharToGrid(myTeamPlayers[type - 1].location.row,
+			myTeamPlayers[type - 1].location.col, H_SLOWER, true);
 }
 
 void renderGrid() {
 	moveHeroMine(1);
+	moveHeroMine(2);
 
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			handleGridCharSwitch(Coordinate_grid(r, c), RENDER_GRID);
 		}
 	}
+}
+
+void togglePlayer()
+{
+	if(currentPlayer==1)
+		currentPlayer=2;
+	else
+		currentPlayer=1;
 }
 
 #endif

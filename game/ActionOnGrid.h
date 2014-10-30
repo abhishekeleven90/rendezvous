@@ -7,7 +7,6 @@
 #include "Constants.h"
 #include "CustomVectorStruct.h"
 #include "MapNGrid.h"
-#include "AStar.h"
 #include "Timer.h"
 
 Coordinate_grid targetCell;
@@ -118,18 +117,21 @@ void wrong() {
 }
 
 void aStarMove(bool through) {
+	//TODO:BOTH PLAYERS MOVE
+
 	//have to handle block status here istelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
-				blockSiteAStarGrid(i, j);
+				myTeamPlayers[currentPlayer-1].astar->blockSiteAStarGrid(i, j);
 			} else {
-				openSiteAStarGrid(i, j);
+				myTeamPlayers[currentPlayer-1].astar->openSiteAStarGrid(i, j);
 			}
 		}
 	}
-	initAStar(HERO_MINE_1_LOC, targetCell);//source and target given
-	AStar(through);
+	//myTeamPlayers[0].astar->initAStar(HERO_MINE_1_LOC, targetCell);
+	myTeamPlayers[currentPlayer-1].astar->initAStar(myTeamPlayers[currentPlayer-1].location, targetCell);
+	myTeamPlayers[currentPlayer-1].astar->AStar(through);
 }
 
 void aStarMoveThrough() {

@@ -46,13 +46,10 @@ GLuint i_tHealer_texId;
 
 GLuint temp_texId;
 
-//used for A*
-Coordinate_grid HERO_MINE_1_LOC;
-Coordinate_grid HERO_MINE_2_LOC;
-
 //window IDs
 int windowId_current;
 
 Coordinate_grid downGrid_click; //used for clickHandler
 
+int currentPlayer=2;//by default, toggle by 'P'
 #endif

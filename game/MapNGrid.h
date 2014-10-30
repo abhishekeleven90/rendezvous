@@ -7,7 +7,6 @@
 #include "Globals.h"
 #include "Validations.h"
 #include "Node.h"
-#include "AStar.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -28,14 +27,30 @@ void moveHeroMine(int type);
 Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
+void putHeros() {
+	myTeamPlayers[0].astar = new AStarClass();
+	myTeamPlayers[0].astar->firstInitAStar();
+	//TODO: player's location
+	Coordinate_grid location;
+	location.row = 19;
+	location.col = 1;
+	setHeroLocation(1, location);
+	//assuming the type is H_SLOWER in moveHero also
+	putCharToGrid(19, 1, H_SLOWER, true);
+
+	myTeamPlayers[1].astar = new AStarClass();
+	myTeamPlayers[1].astar->firstInitAStar();
+	//TODO: player's location
+	Coordinate_grid location2;
+	location2.row = 20;
+	location2.col = 3;
+	setHeroLocation(2, location2);
+	//assuming the type is H_SLOWER in moveHero also
+	putCharToGrid(20, 3, H_SLOWER, true);
+}
 void setHeroLocation(int which, Coordinate_grid loc) {
-	if (which == 1) {
-		HERO_MINE_1_LOC.row = loc.row;
-		HERO_MINE_1_LOC.col = loc.col;
-	} else {
-		HERO_MINE_2_LOC.row = loc.row;
-		HERO_MINE_2_LOC.col = loc.col;
-	}
+	myTeamPlayers[which - 1].location.row = loc.row;
+	myTeamPlayers[which - 1].location.col = loc.col;
 }
 
 void putAttributeSpace() {
@@ -157,12 +172,13 @@ void copyInit() {
 
 }
 
-Node* findLocToMove(Coordinate_grid curr) {
+Node* findLocToMove(Coordinate_grid curr, int which) {
+	AStarClass* astarForPlayer = myTeamPlayers[which - 1].astar;
 	Node* neighbours[4];
-	neighbours[0] = getNodeFromGrid(curr.row + 1, curr.col);
-	neighbours[1] = getNodeFromGrid(curr.row - 1, curr.col);
-	neighbours[2] = getNodeFromGrid(curr.row, curr.col + 1);
-	neighbours[3] = getNodeFromGrid(curr.row, curr.col - 1);
+	neighbours[0] = astarForPlayer->getNodeFromGrid(curr.row + 1, curr.col);
+	neighbours[1] = astarForPlayer->getNodeFromGrid(curr.row - 1, curr.col);
+	neighbours[2] = astarForPlayer->getNodeFromGrid(curr.row, curr.col + 1);
+	neighbours[3] = astarForPlayer->getNodeFromGrid(curr.row, curr.col - 1);
 
 	Node* toReturn = NULL;
 
@@ -176,7 +192,7 @@ Node* findLocToMove(Coordinate_grid curr) {
 		toReturn = neighbours[3];
 
 	if (toReturn != NULL)
-		getNodeFromGrid(curr.row, curr.col)->onPath = false;//So that it doesn't loop back
+		(astarForPlayer->getNodeFromGrid(curr.row, curr.col))->onPath = false;//So that it doesn't loop back
 
 	return toReturn;
 }

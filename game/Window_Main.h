@@ -35,7 +35,8 @@ void initRendering_main() {
 	loadTextures_main();
 
 	initMap();
-	firstInitAStar();
+
+	putHeros();
 
 	//Placing items in the map
 	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
@@ -43,14 +44,7 @@ void initRendering_main() {
 	}
 
 	loadPlayerSpecificAttributes();
-	//TODO: check if below required to move/modify
-	//modify to 19,3??
-	Coordinate_grid location;
-	location.row = 19;
-	location.col = 1;
-	setHeroLocation(1, location);
-	//assuming the type is H_SLOWER in moveHero also
-	putCharToGrid(19, 1, H_SLOWER, true);
+
 }
 
 //Draws the 3D scene
@@ -76,6 +70,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 32: //key - 'space' : on/off bgMusic
 		toggleBgMusic();
+		togglePlayer();
 		break;
 
 	case 49: //key - '1' : select basicPower
