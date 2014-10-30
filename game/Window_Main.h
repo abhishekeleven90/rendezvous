@@ -43,6 +43,7 @@ void initRendering_main() {
 		placeItemAtRandomPos(TEAM_BOTH);
 	}
 
+	loadTeamAttributes();
 	loadPlayerSpecificAttributes();
 
 }
@@ -84,6 +85,11 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		cout << "selected power_magic" << endl;
 		playerStats.currentPower = POWER_MAGIC;
 		break;
+
+	case 48:
+		cout<<"Switching player"<<endl;
+		togglePlayer();
+		break;
 	}
 }
 
@@ -120,9 +126,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 
 	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
 		processRightClick_main();
-	}
-	else
-	{
+	} else {
 		processLeftClick_main();
 	}
 }

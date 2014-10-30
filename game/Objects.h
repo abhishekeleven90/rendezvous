@@ -82,7 +82,15 @@ struct Player {
 	//list<itemType*> itemsBag;
 	AStarClass *astar;
 	Coordinate_grid location;
+
+	bool toAttackTemple;
 };
 
-Player myTeamPlayers[2];//0 for player 1 and 1 for player 2
+//TODO: Abhishek to remove once corrected structure
+struct TeamStruct {
+	teamName team_name;
+	int health;//temple health
+	Player players[2];
+};
+
 #endif

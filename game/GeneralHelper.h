@@ -12,6 +12,7 @@
 #include "ActionOnGrid.h"
 #include "Validations.h"
 
+
 void blockOponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
@@ -20,6 +21,23 @@ void blockOponentsArea() {
 			}
 		}
 	}
+}
+
+void loadTeamAttributes()
+{
+	//TODO: Abhishek from other screens, or as decided
+
+	myTeam.team_name=TEAM_ANGELS;
+	myTeam.health=HEALTH_FULL_TEMPLE;
+	//first player load attributes yours, plus others
+	//first player may be the first player to join
+
+	enemyTeam.team_name=TEAM_DEMONS;
+	//load attributes
+
+	enemyTeam.health=HEALTH_FULL_TEMPLE;
+	enemyTeam.team_name=TEAM_DEMONS;
+
 }
 
 void loadPlayerSpecificAttributes() {
@@ -77,10 +95,13 @@ void printGrid() {
 
 //call this from the render function periodically
 void moveHeroMine(int type) {
-	Node* nodeToMove = findLocToMove(myTeamPlayers[type - 1].location, type);
+	Node* nodeToMove = findLocToMove(myTeam.players[type - 1].location, type);
 	if (nodeToMove == NULL)
+	{
+		if(myTeam.players[type - 1].toAttackTemple)
+			decreaseEnemyTempleHealth();
 		return; //nothing to move
-
+	}
 	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
 			nodeToMove->col + ATTRIBUTE_WIDTH);
 	if (isItem(celltoMove)) {
@@ -89,15 +110,15 @@ void moveHeroMine(int type) {
 	}
 
 	putCharToGrid(
-			myTeamPlayers[type - 1].location.row,
-			myTeamPlayers[type - 1].location.col,
-			initialGridChar[myTeamPlayers[type - 1].location.row][myTeamPlayers[type
+			myTeam.players[type - 1].location.row,
+			myTeam.players[type - 1].location.col,
+			initialGridChar[myTeam.players[type - 1].location.row][myTeam.players[type
 					- 1].location.col + ATTRIBUTE_WIDTH], true);
 
-	myTeamPlayers[type - 1].location.row = nodeToMove->row;
-	myTeamPlayers[type - 1].location.col = nodeToMove->col;
-	putCharToGrid(myTeamPlayers[type - 1].location.row,
-			myTeamPlayers[type - 1].location.col, H_SLOWER, true);
+	myTeam.players[type - 1].location.row = nodeToMove->row;
+	myTeam.players[type - 1].location.col = nodeToMove->col;
+	putCharToGrid(myTeam.players[type - 1].location.row,
+			myTeam.players[type - 1].location.col, H_SLOWER, true);
 }
 
 void renderGrid() {
@@ -117,6 +138,6 @@ void togglePlayer()
 		currentPlayer=2;
 	else
 		currentPlayer=1;
+	playerStats=myTeam.players[currentPlayer-1];
 }
-
 #endif

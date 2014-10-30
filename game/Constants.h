@@ -32,7 +32,7 @@
 
 //Attributes
 #define HEALTH_FULL_HERO 100
-#define HEALTH_FULL_TEMPLE 100
+#define HEALTH_FULL_TEMPLE 500
 
 #define STRENGTH_H_STUNNER 1 //DAMAGE
 #define STRENGTH_H_DISABLER 1
@@ -57,7 +57,7 @@
 
 //Number of Blocks
 #define SPAWN_BLOCKS 3
-#define ATTRIBUTE_WIDTH 3
+#define ATTRIBUTE_WIDTH 2
 #define TEMPLE_BLOCKS 2
 #define DIAG_BLOCKS 2 //numOfDiagonals = 2*DIAGONAL_BLOCKS+1
 #endif

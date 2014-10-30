@@ -28,29 +28,31 @@ Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
 void putHeros() {
-	myTeamPlayers[0].astar = new AStarClass();
-	myTeamPlayers[0].astar->firstInitAStar();
+	myTeam.players[0].astar = new AStarClass();
+	myTeam.players[0].astar->firstInitAStar();
 	//TODO: Abhisek : player's location, move to playerStats?
 	Coordinate_grid location;
 	location.row = 19;
 	location.col = 1;
 	setHeroLocation(1, location);
+	myTeam.players[0].strength=STRENGTH_H_SLOWER;
 
 	putCharToGrid(19, 1, H_SLOWER, true);
 
-	myTeamPlayers[1].astar = new AStarClass();
-	myTeamPlayers[1].astar->firstInitAStar();
+	myTeam.players[1].astar = new AStarClass();
+	myTeam.players[1].astar->firstInitAStar();
 
 	Coordinate_grid location2;
 	location2.row = 20;
 	location2.col = 3;
 	setHeroLocation(2, location2);
 	//assuming the type is H_SLOWER in moveHero also
+	myTeam.players[1].strength=STRENGTH_H_SLOWER;
 	putCharToGrid(20, 3, H_SLOWER, true);
 }
 void setHeroLocation(int which, Coordinate_grid loc) {
-	myTeamPlayers[which - 1].location.row = loc.row;
-	myTeamPlayers[which - 1].location.col = loc.col;
+	myTeam.players[which - 1].location.row = loc.row;
+	myTeam.players[which - 1].location.col = loc.col;
 }
 
 void putAttributeSpace() {
@@ -173,7 +175,7 @@ void copyInit() {
 }
 
 Node* findLocToMove(Coordinate_grid curr, int which) {
-	AStarClass* astarForPlayer = myTeamPlayers[which - 1].astar;
+	AStarClass* astarForPlayer = myTeam.players[which - 1].astar;
 	Node* neighbours[4];
 	neighbours[0] = astarForPlayer->getNodeFromGrid(curr.row + 1, curr.col);
 	neighbours[1] = astarForPlayer->getNodeFromGrid(curr.row - 1, curr.col);
