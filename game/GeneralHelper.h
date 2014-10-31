@@ -30,11 +30,9 @@ void loadTeamAttributes() {
 	//first player load attributes yours, plus others
 	//first player may be the first player to join
 
-	enemyTeam.team_name = TEAM_DEMONS;
-	//load attributes
-
 	enemyTeam.health = HEALTH_FULL_TEMPLE;
 	enemyTeam.team_name = TEAM_DEMONS;
+	//load other attributes
 
 }
 

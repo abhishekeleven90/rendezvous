@@ -234,13 +234,22 @@ void decreaseEnemyTempleHealth() {
 }
 
 void attackEnemyTemple() {
-	cout << "Gear up! We are attacking opponent's temple!" << endl;
-	//TODO: Abhishek for both type of teams
-	//write now for demons
 	aStarMoveNotThrough();
 	setAttackTemple(currentPlayer, true);
 	//TODO: Abhishek play temple attack sound
 	//TODO: gif attack animation
+}
+
+void attackAngelsTemple() {
+	if (myTeam.team_name == TEAM_DEMONS) {
+		attackEnemyTemple();
+	}
+}
+
+void attackDemonsTemple() {
+	if (myTeam.team_name == TEAM_ANGELS) {
+		attackEnemyTemple();
+	}
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
@@ -281,23 +290,13 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		break;
 
 	case TEMPLE_ANGELS:
-		if (myTeam.team_name == TEAM_ANGELS) {
-			processCase(callType, grid, t_angels_texId, "TAn", wrong, wrong,
-					false, TEMPLE_BLOCKS);
-		} else {
-			processCase(callType, grid, t_angels_texId, "TAn", wrong,
-					attackEnemyTemple, false, TEMPLE_BLOCKS);
-		}
+		processCase(callType, grid, t_angels_texId, "TAn", wrong,
+				attackAngelsTemple, false, TEMPLE_BLOCKS);
 		break;
 
 	case TEMPLE_DEMONS:
-		if (myTeam.team_name == TEAM_ANGELS) {
-			processCase(callType, grid, t_demons_texId, "TDe", wrong,
-					attackEnemyTemple, false, TEMPLE_BLOCKS);
-		} else {
-			processCase(callType, grid, t_angels_texId, "TAn", wrong,
-					attackEnemyTemple, false, TEMPLE_BLOCKS);
-		}
+		processCase(callType, grid, t_demons_texId, "TDe", wrong,
+				attackDemonsTemple, false, TEMPLE_BLOCKS);
 		break;
 
 		//TODO: Abhishek : leftClick on enemy and on friend and on self
@@ -305,12 +304,15 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		processCase(callType, grid, h_disabler_texId, "HDi", wrong, wrong,
 				false);
 		break;
+
 	case H_SLOWER:
 		processCase(callType, grid, h_slower_texId, "HSl", wrong, wrong, false);
 		break;
+
 	case H_BURSTER:
 		processCase(callType, grid, h_burster_texId, "HBu", wrong, wrong, false);
 		break;
+
 	case H_STUNNER:
 		processCase(callType, grid, h_stunner_texId, "HSt", wrong, wrong, false);
 		break;
@@ -320,16 +322,19 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case I_HEALTH:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case I_DAMAGE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case I_TEMPLE_HEALER:
 		itemCell = Coordinate_grid(grid.row, grid.col);
 		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough,
@@ -340,13 +345,14 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		processCase(callType, grid, temp_texId, "TBa", wrong, wrong, true);
 		break;
 
-		//TODO: if else for demons and angels
 	case T_ANGELS_BACK:
-		processCase(callType, grid, temp_texId, "TAB", wrong, wrong, true);
+		processCase(callType, grid, temp_texId, "TAB", wrong,
+				attackAngelsTemple, true);
 		break;
+
 	case T_DEMONS_BACK:
 		processCase(callType, grid, temp_texId, "TDB", wrong,
-				attackEnemyTemple, true);
+				attackDemonsTemple, true);
 		break;
 
 	default:
