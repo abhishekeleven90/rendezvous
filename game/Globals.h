@@ -57,6 +57,4 @@ int windowId_current;
 
 Coordinate_grid downGrid_click; //used for clickHandler
 
-int currentPlayer = 2;//by default, toggle by 'P'
-
 #endif

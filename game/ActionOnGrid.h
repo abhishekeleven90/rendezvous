@@ -129,7 +129,8 @@ void aStarMove(bool through) {
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
-				myTeam.players[currentPlayer - 1].astar->blockSiteAStarGrid(i, j);
+				myTeam.players[currentPlayer - 1].astar->blockSiteAStarGrid(i,
+						j);
 			} else {
 				myTeam.players[currentPlayer - 1].astar->openSiteAStarGrid(i, j);
 			}
@@ -192,7 +193,8 @@ void updateHeroAttributesTakingItem() {
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;
-		myTeam.players[currentPlayer - 1].templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+		myTeam.players[currentPlayer - 1].templeHealth
+				+= GAIN_ITEM_TEMPLE_HEALER;
 		//myTeam.players[currentPlayer - 1].itemsBag.push_back(&itemTaken);
 		break;
 	}
@@ -249,18 +251,22 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		processCase(callType, grid, bg_grass_texId, "Gra", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case BG_SPAWN:
 		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case BG_WAR:
 		processCase(callType, grid, bg_war_texId, "BWa", aStarMoveThrough,
 				wrong, false);
 		break;
+
 	case BG_ATTRIBUTE:
 		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, wrong,
 				false);
 		break;
+
 	case BG_BLOCKED:
 		processCase(callType, grid, bg_blocked_texId, "BBl", wrong, wrong,
 				false);
@@ -269,22 +275,32 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 	case STONE:
 		processCase(callType, grid, stone_texId, "Sto", wrong, wrong, false);
 		break;
+
 	case TREE:
 		processCase(callType, grid, tree_texId, "Tre", wrong, wrong, false);
 		break;
 
 	case TEMPLE_ANGELS:
-		processCase(callType, grid, t_angels_texId, "TAn", wrong, wrong, false,
-				TEMPLE_BLOCKS);
+		if (myTeam.team_name == TEAM_ANGELS) {
+			processCase(callType, grid, t_angels_texId, "TAn", wrong, wrong,
+					false, TEMPLE_BLOCKS);
+		} else {
+			processCase(callType, grid, t_angels_texId, "TAn", wrong,
+					attackEnemyTemple, false, TEMPLE_BLOCKS);
+		}
 		break;
 
-		//TODO: Abhishek: friend temple attack
 	case TEMPLE_DEMONS:
-		processCase(callType, grid, t_demons_texId, "TDe", wrong,
-				attackEnemyTemple, false, TEMPLE_BLOCKS);
+		if (myTeam.team_name == TEAM_ANGELS) {
+			processCase(callType, grid, t_demons_texId, "TDe", wrong,
+					attackEnemyTemple, false, TEMPLE_BLOCKS);
+		} else {
+			processCase(callType, grid, t_angels_texId, "TAn", wrong,
+					attackEnemyTemple, false, TEMPLE_BLOCKS);
+		}
 		break;
 
-		//TODO: Abhishek : leftClick on enemy and on friend and on on self
+		//TODO: Abhishek : leftClick on enemy and on friend and on self
 	case H_DISABLER:
 		processCase(callType, grid, h_disabler_texId, "HDi", wrong, wrong,
 				false);
