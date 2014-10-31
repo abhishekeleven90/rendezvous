@@ -4,58 +4,28 @@
 #include "text3d.h"
 
 void loadTextures_main() {
-	texId_bg_grass = getTextureFromImage(PATH_IMG_BG_WINDOW_MAIN);
-	texId_bg_spawn = getTextureFromImage(PATH_IMG_BG_SPAWN);
-	texId_bg_war = getTextureFromImage(PATH_IMG_BG_WAR);
-	texId_bg_attribute = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
-	texId_bg_blocked = getTextureFromImage(PATH_IMG_BG_BLOCKED);
+	texId_bg_grass = getTextureFromBmpImage(PATH_IMG_BG_WINDOW_MAIN);
+	texId_bg_spawn = getTextureFromBmpImage(PATH_IMG_BG_SPAWN);
+	texId_bg_war = getTextureFromBmpImage(PATH_IMG_BG_WAR);
+	texId_bg_attribute = getTextureFromBmpImage(PATH_IMG_BG_ATTRIBUTE);
+	texId_bg_blocked = getTextureFromBmpImage(PATH_IMG_BG_BLOCKED);
 
-	texId_tree = getTextureFromImage(PATH_IMG_TREE);
-	texId_stone = getTextureFromImage(PATH_IMG_STONE);
+	texId_tree = getTextureFromBmpImage(PATH_IMG_TREE);
+	texId_stone = getTextureFromBmpImage(PATH_IMG_STONE);
 
-	texId_t_demons = getTextureFromImage(PATH_IMG_TEMPLE_DEMONS);
+	texId_t_demons = getTextureFromBmpImage(PATH_IMG_TEMPLE_DEMONS);
 
 	//TODO: uncomment
 	//h_stunner_texId = getTextureFromImage(PATH_IMG_HERO_STUNNER);
 	//h_disabler_texId = getTextureFromImage(PATH_IMG_HERO_DISABLER);
-	texId_h_slower = getTextureFromImage(PATH_IMG_HERO_SLOWER);
-	texId_h_burster = getTextureFromImage(PATH_IMG_HERO_BURSTER);
+	texId_h_slower = getTextureFromBmpImage(PATH_IMG_HERO_SLOWER);
+	texId_h_burster = getTextureFromBmpImage(PATH_IMG_HERO_BURSTER);
 
-	texId_i_speedMov = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	texId_i_speedAttack = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
-	texId_i_damage = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
-	texId_i_health = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
-	texId_i_tHealer = getTextureFromImage(PATH_IMG_ITEM_TEMPLE_HEALER);
-
-	texId_att_cBurst = getTextureFromImage(PATH_IMG_ATT_CURSE_BURST);
-	texId_att_cDisable = getTextureFromImage(PATH_IMG_ATT_CURSE_DISABLE);
-	texId_att_cSlow = getTextureFromImage(PATH_IMG_ATT_CURSE_SLOW);
-	texId_att_cStun = getTextureFromImage(PATH_IMG_ATT_CURSE_STUN);
-	texId_att_cNone = getTextureFromImage(PATH_IMG_ATT_CURSE_NONE);
-
-	texId_att_h_burster = getTextureFromImage(PATH_IMG_ATT_HERO_BURSTER);
-	texId_att_h_dsabler = getTextureFromImage(PATH_IMG_ATT_HERO_DISABLER);
-	texId_att_h_slower = getTextureFromImage(PATH_IMG_ATT_HERO_SLOWER);
-	texId_att_h_stunner = getTextureFromImage(PATH_IMG_ATT_HERO_STUNNER);
-
-	texId_att_mode_basic = getTextureFromImage(PATH_IMG_ATT_MODE_BASIC);
-	texId_att_mode_magic = getTextureFromImage(PATH_IMG_ATT_MODE_MAGIC);
-
-	texId_att_team_angels = getTextureFromImage(PATH_IMG_ATT_TEAM_ANGELS);
-	//texId_att_team_demons = getTextureFromImage(PATH_IMG_ATT_TEAM_DEMONS);
-
-	texId_att_team_enemy = getTextureFromImage(PATH_IMG_ATT_TEAM_ENEMY);
-	texId_att_team_my = getTextureFromImage(PATH_IMG_ATT_TEAM_MY);
-
-	texId_att_timers = getTextureFromImage(PATH_IMG_ATT_TIMERS);
-	texId_att_time_iOn = getTextureFromImage(PATH_IMG_ATT_TIMERS_ITEM_ON);
-	texId_att_time_iOff = getTextureFromImage(PATH_IMG_ATT_TIMERS_ITEM_OFF);
-	texId_att_time_mOff = getTextureFromImage(PATH_IMG_ATT_TIMERS_MAGIC_OFF);
-	texId_att_time_mOn = getTextureFromImage(PATH_IMG_ATT_TIMERS_MAGIC_ON);
-
-	texId_att_wall = getTextureFromImage(PATH_IMG_ATT_WALL);
-
-	texId_att_health = getTextureFromImage(PATH_IMG_ATT_HEALTH);
+	texId_i_speedMov = getTextureFromBmpImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
+	texId_i_speedAttack = getTextureFromBmpImage(PATH_IMG_ITEM_ATTACK_SPEED);
+	texId_i_damage = getTextureFromBmpImage(PATH_IMG_ITEM_DAMAGE);
+	texId_i_health = getTextureFromBmpImage(PATH_IMG_ITEM_HEALTH);
+	texId_i_tHealer = getTextureFromBmpImage(PATH_IMG_ITEM_TEMPLE_HEALER);
 }
 
 //Initializes 3D rendering

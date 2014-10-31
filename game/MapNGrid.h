@@ -248,9 +248,6 @@ void putImageToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0f, 0.0f);
@@ -263,19 +260,6 @@ void putImageToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
 	glVertex3f(openGl.x + xSize, openGl.y, -5.0f);
 
 	glEnd();
-}
-
-void putImageToLeftAttCell(Coordinate_grid grid, GLuint _textureId,
-		int xBlocks, int yBlocks) {
-	//grid.col should be between 1 & ATTRIBUTE_WIDTH
-	putImageToCell(grid, _textureId, xBlocks, yBlocks);
-}
-
-void putImageToRightAttCell(Coordinate_grid grid, GLuint _textureId,
-		int xBlocks, int yBlocks) {
-	//grid.col should be between 1 & ATTRIBUTE_WIDTH
-	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
-	putImageToCell(grid, _textureId, xBlocks, yBlocks);
 }
 
 void putMultipleCharToGrid(int row, int col, charCellType charType,

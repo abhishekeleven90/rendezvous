@@ -118,47 +118,12 @@ void moveHeroMine(int type) {
 }
 
 void loadAttributeSpace() {
-	putImageToLeftAttCell(Coordinate_grid(1, 1), texId_att_team_my, 2, 1);
-	putImageToLeftAttCell(Coordinate_grid(6, 1), texId_att_health, 1, 1);
-	putImageToLeftAttCell(Coordinate_grid(12, 1), texId_att_health, 1, 1);
-	putImageToLeftAttCell(Coordinate_grid(15, 1), texId_att_health, 1, 1);
-	putImageToLeftAttCell(Coordinate_grid(17, 1), texId_att_timers, 2, 1);
+	putPngImageToLeftAttCell(PATH_IMG_ATT_TEAM_MY, Coordinate_grid(1, 1), 2, 1);
+	putPngImageToLeftAttCell(PATH_IMG_ATT_TIMERS, Coordinate_grid(17, 1), 2, 1);
 
-	putImageToRightAttCell(Coordinate_grid(1, 1), texId_att_team_enemy, 2, 1);
-	putImageToRightAttCell(Coordinate_grid(6, 1), texId_att_health, 1, 1);
-	putImageToRightAttCell(Coordinate_grid(10, 1), texId_att_health, 1, 1);
-	putImageToRightAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
-	putImageToRightAttCell(Coordinate_grid(15, 1), texId_att_wall, 2, 1);
-
-	/*putImageToLeftAttCell(Coordinate_grid(2, 1), texId_att_time_iOff, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(3, 1), texId_att_time_iOn, 2, 1);
-
-	 putImageToLeftAttCell(Coordinate_grid(3, 1), texId_att_timers, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(4, 1), texId_att_time_mOn, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(4, 1), texId_att_time_mOff, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(5, 1), texId_att_team_demons, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(5, 1), texId_att_team_angels, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(6, 1), texId_att_mode_magic, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(6, 1), texId_att_mode_basic, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(7, 1), texId_att_h_stunner, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(7, 1), texId_att_h_slower, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(8, 1), texId_att_h_dsabler, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(9, 1), texId_att_cNone, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(9, 1), texId_att_cStun, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(10, 1), texId_att_cSlow, 2, 1);
-	 putImageToLeftAttCell(Coordinate_grid(10, 1), texId_att_cDisable, 2, 1);
-
-	 putImageToRightAttCell(Coordinate_grid(11, 1), texId_att_cBurst, 2, 1);
-	 putImageToRightAttCell(Coordinate_grid(11, 1), texId_att_wall, 2, 1);*/
+	putPngImageToRightAttCell(PATH_IMG_ATT_TEAM_ENEMY, Coordinate_grid(1, 1),
+			2, 1);
+	putPngImageToRightAttCell(PATH_IMG_ATT_WALL, Coordinate_grid(16, 1), 2, 1);
 }
 
 void renderGrid() {

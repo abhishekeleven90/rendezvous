@@ -50,36 +50,6 @@ GLuint texId_i_damage;
 GLuint texId_i_health;
 GLuint texId_i_tHealer;
 
-GLuint texId_att_cBurst;
-GLuint texId_att_cDisable;
-GLuint texId_att_cSlow;
-GLuint texId_att_cStun;
-GLuint texId_att_cNone;
-
-GLuint texId_att_h_burster;
-GLuint texId_att_h_dsabler;
-GLuint texId_att_h_slower;
-GLuint texId_att_h_stunner;
-
-GLuint texId_att_mode_basic;
-GLuint texId_att_mode_magic;
-
-GLuint texId_att_team_angels;
-GLuint texId_att_team_demons;
-
-GLuint texId_att_team_enemy;
-GLuint texId_att_team_my;
-
-GLuint texId_att_timers;
-GLuint texId_att_time_iOn;
-GLuint texId_att_time_iOff;
-GLuint texId_att_time_mOff;
-GLuint texId_att_time_mOn;
-
-GLuint texId_att_health;
-
-GLuint texId_att_wall;
-
 GLuint temp_texId;
 
 //window IDs

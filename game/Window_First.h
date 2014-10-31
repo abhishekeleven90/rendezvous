@@ -2,7 +2,7 @@
 #define WINDOW_FIRST_H
 
 void loadTextures_first() {
-	btn_start_texId = getTextureFromImage(PATH_IMG_BTN_START);
+	btn_start_texId = getTextureFromBmpImage(PATH_IMG_BTN_START);
 }
 
 //Initializes 3D rendering
