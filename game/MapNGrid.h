@@ -27,6 +27,7 @@ void moveHeroMine(int type);
 Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
+//TODO: test code can be removed whenever wanted
 void putHeros() {
 	myTeam.players[0].astar = new AStarClass();
 	myTeam.players[0].astar->firstInitAStar();
@@ -35,7 +36,6 @@ void putHeros() {
 	location.row = 19;
 	location.col = 1;
 	setHeroLocation(1, location);
-	myTeam.players[0].strength=STRENGTH_H_SLOWER;
 
 	putCharToGrid(19, 1, H_SLOWER, true);
 
@@ -50,6 +50,7 @@ void putHeros() {
 	myTeam.players[1].strength=STRENGTH_H_SLOWER;
 	putCharToGrid(20, 3, H_SLOWER, true);
 }
+
 void setHeroLocation(int which, Coordinate_grid loc) {
 	myTeam.players[which - 1].location.row = loc.row;
 	myTeam.players[which - 1].location.col = loc.col;
@@ -286,7 +287,7 @@ bool isBlockedSite(int r, int c) {
 	default:
 		break;
 	}
-	return true; //Open
+	return true; //close
 }
 
 #endif
