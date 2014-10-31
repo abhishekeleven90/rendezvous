@@ -4,9 +4,12 @@
 #include "Constants.h"
 #include "Objects.h"
 #include "FilePaths.h"
+#include "FilePaths_att.h"
 #include "Globals.h"
 #include "Validations.h"
 #include "Node.h"
+
+#include "text3d.h"
 
 void putAttributeSpace();
 void putGrass();
@@ -16,9 +19,7 @@ GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
 void putCharToGrid(int row, int col, charCellType charType, bool isInner);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
-		charCellType backChar, int blocks, bool isInner);
-void putImageToCell(Coordinate_grid grid, GLuint _textureId, int blocks = 1);
-void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks);
+		charCellType backChar, int xBlocks, int yBlocks, bool isInner);
 void renderGrid();
 void copyInit();
 void setHeroLocation(int which, Coordinate_grid loc);
@@ -47,7 +48,7 @@ void putHeros() {
 	location2.col = 3;
 	setHeroLocation(2, location2);
 	//assuming the type is H_SLOWER in moveHero also
-	myTeam.players[1].strength=STRENGTH_H_SLOWER;
+	myTeam.players[1].strength = STRENGTH_H_SLOWER;
 	putCharToGrid(20, 3, H_SLOWER, true);
 }
 
@@ -105,9 +106,9 @@ void putWarGround() {
 
 void putTemple() {
 	putMultipleCharToGrid(5, 4, TEMPLE_ANGELS, T_ANGELS_BACK, TEMPLE_BLOCKS,
-			true);
+			TEMPLE_BLOCKS, true);
 	putMultipleCharToGrid(17, 16, TEMPLE_DEMONS, T_DEMONS_BACK, TEMPLE_BLOCKS,
-			true);
+			TEMPLE_BLOCKS, true);
 }
 
 void putToGridFromFile(string filePath, charCellType charCellType,
@@ -185,17 +186,19 @@ Node* findLocToMove(Coordinate_grid curr, int which) {
 
 	Node* toReturn = NULL;
 
-	if (neighbours[0] != NULL && neighbours[0]->onPath)
+	if (neighbours[0] != NULL && neighbours[0]->onPath) {
 		toReturn = neighbours[0];
-	else if (neighbours[1] != NULL && neighbours[1]->onPath)
+	} else if (neighbours[1] != NULL && neighbours[1]->onPath) {
 		toReturn = neighbours[1];
-	else if (neighbours[2] != NULL && neighbours[2]->onPath)
+	} else if (neighbours[2] != NULL && neighbours[2]->onPath) {
 		toReturn = neighbours[2];
-	else if (neighbours[3] != NULL && neighbours[3]->onPath)
+	} else if (neighbours[3] != NULL && neighbours[3]->onPath) {
 		toReturn = neighbours[3];
+	}
 
-	if (toReturn != NULL)
+	if (toReturn != NULL) {
 		(astarForPlayer->getNodeFromGrid(curr.row, curr.col))->onPath = false;//So that it doesn't loop back
+	}
 
 	return toReturn;
 }
@@ -216,8 +219,32 @@ charCellType getInnerGridChar(int randomRow, int randomCol) {
 	return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
 }
 
-void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
-	GLfloat size1D = blocks * CELL_LENGTH;
+float t3dComputeScale(const char* str) {
+	float width = t3dDrawWidth(str);
+	return CELL_LENGTH / width;
+}
+
+void putTextToCell(Coordinate_grid grid, char* string) {
+	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+	float t3dScale = t3dComputeScale("qqqqq");
+	glPushMatrix();
+	glTranslatef(openGl.x, openGl.y, -5.0f);
+	//glTranslatef(0, 0, -4.0f);
+	glScalef(t3dScale, t3dScale, t3dScale);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	//glTranslatef(0, 0, 1.5f / _scale);
+	t3dDraw3D(string, -1, 0, 0.2f);
+	glPopMatrix();
+	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void putImageToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
+		int yBlocks) {
+	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+
+	GLfloat xSize = xBlocks * CELL_LENGTH;
+	GLfloat ySize = yBlocks * CELL_LENGTH;
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 
@@ -227,28 +254,36 @@ void putImageToGrid(GLfloat x, GLfloat y, GLuint _textureId, int blocks) {
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(x, y, -5.0f);
+	glVertex3f(openGl.x, openGl.y, -5.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(x, y + size1D, -5.0f);
+	glVertex3f(openGl.x, openGl.y + ySize, -5.0f);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(x + size1D, y + size1D, -5.0f);
+	glVertex3f(openGl.x + xSize, openGl.y + ySize, -5.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(x + size1D, y, -5.0f);
+	glVertex3f(openGl.x + xSize, openGl.y, -5.0f);
 
 	glEnd();
 }
 
-void putImageToCell(Coordinate_grid grid, GLuint _textureId, int blocks) {
-	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
-	putImageToGrid(openGl.x, openGl.y, _textureId, blocks);
+void putImageToLeftAttCell(Coordinate_grid grid, GLuint _textureId,
+		int xBlocks, int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	putImageToCell(grid, _textureId, xBlocks, yBlocks);
+}
+
+void putImageToRightAttCell(Coordinate_grid grid, GLuint _textureId,
+		int xBlocks, int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
+	putImageToCell(grid, _textureId, xBlocks, yBlocks);
 }
 
 void putMultipleCharToGrid(int row, int col, charCellType charType,
-		charCellType backChar, int blocks, bool isInner) {
+		charCellType backChar, int xBlocks, int yBlocks, bool isInner) {
 
 	//Adding 'back' characters - required in case of covering multiple cells
-	for (int i = 0; i < blocks; i++) {
-		for (int j = 0; j < blocks; j++) {
+	for (int i = 0; i < xBlocks; i++) {
+		for (int j = 0; j < yBlocks; j++) {
 			putCharToGrid(row - i, col + j, backChar, isInner);
 		}
 	}

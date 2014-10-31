@@ -26,29 +26,59 @@ TeamStruct myTeam, enemyTeam;
 //TextureIds
 GLuint btn_start_texId;
 
-GLuint bg_grass_texId;
-GLuint bg_spawn_texId;
-GLuint bg_war_texId;
-GLuint bg_blocked_texId;
+GLuint texId_bg_grass;
+GLuint texId_bg_spawn;
+GLuint texId_bg_war;
+GLuint texId_bg_blocked;
 
-GLuint bg_attribute_texId;
+GLuint texId_bg_attribute;
 
-GLuint tree_texId;
-GLuint stone_texId;
+GLuint texId_tree;
+GLuint texId_stone;
 
 GLuint t_angels_texId; //temples
-GLuint t_demons_texId;
+GLuint texId_t_demons;
 
 GLuint h_stunner_texId;
 GLuint h_disabler_texId;
-GLuint h_slower_texId; //hero_mario
-GLuint h_burster_texId; //hero_soldier
+GLuint texId_h_slower; //hero_mario
+GLuint texId_h_burster; //hero_soldier
 
-GLuint i_speedMov_texId;
-GLuint i_speedAttack_texId;
-GLuint i_damage_texId;
-GLuint i_health_texId;
-GLuint i_tHealer_texId;
+GLuint texId_i_speedMov;
+GLuint texId_i_speedAttack;
+GLuint texId_i_damage;
+GLuint texId_i_health;
+GLuint texId_i_tHealer;
+
+GLuint texId_att_cBurst;
+GLuint texId_att_cDisable;
+GLuint texId_att_cSlow;
+GLuint texId_att_cStun;
+GLuint texId_att_cNone;
+
+GLuint texId_att_h_burster;
+GLuint texId_att_h_dsabler;
+GLuint texId_att_h_slower;
+GLuint texId_att_h_stunner;
+
+GLuint texId_att_mode_basic;
+GLuint texId_att_mode_magic;
+
+GLuint texId_att_team_angels;
+GLuint texId_att_team_demons;
+
+GLuint texId_att_team_enemy;
+GLuint texId_att_team_my;
+
+GLuint texId_att_timers;
+GLuint texId_att_time_iOn;
+GLuint texId_att_time_iOff;
+GLuint texId_att_time_mOff;
+GLuint texId_att_time_mOn;
+
+GLuint texId_att_health;
+
+GLuint texId_att_wall;
 
 GLuint temp_texId;
 

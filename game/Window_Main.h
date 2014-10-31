@@ -4,36 +4,66 @@
 #include "text3d.h"
 
 void loadTextures_main() {
-	bg_grass_texId = getTextureFromImage(PATH_IMG_BG_WINDOW_MAIN);
-	bg_spawn_texId = getTextureFromImage(PATH_IMG_BG_SPAWN);
-	bg_war_texId = getTextureFromImage(PATH_IMG_BG_WAR);
-	bg_attribute_texId = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
-	bg_blocked_texId = getTextureFromImage(PATH_IMG_BG_BLOCKED);
+	texId_bg_grass = getTextureFromImage(PATH_IMG_BG_WINDOW_MAIN);
+	texId_bg_spawn = getTextureFromImage(PATH_IMG_BG_SPAWN);
+	texId_bg_war = getTextureFromImage(PATH_IMG_BG_WAR);
+	texId_bg_attribute = getTextureFromImage(PATH_IMG_BG_ATTRIBUTE);
+	texId_bg_blocked = getTextureFromImage(PATH_IMG_BG_BLOCKED);
 
-	tree_texId = getTextureFromImage(PATH_IMG_TREE);
-	stone_texId = getTextureFromImage(PATH_IMG_STONE);
+	texId_tree = getTextureFromImage(PATH_IMG_TREE);
+	texId_stone = getTextureFromImage(PATH_IMG_STONE);
 
-	t_demons_texId = getTextureFromImage(PATH_IMG_TEMPLE_DEMONS);
+	texId_t_demons = getTextureFromImage(PATH_IMG_TEMPLE_DEMONS);
 
 	//TODO: uncomment
 	//h_stunner_texId = getTextureFromImage(PATH_IMG_HERO_STUNNER);
 	//h_disabler_texId = getTextureFromImage(PATH_IMG_HERO_DISABLER);
-	h_slower_texId = getTextureFromImage(PATH_IMG_HERO_SLOWER);
-	h_burster_texId = getTextureFromImage(PATH_IMG_HERO_BURSTER);
+	texId_h_slower = getTextureFromImage(PATH_IMG_HERO_SLOWER);
+	texId_h_burster = getTextureFromImage(PATH_IMG_HERO_BURSTER);
 
-	i_speedMov_texId = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	i_speedAttack_texId = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
-	i_damage_texId = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
-	i_health_texId = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
-	i_tHealer_texId = getTextureFromImage(PATH_IMG_ITEM_TEMPLE_HEALER);
+	texId_i_speedMov = getTextureFromImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
+	texId_i_speedAttack = getTextureFromImage(PATH_IMG_ITEM_ATTACK_SPEED);
+	texId_i_damage = getTextureFromImage(PATH_IMG_ITEM_DAMAGE);
+	texId_i_health = getTextureFromImage(PATH_IMG_ITEM_HEALTH);
+	texId_i_tHealer = getTextureFromImage(PATH_IMG_ITEM_TEMPLE_HEALER);
+
+	texId_att_cBurst = getTextureFromImage(PATH_IMG_ATT_CURSE_BURST);
+	texId_att_cDisable = getTextureFromImage(PATH_IMG_ATT_CURSE_DISABLE);
+	texId_att_cSlow = getTextureFromImage(PATH_IMG_ATT_CURSE_SLOW);
+	texId_att_cStun = getTextureFromImage(PATH_IMG_ATT_CURSE_STUN);
+	texId_att_cNone = getTextureFromImage(PATH_IMG_ATT_CURSE_NONE);
+
+	texId_att_h_burster = getTextureFromImage(PATH_IMG_ATT_HERO_BURSTER);
+	texId_att_h_dsabler = getTextureFromImage(PATH_IMG_ATT_HERO_DISABLER);
+	texId_att_h_slower = getTextureFromImage(PATH_IMG_ATT_HERO_SLOWER);
+	texId_att_h_stunner = getTextureFromImage(PATH_IMG_ATT_HERO_STUNNER);
+
+	texId_att_mode_basic = getTextureFromImage(PATH_IMG_ATT_MODE_BASIC);
+	texId_att_mode_magic = getTextureFromImage(PATH_IMG_ATT_MODE_MAGIC);
+
+	texId_att_team_angels = getTextureFromImage(PATH_IMG_ATT_TEAM_ANGELS);
+	//texId_att_team_demons = getTextureFromImage(PATH_IMG_ATT_TEAM_DEMONS);
+
+	texId_att_team_enemy = getTextureFromImage(PATH_IMG_ATT_TEAM_ENEMY);
+	texId_att_team_my = getTextureFromImage(PATH_IMG_ATT_TEAM_MY);
+
+	texId_att_timers = getTextureFromImage(PATH_IMG_ATT_TIMERS);
+	texId_att_time_iOn = getTextureFromImage(PATH_IMG_ATT_TIMERS_ITEM_ON);
+	texId_att_time_iOff = getTextureFromImage(PATH_IMG_ATT_TIMERS_ITEM_OFF);
+	texId_att_time_mOff = getTextureFromImage(PATH_IMG_ATT_TIMERS_MAGIC_OFF);
+	texId_att_time_mOn = getTextureFromImage(PATH_IMG_ATT_TIMERS_MAGIC_ON);
+
+	texId_att_wall = getTextureFromImage(PATH_IMG_ATT_WALL);
+
+	texId_att_health = getTextureFromImage(PATH_IMG_ATT_HEALTH);
 }
 
 //Initializes 3D rendering
 void initRendering_main() {
 	//Makes 3D drawing work when something is in front of something else
 	glEnable( GL_DEPTH_TEST);
-	//glEnable(( GL_BLEND));
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(( GL_BLEND));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
 	loadTextures_main();
@@ -43,7 +73,7 @@ void initRendering_main() {
 	putHeros();
 
 	//Placing items in the map
-	for (int i = 0; i < ITEM_MAP_COUNT; i++) {
+	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
 		placeItemAtRandomPos(TEAM_BOTH);
 	}
 
@@ -58,23 +88,15 @@ void initRendering_main() {
 void drawScene_main() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW); //Switch to the drawing perspective
+	glMatrixMode( GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
+
 
 	//printGrid();
 	renderGrid();
 
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, -4.0f);
-	float _scale = t3dComputeScale("qqqq");
-	glScalef(_scale, _scale, _scale);
-	glColor3f(1.0f, 0.0f, 0.0f);
-
-	//glTranslatef(0, 0, 1.5f / _scale);
-	t3dDraw3D("hell", -1, 1, 0.2f);
-	glPopMatrix();
-
-	glColor3f(1.0f, 1.0f, 1.0f);
+	//putTextToCell(Coordinate_grid(1, 1), "type:");
+	//putTextToCell(Coordinate_grid(1, 2), "stun");
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
@@ -106,7 +128,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 48:
-		cout<<"Switching player"<<endl;
+		cout << "Switching player" << endl;
 		togglePlayer();
 		break;
 	}

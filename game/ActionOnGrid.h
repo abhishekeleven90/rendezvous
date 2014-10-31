@@ -92,29 +92,24 @@ enum switchCallType {
 
 void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 		string toPrint, void( rightClick)(void), void( leftClick)(void),
-		bool isBackChar, int blocks = 1) {
+		bool isBackChar, int xBlocks = 1, int yBlocks = 1) {
 
 	switch (callType) {
 	case PRINT_GRID:
 		cout << " " << toPrint;
 		break;
+
 	case PROCESS_MOVE_RIGHT_CLICK:
-		/*if (!isValidCellForTeam()) { // check if the cell clicked
-		 wrong();
-		 return;
-		 }*/
 		rightClick();
 		break;
+
 	case PROCESS_MOVE_LEFT_CLICK:
-		/*if (!isValidCellForTeam()) { // check if the cell clicked
-		 wrong();
-		 return;
-		 }*/
 		leftClick();
 		break;
+
 	case RENDER_GRID:
 		if (!isBackChar) {
-			putImageToCell(grid, texId, blocks);
+			putImageToCell(grid, texId, xBlocks, yBlocks);
 		}
 		break;
 	}
@@ -257,46 +252,46 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, bg_grass_texId, "Gra", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_grass, "Gra", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case BG_SPAWN:
-		processCase(callType, grid, bg_spawn_texId, "BSp", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_spawn, "BSp", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case BG_WAR:
-		processCase(callType, grid, bg_war_texId, "BWa", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_war, "BWa", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case BG_ATTRIBUTE:
-		processCase(callType, grid, bg_attribute_texId, "BAt", wrong, wrong,
+		processCase(callType, grid, texId_bg_attribute, "BAt", wrong, wrong,
 				false);
 		break;
 
 	case BG_BLOCKED:
-		processCase(callType, grid, bg_blocked_texId, "BBl", wrong, wrong,
+		processCase(callType, grid, texId_bg_blocked, "BBl", wrong, wrong,
 				false);
 		break;
 
 	case STONE:
-		processCase(callType, grid, stone_texId, "Sto", wrong, wrong, false);
+		processCase(callType, grid, texId_stone, "Sto", wrong, wrong, false);
 		break;
 
 	case TREE:
-		processCase(callType, grid, tree_texId, "Tre", wrong, wrong, false);
+		processCase(callType, grid, texId_tree, "Tre", wrong, wrong, false);
 		break;
 
 	case TEMPLE_ANGELS:
 		processCase(callType, grid, t_angels_texId, "TAn", wrong,
-				attackAngelsTemple, false, TEMPLE_BLOCKS);
+				attackAngelsTemple, false, TEMPLE_BLOCKS, TEMPLE_BLOCKS);
 		break;
 
 	case TEMPLE_DEMONS:
-		processCase(callType, grid, t_demons_texId, "TDe", wrong,
-				attackDemonsTemple, false, TEMPLE_BLOCKS);
+		processCase(callType, grid, texId_t_demons, "TDe", wrong,
+				attackDemonsTemple, false, TEMPLE_BLOCKS, TEMPLE_BLOCKS);
 		break;
 
 		//TODO: Abhishek : leftClick on enemy and on friend and on self
@@ -306,11 +301,11 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		break;
 
 	case H_SLOWER:
-		processCase(callType, grid, h_slower_texId, "HSl", wrong, wrong, false);
+		processCase(callType, grid, texId_h_slower, "HSl", wrong, wrong, false);
 		break;
 
 	case H_BURSTER:
-		processCase(callType, grid, h_burster_texId, "HBu", wrong, wrong, false);
+		processCase(callType, grid, texId_h_burster, "HBu", wrong, wrong, false);
 		break;
 
 	case H_STUNNER:
@@ -319,25 +314,25 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	case I_SPEED_MOVE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_speedMov_texId, "ISM", aStarMoveThrough,
+		processCase(callType, grid, texId_i_speedMov, "ISM", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_HEALTH:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_health_texId, "IHe", aStarMoveThrough,
+		processCase(callType, grid, texId_i_health, "IHe", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_DAMAGE:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_damage_texId, "IDa", aStarMoveThrough,
+		processCase(callType, grid, texId_i_damage, "IDa", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_TEMPLE_HEALER:
 		itemCell = Coordinate_grid(grid.row, grid.col);
-		processCase(callType, grid, i_tHealer_texId, "ITH", aStarMoveThrough,
+		processCase(callType, grid, texId_i_tHealer, "ITH", aStarMoveThrough,
 				wrong, false);
 		break;
 

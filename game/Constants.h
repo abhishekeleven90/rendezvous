@@ -3,7 +3,7 @@
 
 //-------------------------CONSTANTS------------------
 
-#define ITEM_MAP_COUNT 3
+#define ITEMS_ON_MAP_COUNT 3
 #define CELL_LENGTH 0.2f
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
@@ -58,6 +58,6 @@
 //Number of Blocks
 #define SPAWN_BLOCKS 3
 #define ATTRIBUTE_WIDTH 2
-#define TEMPLE_BLOCKS 2
+#define TEMPLE_BLOCKS 2 //both on x & y direction
 #define DIAG_BLOCKS 2 //numOfDiagonals = 2*DIAGONAL_BLOCKS+1
 #endif
