@@ -9,57 +9,6 @@
 #include "Objects.h"
 #include "Headers.h"
 
-#include "text3d.h"
-
-float t3dComputeScale(const char* str) {
-	float width = t3dDrawWidth(str);
-	return CELL_LENGTH / width;
-}
-
-/*void setOrthographicProjection() {
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(0, windowWidth, 0, windowHeight);
-	glScalef(1, -1, 1);
-	glTranslatef(0, -windowHeight, 0);
-	glMatrixMode(GL_MODELVIEW);
-}
-
-void resetPerspectiveProjection() {
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-}
-
-Coordinate_grid getGridCoordinatesFromWindow(Coordinate_window window) {
-	int col = ceil(window.x / cellWidth);
-	int row = ceil(window.y / cellHeight);
-	return Coordinate_grid(row, col);
-}
-
-Coordinate_window getWindowCoordinatesFromGrid(Coordinate_grid grid) {
-	float x = (grid.col - 1) * cellWidth;
-	float y = (grid.row) * cellHeight;
-	return Coordinate_window(x, y);
-}
-
-void renderBitmapString(Coordinate_grid grid, const char *string) {
-	Coordinate_window window = getWindowCoordinatesFromGrid(grid);
-	setOrthographicProjection();
-	glPushMatrix();
-	glLoadIdentity();
-
-	const char *c;
-	glRasterPos2f(window.x, window.y);
-	for (c = string; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c);
-	}
-
-	glPopMatrix();
-	resetPerspectiveProjection();
-}*/
-
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
 	GLuint textureId;
@@ -124,5 +73,49 @@ GLuint getTextureFromImage(string path) {
 	delete bgImage;
 	return _textureId;
 }
+
+/*void setOrthographicProjection() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0, windowWidth, 0, windowHeight);
+	glScalef(1, -1, 1);
+	glTranslatef(0, -windowHeight, 0);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void resetPerspectiveProjection() {
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+Coordinate_grid getGridCoordinatesFromWindow(Coordinate_window window) {
+	int col = ceil(window.x / cellWidth);
+	int row = ceil(window.y / cellHeight);
+	return Coordinate_grid(row, col);
+}
+
+Coordinate_window getWindowCoordinatesFromGrid(Coordinate_grid grid) {
+	float x = (grid.col - 1) * cellWidth;
+	float y = (grid.row) * cellHeight;
+	return Coordinate_window(x, y);
+}
+
+void renderBitmapString(Coordinate_grid grid, const char *string) {
+	Coordinate_window window = getWindowCoordinatesFromGrid(grid);
+	setOrthographicProjection();
+	glPushMatrix();
+	glLoadIdentity();
+
+	const char *c;
+	glRasterPos2f(window.x, window.y);
+	for (c = string; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c);
+	}
+
+	glPopMatrix();
+	resetPerspectiveProjection();
+}*/
 
 #endif

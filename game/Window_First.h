@@ -9,8 +9,8 @@ void loadTextures_first() {
 void initRendering_first() {
 	//Makes 3D drawing work when something is in front of something else
 	glEnable( GL_DEPTH_TEST);
-	//glEnable(( GL_BLEND));
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(( GL_BLEND));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
 	loadTextures_first();
