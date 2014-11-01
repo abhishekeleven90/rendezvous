@@ -49,13 +49,14 @@ void loadTextures_main() {
 	texId_att_team_enemy = getTextureFromPng(PATH_IMG_ATT_TEAM_ENEMY);
 	texId_att_team_my = getTextureFromPng(PATH_IMG_ATT_TEAM_MY);
 
-	texId_att_timers = getTextureFromPng(PATH_IMG_ATT_TIMERS);
 	texId_att_time_itemOff = getTextureFromPng(PATH_IMG_ATT_TIMERS_ITEM_OFF);
 	texId_att_time_itemOn = getTextureFromPng(PATH_IMG_ATT_TIMERS_ITEM_ON);
 	texId_att_time_magicOff = getTextureFromPng(PATH_IMG_ATT_TIMERS_MAGIC_OFF);
 	texId_att_time_magicOn = getTextureFromPng(PATH_IMG_ATT_TIMERS_MAGIC_ON);
 
 	texId_att_health = getTextureFromPng(PATH_IMG_ATT_HEALTH);
+	texId_att_strength = getTextureFromPng(PATH_IMG_ATT_STRENGTH);
+	texId_att_speed = getTextureFromPng(PATH_IMG_ATT_SPEED);
 
 	texId_att_wall = getTextureFromPng(PATH_IMG_ATT_WALL);
 }
@@ -118,17 +119,25 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 49: //key - '1' : select basicPower
 		cout << "selected power_basic" << endl;
-		//TODO : show in attribute space
 		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
 		break;
 
 	case 50: //key - '2' : select magicPower
-		//TODO : show in attribute space
-		cout << "selected power_magic" << endl;
-		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
+		if (currPlayer.curseType != CURSE_DISABLE) {
+			cout << "selected power_magic" << endl;
+			myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
+		}
+
+		else {
+			cout << "can not use Magic power, you are cursed!!!" << endl; //TODO: show on wall
+		}
 		break;
 
-	case 48: //key - '0'
+	case 51: //key - '3' : curse //TODO: case may not be required later
+		iAmCursed(CURSE_SLOW);
+		break;
+
+	case 48: //key - '0' //TODO: may not be required later : just for testing purpose
 		cout << "Switching player" << endl;
 		togglePlayer();
 		break;

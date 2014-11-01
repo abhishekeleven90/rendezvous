@@ -30,6 +30,10 @@ enum magicPower {
 	MAGIC_DISABLE, MAGIC_SLOW, MAGIC_BURST, MAGIC_STUN
 };
 
+enum curse {
+	CURSE_DISABLE, CURSE_SLOW, CURSE_BURST, CURSE_STUN, CURSE_NONE
+};
+
 //TODO : check if required
 enum itemType {
 	ITEM_SPEED_MOVE, ITEM_HEALTH, ITEM_DAMAGE, ITEM_TEMPLE_HEALER
@@ -77,6 +81,8 @@ struct Player {
 	int strength;
 	int speedMove;
 
+	curse curseType;
+
 	//list<itemType*> itemsBag;
 	AStarClass *astar;
 	Coordinate_grid location;
@@ -85,6 +91,7 @@ struct Player {
 
 	bool isTimerItemGlobalRunning;
 	bool isTimerMagicSpellRunning;
+	bool isTimerCurseRunning;
 };
 
 struct TeamStruct {

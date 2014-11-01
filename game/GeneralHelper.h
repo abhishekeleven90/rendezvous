@@ -34,9 +34,9 @@ void loadTeamAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
 	myTeam.name = TEAM_ANGELS;
 	myTeam.templeHealth = HEALTH_FULL_TEMPLE;
-	currentPlayer.heroHealth = HEALTH_FULL_HERO;
+	currPlayer.heroHealth = HEALTH_FULL_HERO;
 
-	currentPlayer.heroType = HERO_STUNNER;
+	currPlayer.heroType = HERO_STUNNER;
 
 	myTeam.players[1].heroType = HERO_BURSTER; //TODO : might not be one
 	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
@@ -52,51 +52,53 @@ void loadTeamAttributes() {
 	enemyTeam.players[0].heroHealth = HEALTH_FULL_HERO;
 	enemyTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 	//TODO: load other attributes
-	currentPlayer.isTimerItemGlobalRunning = false;
-	currentPlayer.isTimerMagicSpellRunning = false;
+	currPlayer.isTimerItemGlobalRunning = false;
+	currPlayer.isTimerMagicSpellRunning = false;
+	currPlayer.isTimerCurseRunning = false;
 }
 
 void loadPlayerSpecificAttributes() {
 
 	//1st player:playerId=0, 2nd player:playerId=1
 	//TODO: change 'playerId - 1' to playerId everywhere & related like 'which-1'
-	currentPlayer.astar = new AStarClass();
-	currentPlayer.astar->firstInitAStar();
+	currPlayer.astar = new AStarClass();
+	currPlayer.astar->firstInitAStar();
 
-	currentPlayer.currentPowerMode = POWER_MODE_BASIC;
+	currPlayer.currentPowerMode = POWER_MODE_BASIC;
+	currPlayer.curseType = CURSE_NONE;
 
-	switch (currentPlayer.heroType) {
+	switch (currPlayer.heroType) {
 	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
 	case HERO_STUNNER:
-		currentPlayer.strength = STRENGTH_H_STUNNER;
-		currentPlayer.speedMove = SPEED_MOVE_H_STUNNER;
-		currentPlayer.charType = H_STUNNER;
+		currPlayer.strength = STRENGTH_H_STUNNER;
+		currPlayer.speedMove = SPEED_MOVE_H_STUNNER;
+		currPlayer.charType = H_STUNNER;
 		break;
 
 	case HERO_DISABLER:
-		currentPlayer.strength = STRENGTH_H_DISABLER;
-		currentPlayer.speedMove = SPEED_MOVE_H_DISABLER;
-		currentPlayer.charType = H_DISABLER;
+		currPlayer.strength = STRENGTH_H_DISABLER;
+		currPlayer.speedMove = SPEED_MOVE_H_DISABLER;
+		currPlayer.charType = H_DISABLER;
 		break;
 
 	case HERO_SLOWER:
-		currentPlayer.strength = STRENGTH_H_SLOWER;
-		currentPlayer.speedMove = SPEED_MOVE_H_SLOWER;
-		currentPlayer.charType = H_SLOWER;
+		currPlayer.strength = STRENGTH_H_SLOWER;
+		currPlayer.speedMove = SPEED_MOVE_H_SLOWER;
+		currPlayer.charType = H_SLOWER;
 		break;
 
 	case HERO_BURSTER:
-		currentPlayer.strength = STRENGTH_H_BURSTER;
-		currentPlayer.speedMove = SPEED_MOVE_H_BURSTER;
-		currentPlayer.charType = H_BURSTER;
+		currPlayer.strength = STRENGTH_H_BURSTER;
+		currPlayer.speedMove = SPEED_MOVE_H_BURSTER;
+		currPlayer.charType = H_BURSTER;
 		break;
 	}
 
-	currentPlayer.location = Coordinate_grid(19, 1);
+	currPlayer.location = Coordinate_grid(19, 1);
 
-	int row = currentPlayer.location.row;
-	int col = currentPlayer.location.col;
-	putCharToGrid(row, col, currentPlayer.charType, true);
+	int row = currPlayer.location.row;
+	int col = currPlayer.location.col;
+	putCharToGrid(row, col, currPlayer.charType, true);
 
 	//TODO: temp, below remove
 	/*
@@ -153,164 +155,212 @@ void moveHeroMine(int type) {
 			myTeam.players[type - 1].charType, true);
 }
 
-void loadAttributeSpace() {
-
+void putTeamTypeAndTemples() {
 	putPngToLAttCell(Coordinate_grid(1, 1), texId_att_team_my, 2, 1);
-	putPngToLAttCell(Coordinate_grid(17, 1), texId_att_timers, 2, 1);
-	putPngToLAttCell(Coordinate_grid(6, 1), texId_att_health, 1, 1);
-	putPngToLAttCell(Coordinate_grid(12, 1), texId_att_health, 1, 1);
-	putPngToLAttCell(Coordinate_grid(15, 1), texId_att_health, 1, 1);
-
 	putPngToRAttCell(Coordinate_grid(1, 1), texId_att_team_enemy, 2, 1);
-	putPngToRAttCell(Coordinate_grid(15, 1), texId_att_wall, 2, 1);
-	putPngToRAttCell(Coordinate_grid(6, 1), texId_att_health, 1, 1);
-	putPngToRAttCell(Coordinate_grid(10, 1), texId_att_health, 1, 1);
-	putPngToRAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
 
 	switch (myTeam.name) {
 	case TEAM_ANGELS:
 		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_Angels, 2, 1);
 		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_Demons, 2, 1);
 
-		putBmpToLAttCell(Coordinate_grid(14, 1), texId_t_angels, 2, 1);
-		putBmpToRAttCell(Coordinate_grid(12, 1), texId_t_demons, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(4, 1), texId_t_angels, 2, 1); //temples
+		putBmpToRAttCell(Coordinate_grid(4, 1), texId_t_demons, 2, 1);
 		break;
 
 	case TEAM_DEMONS:
 		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_Demons, 2, 1);
 		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_Angels, 2, 1);
 
-		putBmpToLAttCell(Coordinate_grid(14, 1), texId_t_demons, 2, 1);
-		putBmpToRAttCell(Coordinate_grid(14, 1), texId_t_angels, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(4, 1), texId_t_demons, 2, 1); //temples
+		putBmpToRAttCell(Coordinate_grid(4, 1), texId_t_angels, 2, 1);
 		break;
 
 	case TEAM_BOTH:
 		cout << "---shall never occur---" << endl;
 		break;
 	}
+}
 
-	switch (currentPlayer.heroType) {
+void putMyAttributes() {
+	switch (currPlayer.currentPowerMode) {
+	case POWER_MODE_BASIC:
+		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mBasic, 2, 1);
+		break;
+	case POWER_MODE_MAGIC:
+		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mMagic, 2, 1);
+		break;
+	}
+
+	switch (currPlayer.curseType) {
+	case CURSE_NONE:
+		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cNone, 2, 1);
+		break;
+	case CURSE_STUN:
+		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cStun, 2, 1);
+		break;
+	case CURSE_DISABLE:
+		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cDisable, 2, 1);
+		break;
+	case CURSE_SLOW:
+		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cSlow, 2, 1);
+		break;
+	case CURSE_BURST:
+		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cBurst, 2, 1);
+		break;
+	}
+
+	//Speed
+	putPngToLAttCell(Coordinate_grid(12, 1), texId_att_speed, 1, 1);
+	putTextToLAttCell(Coordinate_grid(12, 2), numToStr(currPlayer.speedMove));
+
+	//Strength
+	putPngToLAttCell(Coordinate_grid(13, 1), texId_att_strength, 1, 1);
+	putTextToLAttCell(Coordinate_grid(13, 2), numToStr(currPlayer.strength));
+}
+
+void putHealth() {
+	putPngToLAttCell(Coordinate_grid(5, 1), texId_att_health, 1, 1);
+	putTextToLAttCell(Coordinate_grid(5, 2), numToStr(myTeam.templeHealth));
+
+	putPngToRAttCell(Coordinate_grid(5, 1), texId_att_health, 1, 1);
+	putTextToRAttCell(Coordinate_grid(5, 2), numToStr(enemyTeam.templeHealth));
+
+	putPngToLAttCell(Coordinate_grid(11, 1), texId_att_health, 1, 1);
+	putTextToLAttCell(Coordinate_grid(11, 2), numToStr(currPlayer.heroHealth));
+
+	putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
+	putTextToLAttCell(Coordinate_grid(17, 2),
+			numToStr(myTeam.players[1].heroHealth)); //TODO: may not be '1'
+
+	putPngToRAttCell(Coordinate_grid(9, 1), texId_att_health, 1, 1);
+	putTextToRAttCell(Coordinate_grid(9, 2),
+			numToStr(enemyTeam.players[0].heroHealth));
+
+	putPngToRAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
+	putTextToRAttCell(Coordinate_grid(13, 2),
+			numToStr(enemyTeam.players[1].heroHealth));
+}
+
+void putHeroes() {
+	switch (currPlayer.heroType) {
 	case HERO_STUNNER:
-		putBmpToLAttCell(Coordinate_grid(4, 1), texId_h_stunner, 1, 1);
-		putPngToLAttCell(Coordinate_grid(5, 1), texId_att_h_stunner, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
+		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
 		break;
 
 	case HERO_DISABLER:
-		putBmpToLAttCell(Coordinate_grid(4, 1), texId_h_disabler, 1, 1);
-		putPngToLAttCell(Coordinate_grid(5, 1), texId_att_h_disabler, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_disabler, 1, 1);
+		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_disabler, 2, 1);
 		break;
 
 	case HERO_SLOWER:
-		putBmpToLAttCell(Coordinate_grid(4, 1), texId_h_slower, 1, 1);
-		putPngToLAttCell(Coordinate_grid(5, 1), texId_att_h_slower, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_slower, 1, 1);
+		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_slower, 2, 1);
 		break;
 
 	case HERO_BURSTER:
-		putBmpToLAttCell(Coordinate_grid(4, 1), texId_h_burster, 1, 1);
-		putPngToLAttCell(Coordinate_grid(5, 1), texId_att_h_burster, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
+		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
 		break;
 	}
-
-	switch (currentPlayer.currentPowerMode) {
-	case POWER_MODE_BASIC:
-		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mBasic, 2, 1);
-		break;
-	case POWER_MODE_MAGIC:
-		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mMagic, 2, 1);
-		break;
-	}
-
-	//Timers
-	if (currentPlayer.isTimerItemGlobalRunning) {
-		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOn, 2, 1);
-	} else {
-		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOff, 2, 1);
-	}
-
-	if (currentPlayer.isTimerMagicSpellRunning) {
-		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOn, 2, 1);
-	} else {
-		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOff, 2, 1);
-	}
-
-	//Health
-	putTextToLAttCell(Coordinate_grid(15, 2), numToStr(myTeam.templeHealth));
-	putTextToRAttCell(Coordinate_grid(13, 2), numToStr(enemyTeam.templeHealth));
-	putTextToLAttCell(Coordinate_grid(6, 2), numToStr(currentPlayer.heroHealth));
-	putTextToLAttCell(Coordinate_grid(12, 2),
-			numToStr(myTeam.players[1].heroHealth)); //TODO: may not be one
-	putTextToRAttCell(Coordinate_grid(6, 2),
-			numToStr(enemyTeam.players[0].heroHealth));
-	putTextToRAttCell(Coordinate_grid(10, 2),
-			numToStr(enemyTeam.players[1].heroHealth));
 
 	//TODO: may not be '1' below
 	switch (myTeam.players[1].heroType) {
 	case HERO_STUNNER:
-		putBmpToLAttCell(Coordinate_grid(10, 1), texId_h_stunner, 1, 1);
-		putPngToLAttCell(Coordinate_grid(11, 1), texId_att_h_stunner, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_stunner, 1, 1);
+		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_stunner, 2, 1);
 		break;
 
 	case HERO_DISABLER:
-		putBmpToLAttCell(Coordinate_grid(10, 1), texId_h_disabler, 1, 1);
-		putPngToLAttCell(Coordinate_grid(11, 1), texId_att_h_disabler, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_disabler, 1, 1);
+		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_disabler, 2, 1);
 		break;
 
 	case HERO_SLOWER:
-		putBmpToLAttCell(Coordinate_grid(10, 1), texId_h_slower, 1, 1);
-		putPngToLAttCell(Coordinate_grid(11, 1), texId_att_h_slower, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_slower, 1, 1);
+		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_slower, 2, 1);
 		break;
 
 	case HERO_BURSTER:
-		putBmpToLAttCell(Coordinate_grid(10, 1), texId_h_burster, 1, 1);
-		putPngToLAttCell(Coordinate_grid(11, 1), texId_att_h_burster, 2, 1);
+		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_burster, 1, 1);
+		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_burster, 2, 1);
 		break;
 	}
 
 	switch (enemyTeam.players[0].heroType) {
 	case HERO_STUNNER:
-		putBmpToRAttCell(Coordinate_grid(4, 1), texId_h_stunner, 1, 1);
-		putPngToRAttCell(Coordinate_grid(5, 1), texId_att_h_stunner, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
+		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
 		break;
 
 	case HERO_DISABLER:
-		putBmpToRAttCell(Coordinate_grid(4, 1), texId_h_disabler, 1, 1);
-		putPngToRAttCell(Coordinate_grid(5, 1), texId_att_h_disabler, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_disabler, 1, 1);
+		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_disabler, 2, 1);
 		break;
 
 	case HERO_SLOWER:
-		putBmpToRAttCell(Coordinate_grid(4, 1), texId_h_slower, 1, 1);
-		putPngToRAttCell(Coordinate_grid(5, 1), texId_att_h_slower, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_slower, 1, 1);
+		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_slower, 2, 1);
 		break;
 
 	case HERO_BURSTER:
-		putBmpToRAttCell(Coordinate_grid(4, 1), texId_h_burster, 1, 1);
-		putPngToRAttCell(Coordinate_grid(5, 1), texId_att_h_burster, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
+		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
 		break;
 	}
 
 	switch (enemyTeam.players[1].heroType) {
 	case HERO_STUNNER:
-		putBmpToRAttCell(Coordinate_grid(8, 1), texId_h_stunner, 1, 1);
-		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_h_stunner, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_stunner, 1, 1);
+		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_stunner, 2, 1);
 		break;
 
 	case HERO_DISABLER:
-		putBmpToRAttCell(Coordinate_grid(8, 1), texId_h_disabler, 1, 1);
-		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_h_disabler, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_disabler, 1, 1);
+		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_disabler, 2, 1);
 		break;
 
 	case HERO_SLOWER:
-		putBmpToRAttCell(Coordinate_grid(8, 1), texId_h_slower, 1, 1);
-		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_h_slower, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_slower, 1, 1);
+		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_slower, 2, 1);
 		break;
 
 	case HERO_BURSTER:
-		putBmpToRAttCell(Coordinate_grid(8, 1), texId_h_burster, 1, 1);
-		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_h_burster, 2, 1);
+		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_burster, 1, 1);
+		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_burster, 2, 1);
 		break;
 	}
+}
 
+void putTimers() {
+	if (currPlayer.isTimerItemGlobalRunning) {
+		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOn, 2, 1);
+	} else {
+		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOff, 2, 1);
+	}
+
+	if (currPlayer.isTimerMagicSpellRunning) {
+		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOn, 2, 1);
+	} else {
+		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOff, 2, 1);
+	}
+}
+
+void putWall() {
+	putPngToRAttCell(Coordinate_grid(17, 1), texId_att_wall, 2, 1);
+}
+
+void loadAttributeSpace() {
+	putTeamTypeAndTemples();
+
+	putHeroes();
+	putMyAttributes();
+
+	putHealth();
+
+	putTimers();
+	putWall();
 }
 
 void renderGrid() {
@@ -326,7 +376,38 @@ void renderGrid() {
 	}
 }
 
-void togglePlayer() {
+void iAmCursed(curse curseType) {
+	switch (curseType) {
+	case CURSE_STUN:
+		cout << "stunned" << endl;
+		timerCurse(CURSE_STUN);
+		break;
+
+	case CURSE_DISABLE:
+		cout << "disabled" << endl;
+		currPlayer.currentPowerMode = POWER_MODE_BASIC;
+		timerCurse(CURSE_DISABLE);
+		break;
+
+	case CURSE_SLOW:
+		cout << "slowed" << endl;
+		timerCurse(CURSE_SLOW);
+		break;
+
+	case CURSE_BURST:
+		cout << "bursted" << endl;
+		currPlayer.heroHealth -= CURSE_AMT_BURST_DAMAGE;
+		break;
+
+	case CURSE_NONE:
+		cout << "---Inside cursePlayer: shall not come here---" << endl;
+		return;
+	}
+
+	currPlayer.curseType = curseType;
+}
+
+void togglePlayer() { //TODO: check if required
 	if (playerId == 1)
 		playerId = 2;
 	else

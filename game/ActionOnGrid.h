@@ -195,7 +195,7 @@ void updateHeroAttributesTakingItem() {
 
 void takeItem() {
 	//In actual, not taking the item if globalItemTimer is running
-	if (!currentPlayer.isTimerItemGlobalRunning) {
+	if (!currPlayer.isTimerItemGlobalRunning) {
 		timerItemGlobal(0);
 		updateHeroAttributesTakingItem();
 	} else {
@@ -218,7 +218,7 @@ void setAttackTemple(int player, bool value) {
 
 void decreaseEnemyTempleHealth() {
 
-	enemyTeam.templeHealth -= myTeam.players[playerId - 1].strength;
+	enemyTeam.templeHealth -= currPlayer.strength;
 	if (enemyTeam.templeHealth < 0)
 		enemyTeam.templeHealth = 0;
 	setAttackTemple(playerId, false);

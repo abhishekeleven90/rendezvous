@@ -7,7 +7,7 @@
 #define CELL_LENGTH 0.2f
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
-#define currentPlayer myTeam.players[playerId - 1]
+#define currPlayer myTeam.players[playerId-1]
 
 //Grid related
 #define MAX_XCELL 1.0f
@@ -32,24 +32,27 @@
 #define START_RIGHT_ATTRIBUTE_COL END_RIGHT_ATTRIBUTE_COL-ATTRIBUTE_WIDTH+1
 
 //Attributes
-#define HEALTH_FULL_HERO 100
+#define HEALTH_FULL_HERO 200
 #define HEALTH_FULL_TEMPLE 500
 
-#define STRENGTH_H_STUNNER 1 //DAMAGE
-#define STRENGTH_H_DISABLER 1
-#define STRENGTH_H_SLOWER 1
-#define STRENGTH_H_BURSTER 1
+#define STRENGTH_H_STUNNER 4 //DAMAGE
+#define STRENGTH_H_DISABLER 4
+#define STRENGTH_H_SLOWER 6
+#define STRENGTH_H_BURSTER 6
 
-#define SPEED_MOVE_H_STUNNER 100
-#define SPEED_MOVE_H_DISABLER 1
-#define SPEED_MOVE_H_SLOWER 1
-#define SPEED_MOVE_H_BURSTER 300
+#define CURSE_AMT_BURST_DAMAGE 15
+#define CURSE_AMT_SLOW_STRENGTH 1
+#define CURSE_AMT_STUN_SPEED 500
 
-#define GAIN_ITEM_DAMAGE 1 //Adds to the player current attribute
+#define SPEED_MOVE_H_STUNNER 400
+#define SPEED_MOVE_H_DISABLER 300
+#define SPEED_MOVE_H_SLOWER 200
+#define SPEED_MOVE_H_BURSTER 500
+
+#define GAIN_ITEM_DAMAGE 1
 #define GAIN_ITEM_HEALTH 5
-#define GAIN_ITEM_SPEED_ATTACK 1
-#define GAIN_ITEM_SPEED_MOVE 1
-#define GAIN_ITEM_TEMPLE_HEALER 1
+#define GAIN_ITEM_SPEED_MOVE 50
+#define GAIN_ITEM_TEMPLE_HEALER 10
 
 //Number of Blocks
 #define SPAWN_BLOCKS 3

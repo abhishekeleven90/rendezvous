@@ -21,7 +21,6 @@
 #define PATH_IMG_ATT_TEAM_ENEMY "data/images/att_team_enemy.png"
 #define PATH_IMG_ATT_TEAM_MY "data/images/att_team_my.png"
 
-#define PATH_IMG_ATT_TIMERS "data/images/att_timers.png"
 #define PATH_IMG_ATT_TIMERS_ITEM_OFF "data/images/att_timers_itemOff.png"
 #define PATH_IMG_ATT_TIMERS_ITEM_ON "data/images/att_timers_itemOn.png"
 #define PATH_IMG_ATT_TIMERS_MAGIC_OFF "data/images/att_timers_magicOff.png"
@@ -30,5 +29,7 @@
 #define PATH_IMG_ATT_WALL "data/images/att_wall.png"
 
 #define PATH_IMG_ATT_HEALTH "data/images/att_health.png"
+#define PATH_IMG_ATT_STRENGTH "data/images/att_strength.png"
+#define PATH_IMG_ATT_SPEED "data/images/att_speed.png"
 
 #endif
