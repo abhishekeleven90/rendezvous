@@ -9,6 +9,8 @@
 #include "Window_Main.h"
 #include "Window_First.h"
 
+#include "Network.h"
+
 int main(int argc, char** argv) {
 	//Initialize GLUT
 	glutInit(&argc, argv);
