@@ -8,7 +8,7 @@
 void timerRefresh(int value) {
 
 	glutPostRedisplay();
-	glutTimerFunc(REFRESH_RATE, timerRefresh, 0);
+	glutTimerFunc(currentPlayer.speedMove, timerRefresh, 0);
 }
 
 void timerItemGlobal(int value) {

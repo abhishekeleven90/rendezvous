@@ -37,6 +37,7 @@ void loadTeamAttributes() {
 	currentPlayer.heroHealth = HEALTH_FULL_HERO;
 
 	currentPlayer.heroType = HERO_STUNNER;
+
 	myTeam.players[1].heroType = HERO_BURSTER; //TODO : might not be one
 	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 
@@ -98,11 +99,19 @@ void loadPlayerSpecificAttributes() {
 	putCharToGrid(row, col, currentPlayer.charType, true);
 
 	//TODO: temp, below remove
-	int row1 = 20;
-	int col1 = 3;
-	putCharToGrid(row1, col1, H_BURSTER, true);
-	myTeam.players[1].speedMove = SPEED_MOVE_H_BURSTER;
+	/*
+	 int row1 = 20;
+	 int col1 = 3;
+	 myTeam.players[1].location.row=row1;
+	 myTeam.players[1].location.col=col1;
+	 putCharToGrid(row1, col1, H_BURSTER, true);
+	 myTeam.players[1].speedMove = SPEED_MOVE_H_BURSTER;
 
+	 myTeam.players[1].astar = new AStarClass();
+	 myTeam.players[1].astar->firstInitAStar();
+	 myTeam.players[1].currentPowerMode = POWER_MODE_BASIC;
+	 myTeam.players[1].charType=H_BURSTER;
+	 */
 	blockOpponentsArea();
 }
 
@@ -305,7 +314,7 @@ void loadAttributeSpace() {
 }
 
 void renderGrid() {
-	moveHeroMine(playerId);
+	moveHeroMine(1);
 	moveHeroMine(2); //TODO: check if not required..later may be required
 
 	loadAttributeSpace();
