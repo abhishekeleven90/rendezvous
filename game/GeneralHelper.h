@@ -220,10 +220,10 @@ void putMyAttributes() {
 }
 
 void putHealth() {
-	putPngToLAttCell(Coordinate_grid(5, 1), texId_att_health, 1, 1);
+	putPngToLAttCell(Coordinate_grid(5, 1), texId_att_temple_health, 1, 1);
 	putTextToLAttCell(Coordinate_grid(5, 2), numToStr(myTeam.templeHealth));
 
-	putPngToRAttCell(Coordinate_grid(5, 1), texId_att_health, 1, 1);
+	putPngToRAttCell(Coordinate_grid(5, 1), texId_att_temple_health, 1, 1);
 	putTextToRAttCell(Coordinate_grid(5, 2), numToStr(enemyTeam.templeHealth));
 
 	putPngToLAttCell(Coordinate_grid(11, 1), texId_att_health, 1, 1);

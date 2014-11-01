@@ -175,15 +175,21 @@ void updateHeroAttributesTakingItem() {
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
-		myTeam.players[playerId - 1].strength += GAIN_ITEM_DAMAGE;
+		currPlayer.strength += GAIN_ITEM_DAMAGE;
 		break;
 	case ITEM_HEALTH:
 		cout << "item_health taken" << endl;
-		myTeam.players[playerId - 1].heroHealth += GAIN_ITEM_HEALTH;
+		currPlayer.heroHealth += GAIN_ITEM_HEALTH;
 		break;
 	case ITEM_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
-		myTeam.players[playerId - 1].speedMove -= GAIN_ITEM_SPEED_MOVE;
+		currPlayer.speedMove += GAIN_ITEM_SPEED_MOVE;
+
+		if (currPlayer.speedMove >= SPEED_MAX) {
+			//TODO: notification
+			cout << "Max Speed Reached" << endl;
+			currPlayer.speedMove = SPEED_MAX;
+		}
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;

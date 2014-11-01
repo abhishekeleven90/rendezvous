@@ -8,7 +8,7 @@
 void timerRefresh(int value) {
 
 	glutPostRedisplay();
-	glutTimerFunc(currPlayer.speedMove, timerRefresh, 0);
+	glutTimerFunc(SPEED_MAX - currPlayer.speedMove + 100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
 }
 
 void timerItemGlobal(int value) {

@@ -81,6 +81,7 @@ MyTexture texId_att_time_magicOff;
 MyTexture texId_att_time_magicOn;
 
 MyTexture texId_att_health;
+MyTexture texId_att_temple_health;
 MyTexture texId_att_strength;
 MyTexture texId_att_speed;
 

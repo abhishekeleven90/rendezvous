@@ -29,6 +29,7 @@
 #define PATH_IMG_ATT_WALL "data/images/att_wall.png"
 
 #define PATH_IMG_ATT_HEALTH "data/images/att_health.png"
+#define PATH_IMG_ATT_TEMPLE_HEALTH "data/images/att_temple_health.png"
 #define PATH_IMG_ATT_STRENGTH "data/images/att_strength.png"
 #define PATH_IMG_ATT_SPEED "data/images/att_speed.png"
 

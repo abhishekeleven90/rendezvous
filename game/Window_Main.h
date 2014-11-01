@@ -54,6 +54,7 @@ void loadTextures_main() {
 	texId_att_time_magicOn = getTextureFromPng(PATH_IMG_ATT_TIMERS_MAGIC_ON);
 
 	texId_att_health = getTextureFromPng(PATH_IMG_ATT_HEALTH);
+	texId_att_temple_health = getTextureFromPng(PATH_IMG_ATT_TEMPLE_HEALTH);
 	texId_att_strength = getTextureFromPng(PATH_IMG_ATT_STRENGTH);
 	texId_att_speed = getTextureFromPng(PATH_IMG_ATT_SPEED);
 
