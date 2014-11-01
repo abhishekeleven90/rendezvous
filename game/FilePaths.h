@@ -23,13 +23,16 @@
 
 #define PATH_IMG_TREE "data/images/tree.bmp"
 #define PATH_IMG_STONE "data/images/stone.bmp"
+#define PATH_IMG_TREE_WAR "data/images/tree_war.bmp"
+#define PATH_IMG_STONE_WAR "data/images/stone_war.bmp"
 
+#define PATH_IMG_TEMPLE_ANGELS "data/images/temple_angels.bmp"
 #define PATH_IMG_TEMPLE_DEMONS "data/images/temple_demons.bmp"
 
-#define PATH_IMG_HERO_STUNNER ""
-#define PATH_IMG_HERO_DISABLER ""
-#define PATH_IMG_HERO_SLOWER "data/images/hero_mario.bmp"
-#define PATH_IMG_HERO_BURSTER "data/images/hero_soldier.bmp"
+#define PATH_IMG_HERO_STUNNER "data/images/hero_stunner.bmp"
+#define PATH_IMG_HERO_DISABLER "data/images/hero_disabler.bmp"
+#define PATH_IMG_HERO_SLOWER "data/images/hero_slower.bmp"
+#define PATH_IMG_HERO_BURSTER "data/images/hero_burster.bmp"
 
 #define PATH_IMG_ITEM_ATTACK_SPEED "data/images/item_attack_speed.bmp"
 #define PATH_IMG_ITEM_MOVEMENT_SPEED "data/images/item_movement_speed.bmp"

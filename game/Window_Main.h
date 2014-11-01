@@ -4,28 +4,60 @@
 #include "text3d.h"
 
 void loadTextures_main() {
-	texId_bg_grass = getTextureFromBmpImage(PATH_IMG_BG_WINDOW_MAIN);
-	texId_bg_spawn = getTextureFromBmpImage(PATH_IMG_BG_SPAWN);
-	texId_bg_war = getTextureFromBmpImage(PATH_IMG_BG_WAR);
-	texId_bg_attribute = getTextureFromBmpImage(PATH_IMG_BG_ATTRIBUTE);
-	texId_bg_blocked = getTextureFromBmpImage(PATH_IMG_BG_BLOCKED);
+	texId_bg_grass = getTextureFromBmp(PATH_IMG_BG_WINDOW_MAIN);
+	texId_bg_spawn = getTextureFromBmp(PATH_IMG_BG_SPAWN);
+	texId_bg_war = getTextureFromBmp(PATH_IMG_BG_WAR);
+	texId_bg_attribute = getTextureFromBmp(PATH_IMG_BG_ATTRIBUTE);
+	texId_bg_blocked = getTextureFromBmp(PATH_IMG_BG_BLOCKED);
 
-	texId_tree = getTextureFromBmpImage(PATH_IMG_TREE);
-	texId_stone = getTextureFromBmpImage(PATH_IMG_STONE);
+	texId_tree = getTextureFromBmp(PATH_IMG_TREE);
+	texId_stone = getTextureFromBmp(PATH_IMG_STONE);
+	texId_tree_war = getTextureFromBmp(PATH_IMG_TREE_WAR);
+	texId_stone_war = getTextureFromBmp(PATH_IMG_STONE_WAR);
 
-	texId_t_demons = getTextureFromBmpImage(PATH_IMG_TEMPLE_DEMONS);
+	texId_t_angels = getTextureFromBmp(PATH_IMG_TEMPLE_ANGELS);
+	texId_t_demons = getTextureFromBmp(PATH_IMG_TEMPLE_DEMONS);
 
-	//TODO: uncomment
-	//h_stunner_texId = getTextureFromImage(PATH_IMG_HERO_STUNNER);
-	//h_disabler_texId = getTextureFromImage(PATH_IMG_HERO_DISABLER);
-	texId_h_slower = getTextureFromBmpImage(PATH_IMG_HERO_SLOWER);
-	texId_h_burster = getTextureFromBmpImage(PATH_IMG_HERO_BURSTER);
+	texId_h_stunner = getTextureFromBmp(PATH_IMG_HERO_STUNNER);
+	texId_h_disabler = getTextureFromBmp(PATH_IMG_HERO_DISABLER);
+	texId_h_slower = getTextureFromBmp(PATH_IMG_HERO_SLOWER);
+	texId_h_burster = getTextureFromBmp(PATH_IMG_HERO_BURSTER);
 
-	texId_i_speedMov = getTextureFromBmpImage(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	texId_i_speedAttack = getTextureFromBmpImage(PATH_IMG_ITEM_ATTACK_SPEED);
-	texId_i_damage = getTextureFromBmpImage(PATH_IMG_ITEM_DAMAGE);
-	texId_i_health = getTextureFromBmpImage(PATH_IMG_ITEM_HEALTH);
-	texId_i_tHealer = getTextureFromBmpImage(PATH_IMG_ITEM_TEMPLE_HEALER);
+	texId_i_speedMov = getTextureFromBmp(PATH_IMG_ITEM_MOVEMENT_SPEED);
+	texId_i_speedAttack = getTextureFromBmp(PATH_IMG_ITEM_ATTACK_SPEED);
+	texId_i_damage = getTextureFromBmp(PATH_IMG_ITEM_DAMAGE);
+	texId_i_health = getTextureFromBmp(PATH_IMG_ITEM_HEALTH);
+	texId_i_tHealer = getTextureFromBmp(PATH_IMG_ITEM_TEMPLE_HEALER);
+
+	texId_att_cBurst = getTextureFromPng(PATH_IMG_ATT_CURSE_BURST);
+	texId_att_cDisable = getTextureFromPng(PATH_IMG_ATT_CURSE_DISABLE);
+	texId_att_cSlow = getTextureFromPng(PATH_IMG_ATT_CURSE_SLOW);
+	texId_att_cStun = getTextureFromPng(PATH_IMG_ATT_CURSE_STUN);
+	texId_att_cNone = getTextureFromPng(PATH_IMG_ATT_CURSE_NONE);
+
+	texId_att_h_burster = getTextureFromPng(PATH_IMG_ATT_HERO_BURSTER);
+	texId_att_h_disabler = getTextureFromPng(PATH_IMG_ATT_HERO_DISABLER);
+	texId_att_h_slower = getTextureFromPng(PATH_IMG_ATT_HERO_SLOWER);
+	texId_att_h_stunner = getTextureFromPng(PATH_IMG_ATT_HERO_STUNNER);
+
+	texId_att_mBasic = getTextureFromPng(PATH_IMG_ATT_MODE_BASIC);
+	texId_att_mMagic = getTextureFromPng(PATH_IMG_ATT_MODE_MAGIC);
+
+	texId_att_team_Angels = getTextureFromPng(PATH_IMG_ATT_TEAM_ANGELS);
+	texId_att_team_Demons = getTextureFromPng(PATH_IMG_ATT_TEAM_DEMONS);
+
+	texId_att_team_enemy = getTextureFromPng(PATH_IMG_ATT_TEAM_ENEMY);
+	texId_att_team_my = getTextureFromPng(PATH_IMG_ATT_TEAM_MY);
+
+	texId_att_timers = getTextureFromPng(PATH_IMG_ATT_TIMERS);
+	texId_att_time_itemOff = getTextureFromPng(PATH_IMG_ATT_TIMERS_ITEM_OFF);
+	texId_att_time_itemOn = getTextureFromPng(PATH_IMG_ATT_TIMERS_ITEM_ON);
+	texId_att_time_magicOff = getTextureFromPng(PATH_IMG_ATT_TIMERS_MAGIC_OFF);
+	texId_att_time_magicOn = getTextureFromPng(PATH_IMG_ATT_TIMERS_MAGIC_ON);
+
+	texId_att_health = getTextureFromPng(PATH_IMG_ATT_HEALTH);
+
+	texId_att_wall = getTextureFromPng(PATH_IMG_ATT_WALL);
 }
 
 //Initializes 3D rendering
@@ -88,13 +120,13 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	case 49: //key - '1' : select basicPower
 		cout << "selected power_basic" << endl;
 		//TODO : show in attribute space
-		myTeam.players[currentPlayer - 1].currentPower = POWER_BASIC;
+		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
 		break;
 
 	case 50: //key - '2' : select magicPower
 		//TODO : show in attribute space
 		cout << "selected power_magic" << endl;
-		myTeam.players[currentPlayer - 1].currentPower = POWER_MAGIC;
+		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
 		break;
 
 	case 48:

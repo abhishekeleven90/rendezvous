@@ -71,7 +71,7 @@ void handleResize(int weight, int height) {
 			200.0); //The far z clipping coordinate
 }
 
-GLuint getTextureFromBmpImage(string path) {
+GLuint getTextureFromBmp(string path) {
 	GLuint _textureId; //The id of the texture
 	Image *bgImage = loadBMP(path.c_str());
 	_textureId = loadBmpTexture(bgImage);
@@ -79,8 +79,9 @@ GLuint getTextureFromBmpImage(string path) {
 	return _textureId;
 }
 
-void putPngImageToCell(string path, Coordinate_grid grid, int xBlocks,
-		int yBlocks) {
+MyTexture getTextureFromPng(string path) {
+
+	MyTexture myTexture;
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, path);
@@ -89,7 +90,7 @@ void putPngImageToCell(string path, Coordinate_grid grid, int xBlocks,
 	if (error != 0) {
 		std::cout << "error " << error << ": " << lodepng_error_text(error)
 				<< std::endl;
-		return;
+		return myTexture;
 	}
 
 	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
@@ -114,44 +115,18 @@ void putPngImageToCell(string path, Coordinate_grid grid, int xBlocks,
 
 	// Enable the texture for OpenGL.
 
-	GLuint textureId;
-	glGenTextures(1, &textureId); //Make room for our texture
-	glBindTexture(GL_TEXTURE_2D, textureId); //Tell OpenGL which texture to edit
+
+	glGenTextures(1, &myTexture.textureId); //Make room for our texture
+	glBindTexture(GL_TEXTURE_2D, myTexture.textureId); //Tell OpenGL which texture to edit
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_NEAREST = no smoothing
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 			&image2[0]);
 
-	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+	myTexture.u3 = u3;
+	myTexture.v3 = v3;
 
-	GLfloat xSize = xBlocks * CELL_LENGTH;
-	GLfloat ySize = yBlocks * CELL_LENGTH;
-
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glBegin(GL_QUADS);
-	glTexCoord2d(0, 0);
-	glVertex3f(openGl.x, openGl.y, -5.0f);
-	glTexCoord2d(u3, 0);
-	glVertex3f(openGl.x, openGl.y + ySize, -5.0f);
-	glTexCoord2d(u3, v3);
-	glVertex3f(openGl.x + xSize, openGl.y + ySize, -5.0f);
-	glTexCoord2d(0, v3);
-	glVertex3f(openGl.x + xSize, openGl.y, -5.0f);
-	glEnd();
-}
-
-void putPngImageToLeftAttCell(string path, Coordinate_grid grid, int xBlocks,
-		int yBlocks) {
-	//grid.col should be between 1 & ATTRIBUTE_WIDTH
-	putPngImageToCell(path, grid, xBlocks, yBlocks);
-}
-
-void putPngImageToRightAttCell(string path, Coordinate_grid grid, int xBlocks,
-		int yBlocks) {
-	//grid.col should be between 1 & ATTRIBUTE_WIDTH
-	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
-	putPngImageToCell(path, grid, xBlocks, yBlocks);
+	return myTexture;
 }
 
 /*void setOrthographicProjection() {

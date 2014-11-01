@@ -7,6 +7,7 @@
 #define CELL_LENGTH 0.2f
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
+#define currentPlayer myTeam.players[playerId - 1]
 
 //Grid related
 #define MAX_XCELL 1.0f

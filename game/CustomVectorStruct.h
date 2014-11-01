@@ -44,4 +44,22 @@ public:
 	int x, y;
 };
 
+struct MyTexture {
+public:
+
+	MyTexture() {
+
+	}
+
+	MyTexture(GLuint texId, double u, double v) {
+		textureId = texId;
+		u3 = u;
+		v3 = v;
+	}
+
+	GLuint textureId;
+	double u3;
+	double v3;
+};
+
 #endif

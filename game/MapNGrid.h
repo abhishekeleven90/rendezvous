@@ -28,33 +28,20 @@ void moveHeroMine(int type);
 Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
-//TODO: test code can be removed whenever wanted
+//TODO: delete
 void putHeros() {
-	myTeam.players[0].astar = new AStarClass();
-	myTeam.players[0].astar->firstInitAStar();
-	//TODO: Abhisek : player's location, move to myTeam.players[currentPlayer - 1]?
-	Coordinate_grid location;
-	location.row = 19;
-	location.col = 1;
-	setHeroLocation(1, location);
+	/*
+	 myTeam.players[1].astar = new AStarClass();
+	 myTeam.players[1].astar->firstInitAStar();
 
-	putCharToGrid(19, 1, H_SLOWER, true);
-
-	myTeam.players[1].astar = new AStarClass();
-	myTeam.players[1].astar->firstInitAStar();
-
-	Coordinate_grid location2;
-	location2.row = 20;
-	location2.col = 3;
-	setHeroLocation(2, location2);
-	//assuming the type is H_SLOWER in moveHero also
-	myTeam.players[1].strength = STRENGTH_H_SLOWER;
-	putCharToGrid(20, 3, H_SLOWER, true);
-}
-
-void setHeroLocation(int which, Coordinate_grid loc) {
-	myTeam.players[which - 1].location.row = loc.row;
-	myTeam.players[which - 1].location.col = loc.col;
+	 Coordinate_grid location2;
+	 location2.row = 20;
+	 location2.col = 3;
+	 setHeroLocation(2, location2);
+	 //assuming the type is H_SLOWER in moveHero also
+	 myTeam.players[1].strength = STRENGTH_H_SLOWER;
+	 putCharToGrid(20, 3, H_SLOWER, true);
+	 */
 }
 
 void putAttributeSpace() {
@@ -138,11 +125,11 @@ void putTreesInTeamArea() {
 }
 
 void putStonesInCommonArea() {
-	putToGridFromFile(PATH_LOC_STONES_COMMON, STONE, false, true);
+	putToGridFromFile(PATH_LOC_STONES_COMMON, STONE_WAR, false, true);
 }
 
 void putTreesInCommonArea() {
-	putToGridFromFile(PATH_LOC_TREES_COMMON, TREE, false, true);
+	putToGridFromFile(PATH_LOC_TREES_COMMON, TREE_WAR, false, true);
 }
 
 void putStonesNTrees() {
@@ -238,7 +225,7 @@ void putTextToCell(Coordinate_grid grid, char* string) {
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void putImageToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
+void putBmpToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
 		int yBlocks) {
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 
@@ -262,6 +249,54 @@ void putImageToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
 	glEnd();
 }
 
+void putBmpToLAttCell(Coordinate_grid grid, GLuint textureId, int xBlocks,
+		int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	putBmpToCell(grid, textureId, xBlocks, yBlocks);
+}
+
+void putBmpToRAttCell(Coordinate_grid grid, GLuint textureId, int xBlocks,
+		int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
+	putBmpToCell(grid, textureId, xBlocks, yBlocks);
+}
+
+void putPngToCell(Coordinate_grid grid, MyTexture myTexture, int xBlocks,
+		int yBlocks) {
+	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
+
+	GLfloat xSize = xBlocks * CELL_LENGTH;
+	GLfloat ySize = yBlocks * CELL_LENGTH;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, myTexture.textureId);
+	glBegin(GL_QUADS);
+	glTexCoord2d(0, 0);
+	glVertex3f(openGl.x, openGl.y, -5.0f);
+	glTexCoord2d(myTexture.u3, 0);
+	glVertex3f(openGl.x, openGl.y + ySize, -5.0f);
+	glTexCoord2d(myTexture.u3, myTexture.v3);
+	glVertex3f(openGl.x + xSize, openGl.y + ySize, -5.0f);
+	glTexCoord2d(0, myTexture.v3);
+	glVertex3f(openGl.x + xSize, openGl.y, -5.0f);
+
+	glEnd();
+}
+
+void putPngToLAttCell(Coordinate_grid grid, MyTexture myTexture, int xBlocks,
+		int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	putPngToCell(grid, myTexture, xBlocks, yBlocks);
+}
+
+void putPngToRAttCell(Coordinate_grid grid, MyTexture myTexture, int xBlocks,
+		int yBlocks) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
+	putPngToCell(grid, myTexture, xBlocks, yBlocks);
+}
+
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int xBlocks, int yBlocks, bool isInner) {
 
@@ -278,7 +313,7 @@ void putMultipleCharToGrid(int row, int col, charCellType charType,
 
 //In case some new charis added to grid, remember to add the some in renderGrid
 void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
-	if (!isValidRowNColIndex(row, col, isInner)) {
+	if (!isValidRowNColIndex(Coordinate_grid(row, col), isInner)) {
 		return;
 	}
 

@@ -7,7 +7,7 @@
 enum charCellType {
 	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE, BG_BLOCKED,
 
-	STONE, TREE,
+	STONE, TREE, STONE_WAR, TREE_WAR,
 
 	TEMPLE_ANGELS, TEMPLE_DEMONS,
 
@@ -25,6 +25,7 @@ enum heroes {
 	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
 };
 
+//TODO: check if required
 enum magicPower {
 	MAGIC_DISABLE, MAGIC_SLOW, MAGIC_BURST, MAGIC_STUN
 };
@@ -34,8 +35,8 @@ enum itemType {
 	ITEM_SPEED_MOVE, ITEM_HEALTH, ITEM_DAMAGE, ITEM_TEMPLE_HEALER
 };
 
-enum heroPower {
-	POWER_BASIC, POWER_MAGIC
+enum heroPowerMode {
+	POWER_MODE_BASIC, POWER_MODE_MAGIC
 };
 
 //Angels - left, Demons - right
@@ -66,15 +67,12 @@ struct Temple {
 };
 
 struct Player {
-	teamName team;
 	heroes heroType;
 
-	string pic_path;
-	magicPower magic_power;
+	charCellType charType;
 
-	heroPower currentPower;
+	heroPowerMode currentPowerMode;
 	int heroHealth;
-	int templeHealth;
 
 	int strength;
 	int speedMove;
@@ -84,11 +82,14 @@ struct Player {
 	Coordinate_grid location;
 
 	bool toAttackTemple;
+
+	bool isTimerItemGlobalRunning;
+	bool isTimerMagicSpellRunning;
 };
 
 struct TeamStruct {
-	teamName team_name;
-	int health;//temple health
+	teamName name;
+	int templeHealth;//temple health
 	Player players[2];
 };
 

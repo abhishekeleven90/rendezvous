@@ -3,19 +3,19 @@
 
 #include "CustomVectorStruct.h"
 
-bool isValidRowNColIndex(int row, int col, int isInner) {
-	if (row < START_GRID_ROW || row > END_GRID_ROW) {
+bool isValidRowNColIndex(Coordinate_grid grid, int isInner) {
+	if (grid.row < START_GRID_ROW || grid.row > END_GRID_ROW) {
 		return false;
 	}
 
 	if (isInner) {
-		if (col < START_INNER_GRID_COL || col > END_INNER_GRID_COL) {
+		if (grid.col < START_INNER_GRID_COL || grid.col > END_INNER_GRID_COL) {
 			return false;
 		}
 	}
 
 	else {
-		if (col < START_OUTER_GRID_COL || col > END_OUTER_GRID_COL) {
+		if (grid.col < START_OUTER_GRID_COL || grid.col > END_OUTER_GRID_COL) {
 			return false;
 		}
 	}
@@ -24,17 +24,15 @@ bool isValidRowNColIndex(int row, int col, int isInner) {
 }
 
 bool isValidCell(Coordinate_grid grid) { //Checking it's not in black screen
-	return isValidRowNColIndex(grid.row, grid.col, false);
+	return isValidRowNColIndex(grid, false);
 }
 
 bool isOponentCellForTeam(Coordinate_grid grid) { //returns true if the passed cell lies in my opponent area
-	if (myTeam.players[currentPlayer - 1].team == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS
-			+ 1) {
+	if (myTeam.name == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS + 1) {
 		return true;
 	}
 
-	if (myTeam.players[currentPlayer - 1].team == TEAM_DEMONS && grid.row >= grid.col + DIAG_BLOCKS
-			+ 1) {
+	if (myTeam.name == TEAM_DEMONS && grid.row >= grid.col + DIAG_BLOCKS + 1) {
 		return true;
 	}
 
