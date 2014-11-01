@@ -183,7 +183,7 @@ void updateHeroAttributesTakingItem() {
 		break;
 	case ITEM_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
-		myTeam.players[playerId - 1].speedMove += GAIN_ITEM_SPEED_MOVE;
+		myTeam.players[playerId - 1].speedMove -= GAIN_ITEM_SPEED_MOVE;
 		break;
 	case ITEM_TEMPLE_HEALER:
 		cout << "item_temple_healer taken" << endl;

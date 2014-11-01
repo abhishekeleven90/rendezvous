@@ -114,7 +114,6 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 32: //key - 'space' : on/off bgMusic
 		toggleBgMusic();
-		togglePlayer();
 		break;
 
 	case 49: //key - '1' : select basicPower
@@ -129,7 +128,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
 		break;
 
-	case 48:
+	case 48: //key - '0'
 		cout << "Switching player" << endl;
 		togglePlayer();
 		break;

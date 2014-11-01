@@ -13,6 +13,12 @@
 #include "ActionOnGrid.h"
 #include "Validations.h"
 
+string numToStr(int num) {
+	stringstream ss;
+	ss << num;
+	return ss.str();
+}
+
 void blockOpponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
@@ -28,18 +34,22 @@ void loadTeamAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
 	myTeam.name = TEAM_ANGELS;
 	myTeam.templeHealth = HEALTH_FULL_TEMPLE;
+	currentPlayer.heroHealth = HEALTH_FULL_HERO;
 
 	currentPlayer.heroType = HERO_STUNNER;
-	myTeam.players[1].heroType = HERO_BURSTER;
+	myTeam.players[1].heroType = HERO_BURSTER; //TODO : might not be one
+	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 
 	//TODO: first player load attributes yours, plus others
 	//TODO: first player may be the first player to join
 
-	enemyTeam.templeHealth = HEALTH_FULL_TEMPLE;
 	enemyTeam.name = TEAM_DEMONS;
+	enemyTeam.templeHealth = HEALTH_FULL_TEMPLE;
 
 	enemyTeam.players[0].heroType = HERO_DISABLER;
 	enemyTeam.players[1].heroType = HERO_SLOWER;
+	enemyTeam.players[0].heroHealth = HEALTH_FULL_HERO;
+	enemyTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 	//TODO: load other attributes
 	currentPlayer.isTimerItemGlobalRunning = false;
 	currentPlayer.isTimerMagicSpellRunning = false;
@@ -53,7 +63,6 @@ void loadPlayerSpecificAttributes() {
 	currentPlayer.astar->firstInitAStar();
 
 	currentPlayer.currentPowerMode = POWER_MODE_BASIC;
-	currentPlayer.heroHealth = HEALTH_FULL_HERO;
 
 	switch (currentPlayer.heroType) {
 	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
@@ -87,6 +96,12 @@ void loadPlayerSpecificAttributes() {
 	int row = currentPlayer.location.row;
 	int col = currentPlayer.location.col;
 	putCharToGrid(row, col, currentPlayer.charType, true);
+
+	//TODO: temp, below remove
+	int row1 = 20;
+	int col1 = 3;
+	putCharToGrid(row1, col1, H_BURSTER, true);
+	myTeam.players[1].speedMove = SPEED_MOVE_H_BURSTER;
 
 	blockOpponentsArea();
 }
@@ -187,6 +202,39 @@ void loadAttributeSpace() {
 		break;
 	}
 
+	switch (currentPlayer.currentPowerMode) {
+	case POWER_MODE_BASIC:
+		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mBasic, 2, 1);
+		break;
+	case POWER_MODE_MAGIC:
+		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mMagic, 2, 1);
+		break;
+	}
+
+	//Timers
+	if (currentPlayer.isTimerItemGlobalRunning) {
+		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOn, 2, 1);
+	} else {
+		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOff, 2, 1);
+	}
+
+	if (currentPlayer.isTimerMagicSpellRunning) {
+		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOn, 2, 1);
+	} else {
+		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOff, 2, 1);
+	}
+
+	//Health
+	putTextToLAttCell(Coordinate_grid(15, 2), numToStr(myTeam.templeHealth));
+	putTextToRAttCell(Coordinate_grid(13, 2), numToStr(enemyTeam.templeHealth));
+	putTextToLAttCell(Coordinate_grid(6, 2), numToStr(currentPlayer.heroHealth));
+	putTextToLAttCell(Coordinate_grid(12, 2),
+			numToStr(myTeam.players[1].heroHealth)); //TODO: may not be one
+	putTextToRAttCell(Coordinate_grid(6, 2),
+			numToStr(enemyTeam.players[0].heroHealth));
+	putTextToRAttCell(Coordinate_grid(10, 2),
+			numToStr(enemyTeam.players[1].heroHealth));
+
 	//TODO: may not be '1' below
 	switch (myTeam.players[1].heroType) {
 	case HERO_STUNNER:
@@ -254,31 +302,11 @@ void loadAttributeSpace() {
 		break;
 	}
 
-	switch (currentPlayer.currentPowerMode) {
-	case POWER_MODE_BASIC:
-		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mBasic, 2, 1);
-		break;
-	case POWER_MODE_MAGIC:
-		putPngToLAttCell(Coordinate_grid(7, 1), texId_att_mMagic, 2, 1);
-		break;
-	}
-
-	if (currentPlayer.isTimerItemGlobalRunning) {
-		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOn, 2, 1);
-	} else {
-		putPngToLAttCell(Coordinate_grid(18, 1), texId_att_time_itemOff, 2, 1);
-	}
-
-	if (currentPlayer.isTimerMagicSpellRunning) {
-		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOn, 2, 1);
-	} else {
-		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_magicOff, 2, 1);
-	}
 }
 
 void renderGrid() {
-	moveHeroMine(1);
-	moveHeroMine(2);
+	moveHeroMine(playerId);
+	moveHeroMine(2); //TODO: check if not required..later may be required
 
 	loadAttributeSpace();
 

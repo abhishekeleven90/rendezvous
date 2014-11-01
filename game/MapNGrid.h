@@ -211,7 +211,7 @@ float t3dComputeScale(const char* str) {
 	return CELL_LENGTH / width;
 }
 
-void putTextToCell(Coordinate_grid grid, char* string) {
+void putTextToCell(Coordinate_grid grid, string text) {
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 	float t3dScale = t3dComputeScale("qqqqq");
 	glPushMatrix();
@@ -220,9 +220,20 @@ void putTextToCell(Coordinate_grid grid, char* string) {
 	glScalef(t3dScale, t3dScale, t3dScale);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	//glTranslatef(0, 0, 1.5f / _scale);
-	t3dDraw3D(string, -1, 0, 0.2f);
+	t3dDraw3D(text, -1, 1, 0.2f);
 	glPopMatrix();
 	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void putTextToLAttCell(Coordinate_grid grid, string text) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	putTextToCell(grid, text);
+}
+
+void putTextToRAttCell(Coordinate_grid grid, string text) {
+	//grid.col should be between 1 & ATTRIBUTE_WIDTH
+	grid.col += ATTRIBUTE_WIDTH + END_INNER_GRID_COL - START_INNER_GRID_COL + 1;
+	putTextToCell(grid, text);
 }
 
 void putBmpToCell(Coordinate_grid grid, GLuint _textureId, int xBlocks,
