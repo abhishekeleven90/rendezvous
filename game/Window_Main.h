@@ -86,8 +86,7 @@ void initRendering_main() {
 	loadPlayerSpecificAttributes();
 
 	t3dInit();
-	//createServerThread();
-	broadcast();
+	createServerThread();
 }
 
 //Draws the 3D scene
@@ -100,6 +99,7 @@ void drawScene_main() {
 
 	//printGrid();
 	renderGrid();
+	putTextToLAttCell(Coordinate_grid(3, 1), numToStr(server_port)); //TODO: not req here
 
 	//putTextToCell(Coordinate_grid(1, 1), "type:");
 	//putTextToCell(Coordinate_grid(1, 2), "stun");
@@ -123,6 +123,8 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	case 49: //key - '1' : select basicPower
 		cout << "selected power_basic" << endl;
 		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
+
+		broadcast(); //TODO: not requred here
 		break;
 
 	case 50: //key - '2' : select magicPower

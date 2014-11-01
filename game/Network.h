@@ -85,10 +85,18 @@ void createClientThread() {
 }
 
 void broadcast() {
-	strcpy(client_send_data, MSG_BROADCAST);
-	strcat(client_send_data, "dummy");
-	connectToRemoteNode("127.0.0.1", 5000);
+	while (1) {
+		strcpy(client_send_data, MSG_BROADCAST);
+		strcat(client_send_data, "dummy");
 
+		connectToRemoteNode("127.0.0.1", 5001);
+
+		connectToRemoteNode("127.0.0.1", 6001);
+
+		connectToRemoteNode("127.0.0.1", 7001);
+
+		sleep(2);
+	}
 }
 
 nodeHelper* convertToNodeHelper(char *ipWithPort) {

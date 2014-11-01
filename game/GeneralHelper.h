@@ -13,7 +13,7 @@
 #include "ActionOnGrid.h"
 #include "Validations.h"
 
-string numToStr(int num) {
+string numToStr(int num) { //TODO: move to MyString.h
 	stringstream ss;
 	ss << num;
 	return ss.str();
