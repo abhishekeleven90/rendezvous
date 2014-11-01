@@ -44,7 +44,9 @@ void timerCurse(int value) {
 
 		switch (value) {
 		case CURSE_STUN:
-			//currentPlayer.s
+			currPlayer.speedMoveTemp = currPlayer.speedMove;
+			currPlayer.speedMove = 0;
+			currPlayer.currentPowerMode = POWER_MODE_STUN;
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here
@@ -67,6 +69,11 @@ void timerCurse(int value) {
 
 		switch (value) {
 		case CURSE_STUN:
+			currPlayer.currentPowerMode = POWER_MODE_BASIC;
+			currPlayer.speedMove += currPlayer.speedMoveTemp;
+			if (currPlayer.speedMove > SPEED_MAX) {
+				currPlayer.speedMove = SPEED_MAX;
+			}
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here

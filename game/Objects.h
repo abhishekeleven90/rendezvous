@@ -40,7 +40,7 @@ enum itemType {
 };
 
 enum heroPowerMode {
-	POWER_MODE_BASIC, POWER_MODE_MAGIC
+	POWER_MODE_BASIC, POWER_MODE_MAGIC, POWER_MODE_STUN
 };
 
 //Angels - left, Demons - right
@@ -81,6 +81,7 @@ struct Player {
 	int strength;
 	int speedMove;
 
+	int speedMoveTemp; //used to save speed to restore back after curse is over
 	curse curseType;
 
 	//list<itemType*> itemsBag;

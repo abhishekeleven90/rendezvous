@@ -67,6 +67,7 @@ MyTexture texId_att_h_stunner;
 
 MyTexture texId_att_mBasic;
 MyTexture texId_att_mMagic;
+MyTexture texId_att_mStun;
 
 MyTexture texId_att_team_Angels;
 MyTexture texId_att_team_Demons;

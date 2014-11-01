@@ -41,6 +41,7 @@ void loadTextures_main() {
 
 	texId_att_mBasic = getTextureFromPng(PATH_IMG_ATT_MODE_BASIC);
 	texId_att_mMagic = getTextureFromPng(PATH_IMG_ATT_MODE_MAGIC);
+	texId_att_mStun = getTextureFromPng(PATH_IMG_ATT_MODE_STUN);
 
 	texId_att_team_Angels = getTextureFromPng(PATH_IMG_ATT_TEAM_ANGELS);
 	texId_att_team_Demons = getTextureFromPng(PATH_IMG_ATT_TEAM_DEMONS);
@@ -134,7 +135,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 51: //key - '3' : curse //TODO: case may not be required later
-		iAmCursed(CURSE_SLOW);
+		iAmCursed(CURSE_STUN);
 		break;
 
 	case 48: //key - '0' //TODO: may not be required later : just for testing purpose

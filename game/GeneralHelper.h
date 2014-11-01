@@ -190,6 +190,9 @@ void putMyAttributes() {
 	case POWER_MODE_MAGIC:
 		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mMagic, 2, 1);
 		break;
+	case POWER_MODE_STUN:
+		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mStun, 2, 1);
+		break;
 	}
 
 	switch (currPlayer.curseType) {

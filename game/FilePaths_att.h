@@ -14,6 +14,7 @@
 
 #define PATH_IMG_ATT_MODE_BASIC "data/images/att_mode_basic.png"
 #define PATH_IMG_ATT_MODE_MAGIC "data/images/att_mode_magic.png"
+#define PATH_IMG_ATT_MODE_STUN "data/images/att_mode_stun.png"
 
 #define PATH_IMG_ATT_TEAM_ANGELS "data/images/att_team_angels.png"
 #define PATH_IMG_ATT_TEAM_DEMONS "data/images/att_team_demons.png"
@@ -29,7 +30,7 @@
 #define PATH_IMG_ATT_WALL "data/images/att_wall.png"
 
 #define PATH_IMG_ATT_HEALTH "data/images/att_health.png"
-#define PATH_IMG_ATT_TEMPLE_HEALTH "data/images/att_temple_health.png"
+#define PATH_IMG_ATT_TEMPLE_HEALTH "data/images/att_health_temple.png"
 #define PATH_IMG_ATT_STRENGTH "data/images/att_strength.png"
 #define PATH_IMG_ATT_SPEED "data/images/att_speed.png"
 
