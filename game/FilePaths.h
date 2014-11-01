@@ -34,7 +34,6 @@
 #define PATH_IMG_HERO_SLOWER "data/images/hero_slower.bmp"
 #define PATH_IMG_HERO_BURSTER "data/images/hero_burster.bmp"
 
-#define PATH_IMG_ITEM_ATTACK_SPEED "data/images/item_attack_speed.bmp"
 #define PATH_IMG_ITEM_MOVEMENT_SPEED "data/images/item_movement_speed.bmp"
 #define PATH_IMG_ITEM_DAMAGE "data/images/item_damage.bmp"
 #define PATH_IMG_ITEM_HEALTH "data/images/item_health.bmp"

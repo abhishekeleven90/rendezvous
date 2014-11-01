@@ -24,7 +24,6 @@ void loadTextures_main() {
 	texId_h_burster = getTextureFromBmp(PATH_IMG_HERO_BURSTER);
 
 	texId_i_speedMov = getTextureFromBmp(PATH_IMG_ITEM_MOVEMENT_SPEED);
-	texId_i_speedAttack = getTextureFromBmp(PATH_IMG_ITEM_ATTACK_SPEED);
 	texId_i_damage = getTextureFromBmp(PATH_IMG_ITEM_DAMAGE);
 	texId_i_health = getTextureFromBmp(PATH_IMG_ITEM_HEALTH);
 	texId_i_tHealer = getTextureFromBmp(PATH_IMG_ITEM_TEMPLE_HEALER);
