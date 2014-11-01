@@ -23,18 +23,20 @@
 
 #define DATA_SIZE_KILO 1024
 
-//#define MSG_JOIN "j:"
+#define MSG_BROADCAST "b:"
+
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 
-unsigned int server_port = 0;
+unsigned int server_port = 5000; //TODO: shall be 0
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
 pthread_t serverThreadId;
+pthread_t clientThreadId; //TODO: check if not required
 int serverSock;
 
 int isCreated = false;
@@ -51,11 +53,17 @@ nodeHelper* selfNode = new nodeHelper;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
+void createServerThread();
+void createClientThread();
+void runClientAndWaitForResult(int clientThreadID);
+void connectToRemoteNode(char* ip, unsigned int port);
 int createThread(pthread_t* threadId, void* threadFn(void*));
 void joinIpWithPort(char* ip, unsigned int port, char* ipWithPort);
 void getMyIp(char* ip);
 int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
+
+void processBroadcast(char *data);
 
 //-----TCP Functions-------
 void* client(void* arg);
@@ -63,6 +71,57 @@ void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
+void processBroadcast(char *data) {
+	cout << "received: " << data << endl;
+	strcpy(server_send_data, "tuBiDummy");
+}
+
+void createServerThread() {
+	createThread(&serverThreadId, server);
+}
+
+void createClientThread() {
+	createThread(&clientThreadId, client);
+}
+
+void broadcast() {
+	strcpy(client_send_data, MSG_BROADCAST);
+	strcat(client_send_data, "dummy");
+	connectToRemoteNode("127.0.0.1", 5000);
+
+}
+
+nodeHelper* convertToNodeHelper(char *ipWithPort) {
+	nodeHelper* toReturn = new nodeHelper;
+
+	strcpy(toReturn->ipWithPort, ipWithPort);
+	char* ipAddr = substring(ipWithPort, 0, indexOf(ipWithPort, ':'));
+	char* portString = substring(ipWithPort, indexOf(ipWithPort, ':') + 2,
+			strlen(ipWithPort));
+
+	unsigned int portNum = atoi(portString);
+
+	strcpy(toReturn->ip, ipAddr);
+	toReturn->port = portNum;
+
+	return toReturn;
+}
+
+void runClientAndWaitForResult() {
+	client_recv_data[0] = '\0';
+	createClientThread();
+	while (client_recv_data[0] == '\0')
+		; //wait until data is received
+}
+
+void connectToRemoteNode(char* ip, unsigned int port) {
+	memset(client_recv_data, 0, sizeof client_recv_data);
+	strcpy(ip2Join, ip);
+	remote_port = port;
+
+	runClientAndWaitForResult();
+}
+
 int createThread(pthread_t* threadId, void* threadFn(void*)) {
 	if (pthread_create(threadId, NULL, threadFn, NULL)) {
 
@@ -148,10 +207,6 @@ void fillNodeEntries(struct sockaddr_in server_addr) {
 }
 
 //-----TCP Functions-------
-void createServerThread() {
-	createThread(&serverThreadId, server);
-}
-
 bool connectToServer(int & sock) {
 	struct hostent *host;
 	struct sockaddr_in server_addr;
@@ -203,10 +258,12 @@ void* client(void* arg) {
 	send(sock, client_send_data, strlen(client_send_data), 0);
 
 	bytes_recieved = recv(sock, client_recv_data, DATA_SIZE_KILO, 0);
-	cout << "Data successfully received" << endl;
 	client_recv_data[bytes_recieved] = '\0';
 
+	cout << "Data successfully received" << client_recv_data << endl;
+
 	close(sock);
+	return NULL;
 }
 
 void* server(void* arg) {
@@ -265,10 +322,10 @@ void* server(void* arg) {
 		char dataValArr[2][DATA_SIZE_KILO];
 		split(data, '?', dataValArr);
 
-		/*char* reqData = dataValArr[0];
-		 if (strcmp(type, MSG_QUIT) == 0) {
-		 processQuit(reqData);
-		 }*/
+		char* reqData = dataValArr[0];
+		if (strcmp(type, MSG_BROADCAST) == 0) {
+			processBroadcast(reqData);
+		}
 
 		send(connected, server_send_data, strlen(server_send_data), 0);
 		cout << "Done the required task, closing the connection" << endl;

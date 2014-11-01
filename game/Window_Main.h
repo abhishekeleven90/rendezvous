@@ -86,7 +86,8 @@ void initRendering_main() {
 	loadPlayerSpecificAttributes();
 
 	t3dInit();
-	createServerThread();
+	//createServerThread();
+	broadcast();
 }
 
 //Draws the 3D scene
