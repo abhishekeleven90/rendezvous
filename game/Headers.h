@@ -15,6 +15,8 @@
 #include <list>
 #include <math.h>
 
+#include <pthread.h>
+
 using namespace std;
 
 #endif

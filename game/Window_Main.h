@@ -2,6 +2,7 @@
 #define WINDOW_MAIN_H
 
 #include "text3d.h"
+#include "Network.h"
 
 void loadTextures_main() {
 	texId_bg_grass = getTextureFromBmp(PATH_IMG_BG_WINDOW_MAIN);
@@ -85,7 +86,7 @@ void initRendering_main() {
 	loadPlayerSpecificAttributes();
 
 	t3dInit();
-
+	createServerThread();
 }
 
 //Draws the 3D scene

@@ -34,7 +34,7 @@ unsigned int server_port = 0;
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
-int serverThreadId;
+pthread_t serverThreadId;
 int serverSock;
 
 int isCreated = false;
@@ -51,17 +51,27 @@ nodeHelper* selfNode = new nodeHelper;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
+int createThread(pthread_t* threadId, void* threadFn(void*));
 void joinIpWithPort(char* ip, unsigned int port, char* ipWithPort);
 void getMyIp(char* ip);
 int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
 
 //-----TCP Functions-------
-void client();
-void server();
+void* client(void* arg);
+void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
+int createThread(pthread_t* threadId, void* threadFn(void*)) {
+	if (pthread_create(threadId, NULL, threadFn, NULL)) {
+
+		fprintf(stderr, "Error creating thread\n");
+		return 1;
+	}
+	return 0;
+}
+
 void joinIpWithPort(char* ip, unsigned int port, char* ipWithPort) {
 	char portChar[10];
 	intToChar(port, portChar);
@@ -119,8 +129,6 @@ int getMyPort(int mySock) {
 }
 
 void fillNodeEntries(struct sockaddr_in server_addr) {
-	nodeHelper* self = new nodeHelper();
-
 	char ip[IP_SIZE];
 	memset(ip, 0, sizeof ip);
 	getMyIp(ip);
@@ -129,17 +137,21 @@ void fillNodeEntries(struct sockaddr_in server_addr) {
 		strcpy(ip, "127.0.0.1");
 	}
 
-	strcpy(self->ip, ip);
+	strcpy(selfNode->ip, ip);
 
-	self->port = getMyPort(serverSock);
+	selfNode->port = getMyPort(serverSock);
 
 	char ipWithPort[IP_SIZE];
-	joinIpWithPort(self->ip, self->port, ipWithPort);
-	strcpy(self->ipWithPort, ipWithPort);
+	joinIpWithPort(selfNode->ip, selfNode->port, ipWithPort);
+	strcpy(selfNode->ipWithPort, ipWithPort);
 
 }
 
 //-----TCP Functions-------
+void createServerThread() {
+	createThread(&serverThreadId, server);
+}
+
 bool connectToServer(int & sock) {
 	struct hostent *host;
 	struct sockaddr_in server_addr;
@@ -178,13 +190,13 @@ bool connectToServer(int & sock) {
 	return true;
 }
 
-void client() {
+void* client(void* arg) {
 	cout << "Client started" << endl;
 	int sock, bytes_recieved;
 
 	if (!connectToServer(sock)) {
 		client_recv_data[0] = SERVER_BUSY; //Inserting this --- to be used in helperJoin
-		return;
+		return NULL;
 	}
 
 	cout << "Client socket ID:" << sock << endl;
@@ -197,7 +209,7 @@ void client() {
 	close(sock);
 }
 
-void server() {
+void* server(void* arg) {
 	int sock, connected, trueint = 1;
 
 	struct sockaddr_in server_addr, client_addr;
@@ -264,7 +276,7 @@ void server() {
 
 		close(connected);
 	}
-	//right now, doesn't reach here
+	cout << "right now, doesn't reach here" << endl;
 	close(sock);
 }
 
