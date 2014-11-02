@@ -124,7 +124,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		cout << "selected power_basic" << endl;
 		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
 
-		broadcast(); //TODO: not requred here
+		createClientBroadcastThread(); //TODO: not required here
 		break;
 
 	case 50: //key - '2' : select magicPower

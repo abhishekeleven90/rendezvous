@@ -19,6 +19,7 @@
 #include "MyString.h"
 
 //----------Constants---------
+#define M 400
 #define QUEUE_LIMIT 5
 
 #define DATA_SIZE_KILO 1024
@@ -28,15 +29,19 @@
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
+char GLOBAL_ARR[M][DATA_SIZE_KILO];
+
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 
-unsigned int server_port = 5000; //TODO: shall be 0
+unsigned int server_port = 5001; //TODO: shall be 0
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
 pthread_t serverThreadId;
 pthread_t clientThreadId; //TODO: check if not required
+pthread_t broadcastThreadId;
+
 int serverSock;
 
 int isCreated = false;
@@ -54,9 +59,12 @@ nodeHelper* selfNode = new nodeHelper;
 //****************Function Declarations*******************
 //-----Helper Functions----
 void createServerThread();
-void createClientThread();
+void createClientBroadcastThread();
+
+void populateClientSendDataForBroadcast();
+
 void runClientAndWaitForResult(int clientThreadID);
-void connectToRemoteNode(char* ip, unsigned int port);
+void setRemoteNode(char* ip, unsigned int port);
 int createThread(pthread_t* threadId, void* threadFn(void*));
 void joinIpWithPort(char* ip, unsigned int port, char* ipWithPort);
 void getMyIp(char* ip);
@@ -66,13 +74,28 @@ void fillNodeEntries(struct sockaddr_in server_addr);
 void processBroadcast(char *data);
 
 //-----TCP Functions-------
-void* client(void* arg);
+void* clientBroadcast(void* arg);
 void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
 void processBroadcast(char *data) {
-	cout << "received: " << data << endl;
+	//cout << "received: " << data << endl;
+
+	for (int i = 0; i < M; i++) {
+		memset(GLOBAL_ARR[i], 0, sizeof GLOBAL_ARR[i]);
+	}
+
+	split(data, '|', GLOBAL_ARR);
+
+	int k = 0;
+	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
+		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
+			putCharToGrid(i, j,
+					static_cast<charCellType> (atoi(GLOBAL_ARR[k++])), true);
+		}
+	}
+
 	strcpy(server_send_data, "tuBiDummy");
 }
 
@@ -80,22 +103,18 @@ void createServerThread() {
 	createThread(&serverThreadId, server);
 }
 
-void createClientThread() {
-	createThread(&clientThreadId, client);
+void createClientBroadcastThread() {
+	createThread(&broadcastThreadId, clientBroadcast);
 }
 
-void broadcast() {
-	while (1) {
-		strcpy(client_send_data, MSG_BROADCAST);
-		strcat(client_send_data, "dummy");
+void populateClientSendDataForBroadcast() {
+	strcpy(client_send_data, MSG_BROADCAST);
 
-		connectToRemoteNode("127.0.0.1", 5001);
-
-		connectToRemoteNode("127.0.0.1", 6001);
-
-		connectToRemoteNode("127.0.0.1", 7001);
-
-		sleep(2);
+	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
+		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
+			strcat(client_send_data, numToStr(getInnerGridChar(i, j)).c_str());
+			strcat(client_send_data, "|");
+		}
 	}
 }
 
@@ -115,19 +134,10 @@ nodeHelper* convertToNodeHelper(char *ipWithPort) {
 	return toReturn;
 }
 
-void runClientAndWaitForResult() {
-	client_recv_data[0] = '\0';
-	createClientThread();
-	while (client_recv_data[0] == '\0')
-		; //wait until data is received
-}
-
-void connectToRemoteNode(char* ip, unsigned int port) {
+void setRemoteNode(char* ip, unsigned int port) {
 	memset(client_recv_data, 0, sizeof client_recv_data);
 	strcpy(ip2Join, ip);
 	remote_port = port;
-
-	runClientAndWaitForResult();
 }
 
 int createThread(pthread_t* threadId, void* threadFn(void*)) {
@@ -218,15 +228,15 @@ void fillNodeEntries(struct sockaddr_in server_addr) {
 bool connectToServer(int & sock) {
 	struct hostent *host;
 	struct sockaddr_in server_addr;
-	cout << "Inside connect to server: " << ip2Join << ":" << remote_port
-			<< endl;
+	//cout << "Inside connect to server: " << ip2Join << ":" << remote_port
+	//<< endl;
 	host = gethostbyname(ip2Join);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("Socket");
 		exit(1);
 	}
-	cout << "Client socket created" << endl;
+	//cout << "Client socket created" << endl;
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr = *((struct in_addr *) host->h_addr);
 	server_addr.sin_port = htons(remote_port);
@@ -238,8 +248,8 @@ bool connectToServer(int & sock) {
 
 		//trying again assuming the server is busy
 		retriedCount++;
-		cout << "Server busy --- retrying(" << retriedCount << "/"
-				<< retry_count << ")" << endl;
+		//cout << "Server busy --- retrying(" << retriedCount << "/"
+		//	<< retry_count << ")" << endl;
 		sleep(1);
 		if (retriedCount == retry_count) {
 			cout
@@ -249,28 +259,39 @@ bool connectToServer(int & sock) {
 			return false;
 		}
 	}
-	cout << "Client successfully connected to server" << endl;
+	//cout << "Client successfully connected to server" << endl;
 	return true;
 }
 
-void* client(void* arg) {
-	cout << "Client started" << endl;
+void sendDataToServer() {
 	int sock, bytes_recieved;
 
+	client_recv_data[0] = '\0';
+
 	if (!connectToServer(sock)) {
-		client_recv_data[0] = SERVER_BUSY; //Inserting this --- to be used in helperJoin
-		return NULL;
+		client_recv_data[0] = SERVER_BUSY;
+		return;
 	}
 
-	cout << "Client socket ID:" << sock << endl;
+	//cout << "Client socket ID:" << sock << endl;
 	send(sock, client_send_data, strlen(client_send_data), 0);
 
 	bytes_recieved = recv(sock, client_recv_data, DATA_SIZE_KILO, 0);
 	client_recv_data[bytes_recieved] = '\0';
 
-	cout << "Data successfully received" << client_recv_data << endl;
+	//cout << "Data successfully received" << client_recv_data << endl;
 
 	close(sock);
+}
+
+void* clientBroadcast(void* arg) {
+	cout << "Client started" << endl;
+
+	while (1) {
+		populateClientSendDataForBroadcast();
+		setRemoteNode("127.0.0.1", 5001);
+		sendDataToServer();
+	}
 	return NULL;
 }
 
@@ -336,7 +357,6 @@ void* server(void* arg) {
 		}
 
 		send(connected, server_send_data, strlen(server_send_data), 0);
-		cout << "Done the required task, closing the connection" << endl;
 		fflush(stdout);//may be fatal, adding for UI
 
 		close(connected);
