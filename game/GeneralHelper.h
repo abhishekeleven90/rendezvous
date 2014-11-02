@@ -36,9 +36,9 @@ void loadTeamAttributes() {
 	myTeam.templeHealth = HEALTH_FULL_TEMPLE;
 	currPlayer.heroHealth = HEALTH_FULL_HERO;
 
-	currPlayer.heroType = HERO_STUNNER;
+	currPlayer.heroType = HERO_DISABLER;
 
-	myTeam.players[1].heroType = HERO_BURSTER; //TODO : might not be one
+	myTeam.players[1].heroType = HERO_STUNNER; //TODO : might not be one
 	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 
 	//TODO: first player load attributes yours, plus others
@@ -47,8 +47,8 @@ void loadTeamAttributes() {
 	enemyTeam.name = TEAM_DEMONS;
 	enemyTeam.templeHealth = HEALTH_FULL_TEMPLE;
 
-	enemyTeam.players[0].heroType = HERO_DISABLER;
-	enemyTeam.players[1].heroType = HERO_SLOWER;
+	enemyTeam.players[0].heroType = HERO_SLOWER;
+	enemyTeam.players[1].heroType = HERO_BURSTER;
 	enemyTeam.players[0].heroHealth = HEALTH_FULL_HERO;
 	enemyTeam.players[1].heroHealth = HEALTH_FULL_HERO;
 	//TODO: load other attributes
@@ -367,11 +367,6 @@ void loadAttributeSpace() {
 }
 
 void renderGrid() {
-	moveHeroMine(1);
-	moveHeroMine(2); //TODO: check if not required..later may be required
-
-	loadAttributeSpace();
-
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
 			handleGridCharSwitch(Coordinate_grid(r, c), RENDER_GRID);
