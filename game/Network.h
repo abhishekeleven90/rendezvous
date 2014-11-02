@@ -14,7 +14,6 @@
 #include <errno.h>
 #include <string.h>
 #include <map>
-#include <openssl/evp.h>
 #include <math.h>
 #include "MyString.h"
 
@@ -289,8 +288,11 @@ void* clientBroadcast(void* arg) {
 
 	while (1) {
 		populateClientSendDataForBroadcast();
-		setRemoteNode("127.0.0.1", 5001);
+		setRemoteNode("127.0.0.1", 5000);
 		sendDataToServer();
+
+		//setRemoteNode("10.192.11.114", 5000);
+		//sendDataToServer();
 	}
 	return NULL;
 }
