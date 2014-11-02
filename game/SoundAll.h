@@ -1,9 +1,14 @@
 #ifndef SOUND_ALL_H
 #define SOUND_ALL_H
 
-#include <SFML/Audio.hpp>
-#include "FilePaths.h"
+//#include <SFML/Audio.hpp>
+//#include "FilePaths.h"
 
+void toggleBgMusic(){}
+void playBgSound(){}
+void playEventSound(std::string eventSoundPath){}
+
+/*
 using namespace sf;
 
 Music bgMusic;
@@ -52,5 +57,6 @@ void playEventSound(std::string eventSoundPath) {
 		bgMusic.play();
 	}
 }
+*/
 
 #endif

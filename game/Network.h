@@ -33,7 +33,7 @@ char GLOBAL_ARR[M][DATA_SIZE_KILO];
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 
-unsigned int server_port = 5001; //TODO: shall be 0
+unsigned int server_port = 5000; //TODO: shall be 0
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
