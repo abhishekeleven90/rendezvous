@@ -54,11 +54,38 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		exit(0);
 		break;
 
-	case 51: //key - '3' //TODO:for testing - shall be while clicking start
+	case 57: //key - '9' //TODO:for testing - shall be while clicking start
+		myTeam.players[0].networkDetails
+				= convertToNodeHelper("127.0.0.1:5000"); //TODO: abhi ke liye ..
+		myTeam.players[1].networkDetails
+				= convertToNodeHelper("127.0.0.1:5001"); //TODO: abhi ke liye ..
 		glutDestroyWindow(windowId_current);
 		t3dCleanup();
 		create_window_main();
 		break;
+
+	case 48: //key - '0'
+		isPrimaryNode = true;
+		myTeam.name = TEAM_ANGELS;
+		playerId = 1;
+		break;
+
+	case 49: //key - '1'
+		cout << "1 pressed" << endl;
+		myTeam.name = TEAM_ANGELS;
+		playerId = 2;
+		break;
+
+	case 50: //key - '2'
+		myTeam.name = TEAM_DEMONS;
+		playerId = 2;
+		break;
+
+	case 51: //key - '3'
+		myTeam.name = TEAM_DEMONS;
+		playerId = 3;
+		break;
+
 	}
 }
 

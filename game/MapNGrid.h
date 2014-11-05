@@ -24,7 +24,6 @@ void renderGrid();
 void copyInit();
 void setHeroLocation(int which, Coordinate_grid loc);
 
-void moveHeroMine(int type);
 Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
@@ -334,6 +333,10 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 	}
 
 	gridChar[row][col] = charType;
+
+	if (charType != BG_BLOCKED) {
+		gridCharPrimary[row][col] = charType;
+	}
 }
 
 //TODO: Abhishek move to code to ActionOnGrid

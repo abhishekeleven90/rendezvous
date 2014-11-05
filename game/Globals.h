@@ -10,6 +10,10 @@ float windowWidth = 850, windowHeight = 700;
 float cellWidth = windowWidth / (END_OUTER_GRID_COL - START_OUTER_GRID_COL + 1);
 float cellHeight = windowHeight / (END_GRID_ROW - START_GRID_ROW + 1);
 
+charCellType
+		gridCharPrimary[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
+				- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
+
 charCellType gridChar[END_GRID_ROW - START_GRID_ROW + 2][END_OUTER_GRID_COL
 		- START_OUTER_GRID_COL + 2]; //+1 extra since starting from 1
 
@@ -20,8 +24,10 @@ charCellType
 int g_item_index_angels = 0; //holds the global index of next item to be placed
 int g_item_index_demons = 0;
 
-int playerId = 1;//by default for first player of a team
+bool isPrimaryNode = false; //default - false; true for primaryNode
+int playerId;
 TeamStruct myTeam, enemyTeam;
+//Player players[4];
 
 //TextureIds
 GLuint btn_start_texId;

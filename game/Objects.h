@@ -4,6 +4,14 @@
 #include "Headers.h"
 #include "AStarClass.h"
 
+#define IP_SIZE 40
+
+struct nodeHelper {
+	char ip[IP_SIZE];
+	unsigned int port;
+	char ipWithPort[IP_SIZE];
+};
+
 enum charCellType {
 	BG_GRASS, BG_SPAWN, BG_WAR, BG_ATTRIBUTE, BG_BLOCKED,
 
@@ -71,9 +79,16 @@ struct Temple {
 };
 
 struct Player {
+	int playerId;
+	nodeHelper* networkDetails;
+
 	heroes heroType;
 
 	charCellType charType;
+
+	//teamSpecific
+	teamName name;
+	int templeHealth;
 
 	heroPowerMode currentPowerMode;
 	int heroHealth;
@@ -97,7 +112,7 @@ struct Player {
 
 struct TeamStruct {
 	teamName name;
-	int templeHealth;//temple health
+	int templeHealth;
 	Player players[2];
 };
 

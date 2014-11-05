@@ -83,10 +83,14 @@ void initRendering_main() {
 	}
 
 	loadTeamAttributes();
-	loadPlayerSpecificAttributes();
+	loadPlayerSpecificAttributesMy(1);
+	loadPlayerSpecificAttributesMy(2);
 	blockOpponentsArea();
 
 	t3dInit();
+
+	server_port = myTeam.players[playerId - 1].networkDetails->port;
+
 	createServerThread();
 }
 
@@ -156,6 +160,11 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	case 48: //key - '0' //TODO: may not be required later : just for testing purpose
 		cout << "Switching player" << endl;
 		togglePlayer();
+		break;
+
+	case 52: //key - '4' //TODO: may not be required later : just for testing purpose
+		cout << "Printing message queue" << endl;
+		printQueue(&queuePrimary);
 		break;
 	}
 }

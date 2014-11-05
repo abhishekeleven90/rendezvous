@@ -1,8 +1,9 @@
 //----------Constants---------
-#define IP_SIZE 40
+
 
 //****************Function Declarations*******************
 void intToChar(int intToChng, char* charToRet);
+string numToStr(int num);
 void tab(int count);
 bool startsWith(const char *a, const char *b);
 char* substring(char *string, int position, int length);
@@ -15,6 +16,12 @@ int indexOf(char* string, char of);
 void intToChar(int intToChng, char* charToRet) {
 	size_t size = sizeof(charToRet);
 	snprintf(charToRet, size, "%d", intToChng);
+}
+
+string numToStr(int num) {
+	stringstream ss;
+	ss << num;
+	return ss.str();
 }
 
 void tab(int count) {

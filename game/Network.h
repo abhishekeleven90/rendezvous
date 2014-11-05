@@ -15,6 +15,7 @@
 #include <string.h>
 #include <map>
 #include <math.h>
+#include <list>
 #include "MyString.h"
 
 //----------Constants---------
@@ -24,6 +25,7 @@
 #define DATA_SIZE_KILO 1024
 
 #define MSG_BROADCAST "b:"
+#define MSG_MOVE "m:"
 
 #define SERVER_BUSY 'x'
 
@@ -33,13 +35,15 @@ char GLOBAL_ARR[M][DATA_SIZE_KILO];
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 
-unsigned int server_port = 5000; //TODO: shall be 0
+unsigned int server_port = 0; //TODO: shall be 0
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
 pthread_t serverThreadId;
 pthread_t clientThreadId; //TODO: check if not required
 pthread_t broadcastThreadId;
+pthread_t sendDataServerThreadId;
+pthread_t updateServerThreadId;
 
 int serverSock;
 
@@ -47,22 +51,32 @@ int isCreated = false;
 int isJoined = false;
 int retry_count = 5;
 
-struct nodeHelper {
-	char ip[IP_SIZE];
-	unsigned int port;
-	char ipWithPort[IP_SIZE];
-};
-
 nodeHelper* selfNode = new nodeHelper;
+
+list<string> queuePrimary;
+pthread_mutex_t mutexQueuePrimary;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
+void sendDataAndWaitForResult();
+void sendDataDontWaitForResult();
+void sendDataToServer();
+void* threadSendDataToServer(void* arg);
+
+void enque(list<string> *l, string msg);
+string deque1(list<string> *l);
+void printQueue(list<string> *l);
+void emptyQueue(list<string> *queue);
+
+void helperSendServerMove(Coordinate_grid targetCell);
+
 void createServerThread();
 void createClientBroadcastThread();
+void createSendServerDataThread();
 
 void populateClientSendDataForBroadcast();
+nodeHelper* convertToNodeHelper(char *ipWithPort);
 
-void runClientAndWaitForResult(int clientThreadID);
 void setRemoteNode(char* ip, unsigned int port);
 int createThread(pthread_t* threadId, void* threadFn(void*));
 void joinIpWithPort(char* ip, unsigned int port, char* ipWithPort);
@@ -71,13 +85,117 @@ int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
 
 void processBroadcast(char *data);
+void processMove(char *completeData);
 
 //-----TCP Functions-------
-void* clientBroadcast(void* arg);
+bool connectToServer(int & sock);
+void* threadClientBroadcast(void* arg);
 void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
+void sendDataAndWaitForResult() {
+	createSendServerDataThread();
+	while (client_recv_data[0] == '\0')
+		; //wait until data is received
+}
+
+void sendDataDontWaitForResult() {
+	createSendServerDataThread();
+}
+
+void sendDataToServer() {
+	int sock, bytes_recieved;
+
+	client_recv_data[0] = '\0';
+
+	if (!connectToServer(sock)) {
+		client_recv_data[0] = SERVER_BUSY;
+		return;
+	}
+
+	//cout << "Client socket ID:" << sock << endl;
+	send(sock, client_send_data, strlen(client_send_data), 0);
+
+	bytes_recieved = recv(sock, client_recv_data, DATA_SIZE_KILO, 0);
+	client_recv_data[bytes_recieved] = '\0';
+
+	//cout << "Data successfully received" << client_recv_data << endl;
+
+	close(sock);
+}
+
+void* threadSendDataToServer(void* arg) {
+	sendDataToServer();
+	return NULL;
+}
+
+void* threadUpdateServer(void* arg) {
+	while (1) {
+
+	}
+	return NULL;
+}
+
+void* threadClientBroadcast(void* arg) {
+	cout << "Client started" << endl;
+
+	while (1) {
+		populateClientSendDataForBroadcast();
+		setRemoteNode("127.0.0.1", 5000);
+		sendDataToServer();
+
+		//setRemoteNode("10.192.11.114", 5000);
+		//sendDataToServer();
+	}
+	return NULL;
+}
+
+void enque(list<string> *l, string msg) {
+	(*l).push_back(msg);
+	cout << "enqued: " << endl;
+}
+
+string deque1(list<string> *l) {
+	string msg = (*l).front();
+	(*l).pop_front();
+	return msg;
+}
+
+void printQueue(list<string> *l) {
+	for (list<string>::iterator it = (*l).begin(); it != (*l).end(); it++) {
+		cout << (*it) << ", ";
+	}
+	cout << endl;
+}
+
+void emptyQueue(list<string> *queue) {
+	while (!(*queue).empty()) {
+		cout << deque1(queue);
+	}
+}
+
+void helperSendServerMove(Coordinate_grid targetCell) {
+	//Setting client_send_data
+	strcpy(client_send_data, MSG_MOVE);
+
+	char rowChar[4];
+	intToChar(targetCell.row, rowChar);
+	char colChar[4];
+	intToChar(targetCell.col, colChar);
+
+	strcat(client_send_data, rowChar);
+	strcat(client_send_data, ",");
+	strcat(client_send_data, colChar);
+
+	//setting the remoteNode ip & port
+	setRemoteNode(myTeam.players[0].networkDetails->ip,
+			myTeam.players[0].networkDetails->port); //TODO: abhi ke liye ;)
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataDontWaitForResult();
+}
+
 void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
@@ -98,12 +216,27 @@ void processBroadcast(char *data) {
 	strcpy(server_send_data, "tuBiDummy");
 }
 
+void processMove(char *completeData) {
+	cout << "data received for move: " << completeData << endl;
+	pthread_mutex_lock(&mutexQueuePrimary);
+	enque(&queuePrimary, completeData);
+	pthread_mutex_unlock(&mutexQueuePrimary);
+}
+
 void createServerThread() {
 	createThread(&serverThreadId, server);
 }
 
 void createClientBroadcastThread() {
-	createThread(&broadcastThreadId, clientBroadcast);
+	createThread(&broadcastThreadId, threadClientBroadcast);
+}
+
+void createSendServerDataThread() {
+	createThread(&sendDataServerThreadId, threadSendDataToServer);
+}
+
+void createUpdateServerThread() {
+	createThread(&updateServerThreadId, threadUpdateServer);
 }
 
 void populateClientSendDataForBroadcast() {
@@ -262,41 +395,6 @@ bool connectToServer(int & sock) {
 	return true;
 }
 
-void sendDataToServer() {
-	int sock, bytes_recieved;
-
-	client_recv_data[0] = '\0';
-
-	if (!connectToServer(sock)) {
-		client_recv_data[0] = SERVER_BUSY;
-		return;
-	}
-
-	//cout << "Client socket ID:" << sock << endl;
-	send(sock, client_send_data, strlen(client_send_data), 0);
-
-	bytes_recieved = recv(sock, client_recv_data, DATA_SIZE_KILO, 0);
-	client_recv_data[bytes_recieved] = '\0';
-
-	//cout << "Data successfully received" << client_recv_data << endl;
-
-	close(sock);
-}
-
-void* clientBroadcast(void* arg) {
-	cout << "Client started" << endl;
-
-	while (1) {
-		populateClientSendDataForBroadcast();
-		setRemoteNode("127.0.0.1", 5000);
-		sendDataToServer();
-
-		//setRemoteNode("10.192.11.114", 5000);
-		//sendDataToServer();
-	}
-	return NULL;
-}
-
 void* server(void* arg) {
 	int sock, connected, trueint = 1;
 
@@ -316,6 +414,7 @@ void* server(void* arg) {
 	}
 
 	server_addr.sin_family = AF_INET;
+
 	if (server_port != 0) { //Let the server choose the port itself if not supplied externally
 		server_addr.sin_port = htons(server_port);
 	}
@@ -354,8 +453,13 @@ void* server(void* arg) {
 		split(data, '?', dataValArr);
 
 		char* reqData = dataValArr[0];
+
 		if (strcmp(type, MSG_BROADCAST) == 0) {
 			processBroadcast(reqData);
+		}
+
+		else if (strcmp(type, MSG_MOVE) == 0) {
+			processMove(server_recv_data);
 		}
 
 		send(connected, server_send_data, strlen(server_send_data), 0);
