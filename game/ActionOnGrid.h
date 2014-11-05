@@ -238,9 +238,9 @@ void setAttackTemple(int whichPlayer, bool value) {
 void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 	TeamStruct* enemyTeam;
 	if (players[whichPlayer].team->name == TEAM_ANGELS)
-		enemyTeam = &angelsTeam;
-	else
 		enemyTeam = &demonsTeam;
+	else
+		enemyTeam = &angelsTeam;
 
 	enemyTeam->templeHealth -= players[whichPlayer].strength;
 	if (enemyTeam->templeHealth < 0)
@@ -291,7 +291,7 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, texId_bg_grass, "Gra", sendServerMove,
+		processCase(callType, grid, texId_bg_grass, "Gra", aStarMoveThrough,
 				wrong, false);
 		break;
 

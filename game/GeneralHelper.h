@@ -35,7 +35,7 @@ void loadTeamAttributes() {
 	angelsTeam.name = TEAM_ANGELS;
 	angelsTeam.templeHealth = HEALTH_FULL_TEMPLE;
 
-	angelsTeam.name = TEAM_DEMONS;
+	demonsTeam.name = TEAM_DEMONS;
 	demonsTeam.templeHealth = HEALTH_FULL_TEMPLE;
 }
 
@@ -46,11 +46,8 @@ void loadPlayerGeneralAttributes(int playerId) {
 	players[playerId].currentPowerMode = POWER_MODE_BASIC;
 	players[playerId].curseType = CURSE_NONE;
 	players[playerId].heroHealth = HEALTH_FULL_HERO;
-	cout << "reached5" << endl;
-	cout << players[playerId].heroType;
 	switch (players[playerId].heroType) {
 	case HERO_STUNNER:
-		cout << "reached6" << endl;
 		players[playerId].strength = STRENGTH_H_STUNNER;
 		players[playerId].speedMove = SPEED_MOVE_H_STUNNER;
 		players[playerId].charType = H_STUNNER;
@@ -103,6 +100,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 	//setting myFriend & enemyIds
 	teamName myTeam = players[currPlayerId].team->name;
 	int k = 0; //used to keep track of enemy index
+
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		if (i == currPlayerId) {
 			continue;
@@ -116,7 +114,6 @@ void loadPlayerGeneralAttributes(int playerId) {
 			players[currPlayerId].idEnemy[k++] = i;
 		}
 	}
-
 }
 
 void loadPlayerSpecificAttributes() {

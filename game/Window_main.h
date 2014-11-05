@@ -81,11 +81,11 @@ void initRendering_main() {
 
 	//load Attributes
 	loadTeamAttributes();
-	cout << "reached3" << endl;
+
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		loadPlayerGeneralAttributes(i);
 	}
-	cout << "reached7" << endl;
+
 	loadPlayerSpecificAttributes();
 
 	blockOpponentsArea();
@@ -99,8 +99,10 @@ void initRendering_main() {
 }
 
 void renderGridMainWindow() {
-	moveHero(1);
-	moveHero(2); //TODO: check if not required..later may be required
+	moveHero(0);
+	moveHero(1); //TODO: check if not required..later may be required
+	moveHero(2);
+	moveHero(3);
 
 	loadAttributeSpace();
 	renderGrid();

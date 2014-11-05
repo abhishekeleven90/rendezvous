@@ -115,7 +115,7 @@ struct Player {
 	bool isTimerCurseRunning;
 
 	//some extra info to help
-	int isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location
+	bool isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location
 	int idFriend;
 	int idEnemy[2];
 };
