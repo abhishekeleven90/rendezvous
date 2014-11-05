@@ -106,6 +106,9 @@ struct Player {
 
 	bool toAttackTemple;
 
+	//for items
+	Coordinate_grid itemCell;
+
 	//timers
 	bool isTimerItemGlobalRunning;
 	bool isTimerMagicSpellRunning;

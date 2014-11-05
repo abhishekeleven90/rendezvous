@@ -69,11 +69,11 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		break;
 
 	case 49: //key - '1'
-		cout << "1 pressed" << endl;
 		currPlayerId = 1;
 		players[1].heroType = HERO_STUNNER;
 		players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
 		players[1].team = &angelsTeam;
+		cout << "reached1" << endl;
 		break;
 
 	case 50: //key - '2'
@@ -88,8 +88,8 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		players[3].heroType = HERO_SLOWER;
 		players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
 		players[3].team = &demonsTeam;
+		currPlayerId = 1;
 		break;
-
 	}
 }
 

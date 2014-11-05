@@ -13,9 +13,9 @@
 Coordinate_grid targetCell;
 Coordinate_grid itemCell;
 
-void setItemCell(Coordinate_grid movingToCell) {
-	itemCell.row = movingToCell.row;
-	itemCell.col = movingToCell.col;
+void setItemCell(Coordinate_grid movingToCell, int whichPlayer) {
+	players[whichPlayer].itemCell.row = movingToCell.row;
+	players[whichPlayer].itemCell.col = movingToCell.col;
 }
 
 //TODO: Abhishek: if more items add or try to add to the complex handleGridCharSwitch
@@ -120,38 +120,39 @@ void wrong() {
 	playEventSound(PATH_SOUND_WRONG_CLICK);
 }
 
-void aStarMove(bool through) {
-	//have to handle block status here istelf! phew :(
+void aStarMove(int whichPlayer, bool through) {
+	//have to handle block status here itelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
-				myTeam.players[currPlayerId - 1].astar->blockSiteAStarGrid(i, j);
+				players[whichPlayer].astar->blockSiteAStarGrid(i, j);
 			} else {
-				myTeam.players[currPlayerId - 1].astar->openSiteAStarGrid(i, j);
+				players[whichPlayer].astar->openSiteAStarGrid(i, j);
 			}
 		}
 	}
 	//for the not through, the target could be blocked actually, change it locally!
 	if (!through) {
-		myTeam.players[currPlayerId - 1].astar->openSiteAStarGrid(
-				targetCell.row, targetCell.col - ATTRIBUTE_WIDTH);
+		players[whichPlayer].astar->openSiteAStarGrid(targetCell.row,
+				targetCell.col - ATTRIBUTE_WIDTH);
 	}
-	myTeam.players[currPlayerId - 1].astar->initAStar(
-			myTeam.players[currPlayerId - 1].location, targetCell);
-	myTeam.players[currPlayerId - 1].astar->AStar(through);
-
+	players[whichPlayer].astar->initAStar(players[whichPlayer].location,
+			targetCell);
+	players[whichPlayer].astar->AStar(through);
 }
 
 void aStarMoveThrough() {
-	aStarMove(true);
+	aStarMove(currPlayerId, true); //TODO: Abhishek, changed for legacy code
+	//for testing with one player
+}
+
+void aStarMoveNotThrough() {
+	aStarMove(currPlayerId, false); //TODO: Abhishek, changed for legacy code
+	//for testing with one player
 }
 
 void sendServerMove() {
 	helperSendServerMove(targetCell);
-}
-
-void aStarMoveNotThrough() {
-	aStarMove(false);
 }
 
 itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
@@ -175,7 +176,7 @@ itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
 }
 
 void updateHeroAttributesTakingItem(int playerId) {
-	itemType itemTaken = getItemTypeFromCharItem(itemCell);
+	itemType itemTaken = getItemTypeFromCharItem(players[playerId].itemCell);
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
@@ -211,55 +212,77 @@ void updateHeroAttributesTakingItem(int playerId) {
 	}
 }
 
-void takeItem() {
-	//In actual, not taking the item if globalItemTimer is running
-	if (!players[currPlayerId].isTimerItemGlobalRunning) {
-		timerItemGlobal(0);
-		updateHeroAttributesTakingItem();
+void takeItem(int whichPlayer) {
+	if (!players[whichPlayer].isTimerItemGlobalRunning) {
+		timerItemGlobal(whichPlayer);
+		updateHeroAttributesTakingItem(whichPlayer);
 	} else {
 		cout << "Item not taken" << endl;
 	}
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
-	putCharToGrid(itemCell.row, itemCell.col, BG_GRASS, false);
-	if (itemCell.row > itemCell.col) {
+	putCharToGrid(players[whichPlayer].itemCell.row,
+			players[whichPlayer].itemCell.col, BG_GRASS, false);
+	if (players[whichPlayer].itemCell.row > players[whichPlayer].itemCell.col) {
 		placeItemAtRandomPos(TEAM_ANGELS);
 	}
-	if (itemCell.row < itemCell.col) {
+	if (players[whichPlayer].itemCell.row < players[whichPlayer].itemCell.col) {
 		placeItemAtRandomPos(TEAM_DEMONS);
 	}
 }
 
-void setAttackTemple(int player, bool value) {
-	myTeam.players[player - 1].toAttackTemple = value;
+void setAttackTemple(int whichPlayer, bool value) {
+	players[whichPlayer].toAttackTemple = value;
 }
 
-void decreaseEnemyTempleHealth() {
+void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
+	TeamStruct* enemyTeam;
+	if (players[whichPlayer].team->name == TEAM_ANGELS)
+		enemyTeam = &angelsTeam;
+	else
+		enemyTeam = &demonsTeam;
 
-	enemyTeam.templeHealth -= players[currPlayerId].strength;
-	if (enemyTeam.templeHealth < 0)
-		enemyTeam.templeHealth = 0;
-	setAttackTemple(currPlayerId, false);
-	cout << "Yayy decreased enemy temple health to " << enemyTeam.templeHealth
-			<< endl;
+	enemyTeam->templeHealth -= players[whichPlayer].strength;
+	if (enemyTeam->templeHealth < 0)
+		enemyTeam->templeHealth = 0;
+	setAttackTemple(whichPlayer, false);
+	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
+			<< enemyTeam->templeHealth << endl;
+	//TODO: Abhishek play temple attack sound
+	//TODO: Abhishek gif attack animation
+
 }
 
 void attackEnemyTemple() {
 	aStarMoveNotThrough();
 	setAttackTemple(currPlayerId, true);
-	//TODO: Abhishek play temple attack sound
-	//TODO: gif attack animation
 }
 
-void attackAngelsTemple() {
-	if (myTeam.name == TEAM_DEMONS) {
-		attackEnemyTemple();
+void attackEnemyTempleGeneric(int whichPlayer) {
+	setAttackTemple(whichPlayer, false);
+	//above is imp, if path changed in between
+	//then the previous value would be true
+	//and if arrives by way of moving, and not attacking near temple
+	//then will attack even when attack was cancelled
+
+	aStarMove(whichPlayer, false);
+	setAttackTemple(whichPlayer, true);
+}
+
+void attackAngelsTemple() { //this is ok
+	if (players[currPlayerId].team->name == TEAM_DEMONS) {
+		//TODO: Abhishek ask the server to attack the angels temple
+		//TODO: Abhishek just send the player's ID,with attack temple msg
+		//server will call attackEnemyTempleGeneric
+		attackEnemyTempleGeneric(currPlayerId);
 	}
 }
 
-void attackDemonsTemple() {
-	if (myTeam.name == TEAM_ANGELS) {
-		attackEnemyTemple();
+void attackDemonsTemple() { //this is ok
+	if (players[currPlayerId].team->name == TEAM_ANGELS) {
+		//TODO: Abhishek ask the server to attack demons temple
+		//TODO: Abhishek just send the player's ID,with attack temple msg
+		attackEnemyTempleGeneric(currPlayerId);
 	}
 }
 
@@ -337,25 +360,25 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		break;
 
 	case I_SPEED_MOVE:
-		itemCell = Coordinate_grid(grid.row, grid.col);
+		//setItemCell(grid, currPlayerId); //TODO: Abhishek i think we do not need
 		processCase(callType, grid, texId_i_speedMov, "ISM", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_HEALTH:
-		itemCell = Coordinate_grid(grid.row, grid.col);
+		//setItemCell(grid, currPlayerId);
 		processCase(callType, grid, texId_i_health, "IHe", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_DAMAGE:
-		itemCell = Coordinate_grid(grid.row, grid.col);
+		//setItemCell(grid, currPlayerId);
 		processCase(callType, grid, texId_i_damage, "IDa", aStarMoveThrough,
 				wrong, false);
 		break;
 
 	case I_TEMPLE_HEALER:
-		itemCell = Coordinate_grid(grid.row, grid.col);
+		//setItemCell(grid, currPlayerId);
 		processCase(callType, grid, texId_i_tHealer, "ITH", aStarMoveThrough,
 				wrong, false);
 		break;

@@ -40,16 +40,17 @@ void loadTeamAttributes() {
 }
 
 void loadPlayerGeneralAttributes(int playerId) {
-
 	players[playerId].astar = new AStarClass();
 	players[playerId].astar->firstInitAStar();
 
 	players[playerId].currentPowerMode = POWER_MODE_BASIC;
 	players[playerId].curseType = CURSE_NONE;
 	players[playerId].heroHealth = HEALTH_FULL_HERO;
-
+	cout << "reached5" << endl;
+	cout << players[playerId].heroType;
 	switch (players[playerId].heroType) {
 	case HERO_STUNNER:
+		cout << "reached6" << endl;
 		players[playerId].strength = STRENGTH_H_STUNNER;
 		players[playerId].speedMove = SPEED_MOVE_H_STUNNER;
 		players[playerId].charType = H_STUNNER;
@@ -137,31 +138,34 @@ void printGrid() {
 }
 
 //call this from the render function periodically
-void moveHeroMine(int type) {
-	Node* nodeToMove = findLocToMove(myTeam.players[type - 1].location, type);
+//on the master node, rest will be communicated to others
+void moveHero(int whichPlayer) {
+	Node* nodeToMove =
+			findLocToMove(players[whichPlayer].location, whichPlayer);
 	if (nodeToMove == NULL) {
-		if (myTeam.players[type - 1].toAttackTemple)
-			decreaseEnemyTempleHealth();
+		if (players[whichPlayer].toAttackTemple)//TODO: Abhishek AND condition for is nearEnemyTemple
+			decreaseEnemyTempleHealth(whichPlayer);
 		return; //nothing to move
 	}
 	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
 			nodeToMove->col + ATTRIBUTE_WIDTH);
+
 	if (isItem(celltoMove)) {
-		setItemCell(celltoMove);
-		takeItem();
+		setItemCell(celltoMove, whichPlayer);
+		takeItem(whichPlayer);
 	}
 
 	putCharToGrid(
-			myTeam.players[type - 1].location.row,
-			myTeam.players[type - 1].location.col,
-			initialGridChar[myTeam.players[type - 1].location.row][myTeam.players[type
-					- 1].location.col + ATTRIBUTE_WIDTH], true);
+			players[whichPlayer].location.row,
+			players[whichPlayer].location.col,
+			initialGridChar[players[whichPlayer].location.row][players[whichPlayer].location.col
+					+ ATTRIBUTE_WIDTH], true);
 
-	myTeam.players[type - 1].location.row = nodeToMove->row;
-	myTeam.players[type - 1].location.col = nodeToMove->col;
-	putCharToGrid(myTeam.players[type - 1].location.row,
-			myTeam.players[type - 1].location.col,
-			myTeam.players[type - 1].charType, true);
+	players[whichPlayer].location.row = nodeToMove->row;
+	players[whichPlayer].location.col = nodeToMove->col;
+	putCharToGrid(players[whichPlayer].location.row,
+			players[whichPlayer].location.col, players[whichPlayer].charType,
+			true);
 }
 
 void putTeamTypeAndTemples() {

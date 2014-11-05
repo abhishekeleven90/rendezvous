@@ -72,10 +72,7 @@ void initRendering_main() {
 
 	//Loading all the textures from images
 	loadTextures_main();
-
 	initMap();
-
-	putHeros();
 
 	//Placing items in the map
 	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
@@ -84,9 +81,11 @@ void initRendering_main() {
 
 	//load Attributes
 	loadTeamAttributes();
+	cout << "reached3" << endl;
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		loadPlayerGeneralAttributes(i);
 	}
+	cout << "reached7" << endl;
 	loadPlayerSpecificAttributes();
 
 	blockOpponentsArea();
@@ -95,12 +94,13 @@ void initRendering_main() {
 
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
-	createServerThread();
+
+	//createServerThread();
 }
 
 void renderGridMainWindow() {
-	moveHeroMine(1);
-	moveHeroMine(2); //TODO: check if not required..later may be required
+	moveHero(1);
+	moveHero(2); //TODO: check if not required..later may be required
 
 	loadAttributeSpace();
 	renderGrid();
@@ -212,6 +212,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 }
 
 void create_window_main() {
+	cout << "reached2" << endl;
 	windowId_current = glutCreateWindow("Rendezvous!!!");
 	initRendering_main(); //Initialize rendering
 

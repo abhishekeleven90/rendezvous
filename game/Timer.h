@@ -6,20 +6,19 @@
 #define TIMER_CURSE 5000
 
 void timerRefresh(int value) {
-
 	glutPostRedisplay();
-	glutTimerFunc(SPEED_MAX - players[currPlayerId].speedMove + 100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
+	glutTimerFunc(SPEED_MAX - players[currPlayerId].speedMove + 100,
+			timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
 }
 
-void timerItemGlobal(int value) {
-
-	if (!players[currPlayerId].isTimerItemGlobalRunning) {
+void timerItemGlobal(int whichPlayer) {
+	if (!players[whichPlayer].isTimerItemGlobalRunning) {
 		cout << "starting timerItemGlobal" << endl;
-		players[currPlayerId].isTimerItemGlobalRunning = true;
-		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, 0);
+		players[whichPlayer].isTimerItemGlobalRunning = true;
+		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, whichPlayer);
 	} else {
 		cout << "stopping timerItemGlobal" << endl;
-		players[currPlayerId].isTimerItemGlobalRunning = false;
+		players[whichPlayer].isTimerItemGlobalRunning = false;
 	}
 }
 
@@ -44,7 +43,8 @@ void timerCurse(int value) {
 
 		switch (value) {
 		case CURSE_STUN:
-			players[currPlayerId].speedMoveTemp = players[currPlayerId].speedMove;
+			players[currPlayerId].speedMoveTemp
+					= players[currPlayerId].speedMove;
 			players[currPlayerId].speedMove = 0;
 			players[currPlayerId].currentPowerMode = POWER_MODE_STUN;
 			break;
@@ -70,7 +70,8 @@ void timerCurse(int value) {
 		switch (value) {
 		case CURSE_STUN:
 			players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
-			players[currPlayerId].speedMove += players[currPlayerId].speedMoveTemp;
+			players[currPlayerId].speedMove
+					+= players[currPlayerId].speedMoveTemp;
 			if (players[currPlayerId].speedMove > SPEED_MAX) {
 				players[currPlayerId].speedMove = SPEED_MAX;
 			}

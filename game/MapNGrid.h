@@ -27,22 +27,6 @@ void setHeroLocation(int which, Coordinate_grid loc);
 Node* findLocToMove(Coordinate_grid curr);
 bool isBlockedSite(int r, int c);
 
-//TODO: delete
-void putHeros() {
-	/*
-	 myTeam.players[1].astar = new AStarClass();
-	 myTeam.players[1].astar->firstInitAStar();
-
-	 Coordinate_grid location2;
-	 location2.row = 20;
-	 location2.col = 3;
-	 setHeroLocation(2, location2);
-	 //assuming the type is H_SLOWER in moveHero also
-	 myTeam.players[1].strength = STRENGTH_H_SLOWER;
-	 putCharToGrid(20, 3, H_SLOWER, true);
-	 */
-}
-
 void putAttributeSpace() {
 	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -163,7 +147,7 @@ void copyInit() {
 }
 
 Node* findLocToMove(Coordinate_grid curr, int which) {
-	AStarClass* astarForPlayer = myTeam.players[which - 1].astar;
+	AStarClass* astarForPlayer = players[which].astar;
 	Node* neighbours[4];
 	neighbours[0] = astarForPlayer->getNodeFromGrid(curr.row + 1, curr.col);
 	neighbours[1] = astarForPlayer->getNodeFromGrid(curr.row - 1, curr.col);
