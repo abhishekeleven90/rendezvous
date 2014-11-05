@@ -28,11 +28,13 @@ bool isValidCell(Coordinate_grid grid) { //Checking it's not in black screen
 }
 
 bool isOponentCellForTeam(Coordinate_grid grid) { //returns true if the passed cell lies in my opponent area
-	if (myTeam.name == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS + 1) {
+	int myTeam = players[currPlayerId].team->name;
+
+	if (myTeam == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS + 1) {
 		return true;
 	}
 
-	if (myTeam.name == TEAM_DEMONS && grid.row >= grid.col + DIAG_BLOCKS + 1) {
+	if (myTeam == TEAM_DEMONS && grid.row >= grid.col + DIAG_BLOCKS + 1) {
 		return true;
 	}
 

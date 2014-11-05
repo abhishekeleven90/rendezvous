@@ -55,10 +55,6 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		break;
 
 	case 57: //key - '9' //TODO:for testing - shall be while clicking start
-		myTeam.players[0].networkDetails
-				= convertToNodeHelper("127.0.0.1:5000"); //TODO: abhi ke liye ..
-		myTeam.players[1].networkDetails
-				= convertToNodeHelper("127.0.0.1:5001"); //TODO: abhi ke liye ..
 		glutDestroyWindow(windowId_current);
 		t3dCleanup();
 		create_window_main();
@@ -66,24 +62,32 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 
 	case 48: //key - '0'
 		isPrimaryNode = true;
-		myTeam.name = TEAM_ANGELS;
-		playerId = 0;
+		currPlayerId = 0;
+		players[0].heroType = HERO_DISABLER;
+		players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
+		players[0].team = &angelsTeam;
 		break;
 
 	case 49: //key - '1'
 		cout << "1 pressed" << endl;
-		myTeam.name = TEAM_ANGELS;
-		playerId = 1;
+		currPlayerId = 1;
+		players[1].heroType = HERO_STUNNER;
+		players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
+		players[1].team = &angelsTeam;
 		break;
 
 	case 50: //key - '2'
-		myTeam.name = TEAM_DEMONS;
-		playerId = 2;
+		currPlayerId = 2;
+		players[2].heroType = HERO_BURSTER;
+		players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
+		players[2].team = &demonsTeam;
 		break;
 
 	case 51: //key - '3'
-		myTeam.name = TEAM_DEMONS;
-		playerId = 3;
+		currPlayerId = 3;
+		players[3].heroType = HERO_SLOWER;
+		players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
+		players[3].team = &demonsTeam;
 		break;
 
 	}

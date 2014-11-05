@@ -73,13 +73,14 @@ public:
 	//int itemUsetimer;
 };
 
-struct Temple {
-	teamName team_name;
-	int health;
+struct TeamStruct {
+	teamName name;
+	int templeHealth;
 };
 
 struct Player {
 	int playerId;
+
 	nodeHelper* networkDetails;
 
 	heroes heroType;
@@ -89,28 +90,31 @@ struct Player {
 	TeamStruct* team;
 
 	heroPowerMode currentPowerMode;
-	int heroHealth;
 
+	//attributes
+	int heroHealth;
 	int strength;
 	int speedMove;
 
+	//related to curse
 	int speedMoveTemp; //used to save speed to restore back after curse is over
 	curse curseType;
 
-	//list<itemType*> itemsBag;
+	//related to location & move
 	AStarClass *astar;
 	Coordinate_grid location;
 
 	bool toAttackTemple;
 
+	//timers
 	bool isTimerItemGlobalRunning;
 	bool isTimerMagicSpellRunning;
 	bool isTimerCurseRunning;
-};
 
-struct TeamStruct {
-	teamName name;
-	int templeHealth;
+	//some extra info to help
+	int isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location
+	int idFriend;
+	int idEnemy[2];
 };
 
 #endif

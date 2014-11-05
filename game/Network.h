@@ -26,6 +26,7 @@
 
 #define MSG_BROADCAST "b:"
 #define MSG_MOVE "m:"
+#define MSG_ACK "a:"
 
 #define SERVER_BUSY 'x'
 
@@ -38,6 +39,9 @@ char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 unsigned int server_port = 0; //TODO: shall be 0
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
+
+char primaryNodeIp[IP_SIZE];
+char primaryNodePort;
 
 pthread_t serverThreadId;
 pthread_t clientThreadId; //TODO: check if not required
@@ -189,8 +193,7 @@ void helperSendServerMove(Coordinate_grid targetCell) {
 	strcat(client_send_data, colChar);
 
 	//setting the remoteNode ip & port
-	setRemoteNode(myTeam.players[0].networkDetails->ip,
-			myTeam.players[0].networkDetails->port); //TODO: abhi ke liye ;)
+	setRemoteNode(primaryNodeIp, primaryNodePort);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataDontWaitForResult();
@@ -213,7 +216,7 @@ void processBroadcast(char *data) {
 		}
 	}
 
-	strcpy(server_send_data, "tuBiDummy");
+	strcpy(server_send_data, MSG_ACK);
 }
 
 void processMove(char *completeData) {

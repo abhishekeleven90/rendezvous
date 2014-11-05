@@ -82,20 +82,19 @@ void initRendering_main() {
 		placeItemAtRandomPos(TEAM_BOTH);
 	}
 
+	//load Attributes
 	loadTeamAttributes();
-	for(int)
-	loadPlayerSpecificAttributes(1);
-	loadPlayerSpecificAttributes(2);
-
-	myTeam.players[0].location = Coordinate_grid(19, 1);
-
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		loadPlayerGeneralAttributes(i);
+	}
+	loadPlayerSpecificAttributes();
 
 	blockOpponentsArea();
 
 	t3dInit();
 
-	server_port = myTeam.players[playerId - 1].networkDetails->port;
-
+	strcpy(primaryNodeIp, players[0].networkDetails->ip);
+	primaryNodePort = players[0].networkDetails->port;
 	createServerThread();
 }
 
@@ -124,13 +123,13 @@ void drawScene_main() {
 
 void selectBasicPower() {
 	cout << "selected power_basic" << endl;
-	myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
+	players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
 }
 
 void selectMagicPower() {
-	if (players[playerId].curseType != CURSE_DISABLE) {
+	if (players[currPlayerId].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic" << endl;
-		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
+		players[currPlayerId].currentPowerMode = POWER_MODE_MAGIC;
 	} else {
 		cout << "can not use Magic power, you are cursed!!!" << endl; //TODO: show on wall
 	}

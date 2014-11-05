@@ -125,20 +125,20 @@ void aStarMove(bool through) {
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (isBlockedSite(i, j)) {
-				myTeam.players[playerId - 1].astar->blockSiteAStarGrid(i, j);
+				myTeam.players[currPlayerId - 1].astar->blockSiteAStarGrid(i, j);
 			} else {
-				myTeam.players[playerId - 1].astar->openSiteAStarGrid(i, j);
+				myTeam.players[currPlayerId - 1].astar->openSiteAStarGrid(i, j);
 			}
 		}
 	}
 	//for the not through, the target could be blocked actually, change it locally!
 	if (!through) {
-		myTeam.players[playerId - 1].astar->openSiteAStarGrid(targetCell.row,
-				targetCell.col - ATTRIBUTE_WIDTH);
+		myTeam.players[currPlayerId - 1].astar->openSiteAStarGrid(
+				targetCell.row, targetCell.col - ATTRIBUTE_WIDTH);
 	}
-	myTeam.players[playerId - 1].astar->initAStar(
-			myTeam.players[playerId - 1].location, targetCell);
-	myTeam.players[playerId - 1].astar->AStar(through);
+	myTeam.players[currPlayerId - 1].astar->initAStar(
+			myTeam.players[currPlayerId - 1].location, targetCell);
+	myTeam.players[currPlayerId - 1].astar->AStar(through);
 
 }
 
@@ -174,7 +174,7 @@ itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
 	return item;
 }
 
-void updateHeroAttributesTakingItem() {
+void updateHeroAttributesTakingItem(int playerId) {
 	//TODO: update hero attributes properly, notify & display in attribute space
 	itemType itemTaken = getItemTypeFromCharItem(itemCell);
 	switch (itemTaken) {
@@ -197,16 +197,24 @@ void updateHeroAttributesTakingItem() {
 		}
 		break;
 	case ITEM_TEMPLE_HEALER:
+
 		cout << "item_temple_healer taken" << endl;
-		myTeam.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
-		//myTeam.players[currentPlayer - 1].itemsBag.push_back(&itemTaken);
+		switch (players[playerId].team->name) {
+		case TEAM_ANGELS:
+			angelsTeam.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+			break;
+		case TEAM_DEMONS:
+			demonsTeam.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
+			break;
+		}
+
 		break;
 	}
 }
 
 void takeItem() {
 	//In actual, not taking the item if globalItemTimer is running
-	if (!players[playerId].isTimerItemGlobalRunning) {
+	if (!players[currPlayerId].isTimerItemGlobalRunning) {
 		timerItemGlobal(0);
 		updateHeroAttributesTakingItem();
 	} else {
@@ -229,17 +237,17 @@ void setAttackTemple(int player, bool value) {
 
 void decreaseEnemyTempleHealth() {
 
-	enemyTeam.templeHealth -= players[playerId].strength;
+	enemyTeam.templeHealth -= players[currPlayerId].strength;
 	if (enemyTeam.templeHealth < 0)
 		enemyTeam.templeHealth = 0;
-	setAttackTemple(playerId, false);
+	setAttackTemple(currPlayerId, false);
 	cout << "Yayy decreased enemy temple health to " << enemyTeam.templeHealth
 			<< endl;
 }
 
 void attackEnemyTemple() {
 	aStarMoveNotThrough();
-	setAttackTemple(playerId, true);
+	setAttackTemple(currPlayerId, true);
 	//TODO: Abhishek play temple attack sound
 	//TODO: gif attack animation
 }
