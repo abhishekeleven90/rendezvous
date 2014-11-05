@@ -84,7 +84,6 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		break;
 
 	case 48: //key - '0'
-		isPrimaryNode = true;
 		currPlayerId = 0;
 		break;
 

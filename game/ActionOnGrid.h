@@ -291,7 +291,7 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, texId_bg_grass, "Gra", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_grass, "Gra", sendServerMove,
 				wrong, false);
 		break;
 

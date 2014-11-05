@@ -36,12 +36,12 @@ char GLOBAL_ARR[M][DATA_SIZE_KILO];
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
 
-unsigned int server_port = 0; //TODO: shall be 0
+unsigned int server_port = 0;
 unsigned int remote_port = 0; // port with which to connect to server
 char ip2Join[IP_SIZE]; //used by client to join the server
 
 char primaryNodeIp[IP_SIZE];
-char primaryNodePort;
+int primaryNodePort;
 
 pthread_t serverThreadId;
 pthread_t clientThreadId; //TODO: check if not required
@@ -111,6 +111,10 @@ void sendDataDontWaitForResult() {
 void sendDataToServer() {
 	int sock, bytes_recieved;
 
+	//Appending myId in the request
+	strcat(client_send_data, "?");
+	strcat(client_send_data, numToStr(currPlayerId).c_str());
+
 	client_recv_data[0] = '\0';
 
 	if (!connectToServer(sock)) {
@@ -146,7 +150,8 @@ void* threadClientBroadcast(void* arg) {
 
 	while (1) {
 		populateClientSendDataForBroadcast();
-		setRemoteNode("127.0.0.1", 5000);
+
+		setRemoteNode("127.0.0.1", 5001); //TODO: make generic for all nodes with for loop
 		sendDataToServer();
 
 		//setRemoteNode("10.192.11.114", 5000);

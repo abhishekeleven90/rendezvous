@@ -95,14 +95,12 @@ void initRendering_main() {
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
 
-	//createServerThread();
+	createServerThread();
 }
 
 void renderGridMainWindow() {
-	moveHero(0);
-	moveHero(1); //TODO: check if not required..later may be required
-	moveHero(2);
-	moveHero(3);
+	moveHero(currPlayerId);
+	moveHero(players[currPlayerId].idFriend); //TODO: check
 
 	loadAttributeSpace();
 	renderGrid();
