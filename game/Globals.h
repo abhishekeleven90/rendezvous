@@ -26,8 +26,8 @@ int g_item_index_demons = 0;
 
 bool isPrimaryNode = false; //default - false; true for primaryNode
 int playerId;
-TeamStruct myTeam, enemyTeam;
-//Player players[4];
+TeamStruct angelsTeam, demonsTeam;
+Player players[4];
 
 //TextureIds
 GLuint btn_start_texId;

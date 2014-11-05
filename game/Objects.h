@@ -86,9 +86,7 @@ struct Player {
 
 	charCellType charType;
 
-	//teamSpecific
-	teamName name;
-	int templeHealth;
+	TeamStruct* team;
 
 	heroPowerMode currentPowerMode;
 	int heroHealth;
@@ -113,7 +111,6 @@ struct Player {
 struct TeamStruct {
 	teamName name;
 	int templeHealth;
-	Player players[2];
 };
 
 #endif

@@ -180,20 +180,20 @@ void updateHeroAttributesTakingItem() {
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
 		cout << "item_damage taken" << endl;
-		currPlayer.strength += GAIN_ITEM_DAMAGE;
+		players[playerId].strength += GAIN_ITEM_DAMAGE;
 		break;
 	case ITEM_HEALTH:
 		cout << "item_health taken" << endl;
-		currPlayer.heroHealth += GAIN_ITEM_HEALTH;
+		players[playerId].heroHealth += GAIN_ITEM_HEALTH;
 		break;
 	case ITEM_SPEED_MOVE:
 		cout << "item_speed_move taken" << endl;
-		currPlayer.speedMove += GAIN_ITEM_SPEED_MOVE;
+		players[playerId].speedMove += GAIN_ITEM_SPEED_MOVE;
 
-		if (currPlayer.speedMove >= SPEED_MAX) {
+		if (players[playerId].speedMove >= SPEED_MAX) {
 			//TODO: notification
 			cout << "Max Speed Reached" << endl;
-			currPlayer.speedMove = SPEED_MAX;
+			players[playerId].speedMove = SPEED_MAX;
 		}
 		break;
 	case ITEM_TEMPLE_HEALER:
@@ -206,7 +206,7 @@ void updateHeroAttributesTakingItem() {
 
 void takeItem() {
 	//In actual, not taking the item if globalItemTimer is running
-	if (!currPlayer.isTimerItemGlobalRunning) {
+	if (!players[playerId].isTimerItemGlobalRunning) {
 		timerItemGlobal(0);
 		updateHeroAttributesTakingItem();
 	} else {
@@ -229,7 +229,7 @@ void setAttackTemple(int player, bool value) {
 
 void decreaseEnemyTempleHealth() {
 
-	enemyTeam.templeHealth -= currPlayer.strength;
+	enemyTeam.templeHealth -= players[playerId].strength;
 	if (enemyTeam.templeHealth < 0)
 		enemyTeam.templeHealth = 0;
 	setAttackTemple(playerId, false);

@@ -8,85 +8,85 @@
 void timerRefresh(int value) {
 
 	glutPostRedisplay();
-	glutTimerFunc(SPEED_MAX - currPlayer.speedMove + 100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
+	glutTimerFunc(SPEED_MAX - players[playerId].speedMove + 100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
 }
 
 void timerItemGlobal(int value) {
 
-	if (!currPlayer.isTimerItemGlobalRunning) {
+	if (!players[playerId].isTimerItemGlobalRunning) {
 		cout << "starting timerItemGlobal" << endl;
-		currPlayer.isTimerItemGlobalRunning = true;
+		players[playerId].isTimerItemGlobalRunning = true;
 		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, 0);
 	} else {
 		cout << "stopping timerItemGlobal" << endl;
-		currPlayer.isTimerItemGlobalRunning = false;
+		players[playerId].isTimerItemGlobalRunning = false;
 	}
 }
 
 //TODO : to be called when actually using magic power on hero (not implemented yet)
 void timerMagicSpell(int value) {
 
-	if (!currPlayer.isTimerMagicSpellRunning) {
+	if (!players[playerId].isTimerMagicSpellRunning) {
 		cout << "starting timerMagicSpell" << endl;
-		currPlayer.isTimerMagicSpellRunning = true;
-		currPlayer.currentPowerMode = POWER_MODE_BASIC;
+		players[playerId].isTimerMagicSpellRunning = true;
+		players[playerId].currentPowerMode = POWER_MODE_BASIC;
 		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, 0);
 	} else {
 		cout << "stopping timerMagicSpell" << endl;
-		currPlayer.isTimerMagicSpellRunning = false;
+		players[playerId].isTimerMagicSpellRunning = false;
 	}
 }
 
 void timerCurse(int value) {
 
-	if (!currPlayer.isTimerCurseRunning) {
+	if (!players[playerId].isTimerCurseRunning) {
 		cout << "starting timerCurse" << endl;
 
 		switch (value) {
 		case CURSE_STUN:
-			currPlayer.speedMoveTemp = currPlayer.speedMove;
-			currPlayer.speedMove = 0;
-			currPlayer.currentPowerMode = POWER_MODE_STUN;
+			players[playerId].speedMoveTemp = players[playerId].speedMove;
+			players[playerId].speedMove = 0;
+			players[playerId].currentPowerMode = POWER_MODE_STUN;
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here
 			break;
 		case CURSE_SLOW:
-			currPlayer.strength -= CURSE_AMT_SLOW_STRENGTH;
+			players[playerId].strength -= CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
 			//Nothing to be done over here
 			break;
 		}
 
-		currPlayer.isTimerCurseRunning = true;
+		players[playerId].isTimerCurseRunning = true;
 		glutTimerFunc(TIMER_CURSE, timerCurse, value);
 	}
 
 	else {
 		cout << "stopping timerCurse" << endl;
-		currPlayer.isTimerCurseRunning = false;
+		players[playerId].isTimerCurseRunning = false;
 
 		switch (value) {
 		case CURSE_STUN:
-			currPlayer.currentPowerMode = POWER_MODE_BASIC;
-			currPlayer.speedMove += currPlayer.speedMoveTemp;
-			if (currPlayer.speedMove > SPEED_MAX) {
-				currPlayer.speedMove = SPEED_MAX;
+			players[playerId].currentPowerMode = POWER_MODE_BASIC;
+			players[playerId].speedMove += players[playerId].speedMoveTemp;
+			if (players[playerId].speedMove > SPEED_MAX) {
+				players[playerId].speedMove = SPEED_MAX;
 			}
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here
 			break;
 		case CURSE_SLOW:
-			currPlayer.strength += CURSE_AMT_SLOW_STRENGTH;
+			players[playerId].strength += CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
 			//Nothing to be done over here
 			break;
 		}
 
-		currPlayer.curseType = CURSE_NONE;
+		players[playerId].curseType = CURSE_NONE;
 	}
 }
 

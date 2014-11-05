@@ -28,9 +28,9 @@ void loadTeamAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
 	//myTeam.name = TEAM_ANGELS;
 	myTeam.templeHealth = HEALTH_FULL_TEMPLE;
-	currPlayer.heroHealth = HEALTH_FULL_HERO;
+	players[playerId].heroHealth = HEALTH_FULL_HERO;
 
-	currPlayer.heroType = HERO_DISABLER;
+	players[playerId].heroType = HERO_DISABLER;
 
 	myTeam.players[1].heroType = HERO_STUNNER; //TODO : might not be one
 	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
@@ -41,134 +41,58 @@ void loadTeamAttributes() {
 	enemyTeam.name = TEAM_DEMONS;
 	enemyTeam.templeHealth = HEALTH_FULL_TEMPLE;
 
-	enemyTeam.players[0].heroType = HERO_SLOWER;
-	enemyTeam.players[1].heroType = HERO_BURSTER;
-	enemyTeam.players[0].heroHealth = HEALTH_FULL_HERO;
-	enemyTeam.players[1].heroHealth = HEALTH_FULL_HERO;
+	//enemyTeam.players[0].heroType = HERO_SLOWER;
+	//enemyTeam.players[1].heroType = HERO_BURSTER;
 	//TODO: load other attributes
-	currPlayer.isTimerItemGlobalRunning = false;
-	currPlayer.isTimerMagicSpellRunning = false;
-	currPlayer.isTimerCurseRunning = false;
+	players[playerId].isTimerItemGlobalRunning = false;
+	players[playerId].isTimerMagicSpellRunning = false;
+	players[playerId].isTimerCurseRunning = false;
 
-
-	myTeam.players[0].location = Coordinate_grid(19, 1);
-	myTeam.players[1].location = Coordinate_grid(20, 3);
+	//myTeam.players[1].location = Coordinate_grid(20, 3);
 }
 
-void loadPlayerSpecificAttributesMy(int playerId) {
+void loadPlayerSpecificAttributes(int playerId) {
 
-	//1st player:playerId=0, 2nd player:playerId=1
-	//TODO: change 'playerId - 1' to playerId everywhere & related like 'which-1'
-	myTeam.players[playerId - 1].astar = new AStarClass();
-	myTeam.players[playerId - 1].astar->firstInitAStar();
+	players[playerId].astar = new AStarClass();
+	players[playerId].astar->firstInitAStar();
 
-	myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
-	myTeam.players[playerId - 1].curseType = CURSE_NONE;
+	players[playerId].currentPowerMode = POWER_MODE_BASIC;
+	players[playerId].curseType = CURSE_NONE;
+	players[playerId].heroHealth = HEALTH_FULL_HERO;
 
-	switch (myTeam.players[playerId - 1].heroType) {
-	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
+	switch (players[playerId].heroType) {
 	case HERO_STUNNER:
-		myTeam.players[playerId - 1].strength = STRENGTH_H_STUNNER;
-		myTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_STUNNER;
-		myTeam.players[playerId - 1].charType = H_STUNNER;
+		players[playerId].strength = STRENGTH_H_STUNNER;
+		players[playerId].speedMove = SPEED_MOVE_H_STUNNER;
+		players[playerId].charType = H_STUNNER;
 		break;
 
 	case HERO_DISABLER:
-		myTeam.players[playerId - 1].strength = STRENGTH_H_DISABLER;
-		myTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_DISABLER;
-		myTeam.players[playerId - 1].charType = H_DISABLER;
+		players[playerId].strength = STRENGTH_H_DISABLER;
+		players[playerId].speedMove = SPEED_MOVE_H_DISABLER;
+		players[playerId].charType = H_DISABLER;
 		break;
 
 	case HERO_SLOWER:
-		myTeam.players[playerId - 1].strength = STRENGTH_H_SLOWER;
-		myTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_SLOWER;
-		myTeam.players[playerId - 1].charType = H_SLOWER;
+		players[playerId].strength = STRENGTH_H_SLOWER;
+		players[playerId].speedMove = SPEED_MOVE_H_SLOWER;
+		players[playerId].charType = H_SLOWER;
 		break;
 
 	case HERO_BURSTER:
-		myTeam.players[playerId - 1].strength = STRENGTH_H_BURSTER;
-		myTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_BURSTER;
-		myTeam.players[playerId - 1].charType = H_BURSTER;
+		players[playerId].strength = STRENGTH_H_BURSTER;
+		players[playerId].speedMove = SPEED_MOVE_H_BURSTER;
+		players[playerId].charType = H_BURSTER;
 		break;
 	}
 
-	int row = myTeam.players[playerId - 1].location.row;
-	int col = myTeam.players[playerId - 1].location.col;
-	putCharToGrid(row, col, myTeam.players[playerId - 1].charType, true);
+	if(players[playerId].team->name == TEAM_ANGELS && playerId%2==0){
 
-	//TODO: temp, below remove
-	/*
-	 int row1 = 20;
-	 int col1 = 3;
-	 myTeam.players[1].location.row=row1;
-	 myTeam.players[1].location.col=col1;
-	 putCharToGrid(row1, col1, H_BURSTER, true);
-	 myTeam.players[1].speedMove = SPEED_MOVE_H_BURSTER;
-
-	 myTeam.players[1].astar = new AStarClass();
-	 myTeam.players[1].astar->firstInitAStar();
-	 myTeam.players[1].currentPowerMode = POWER_MODE_BASIC;
-	 myTeam.players[1].charType=H_BURSTER;
-	 */
-}
-
-void loadPlayerSpecificAttributesEnemy(int playerId) {
-
-	//1st player:playerId=0, 2nd player:playerId=1
-	//TODO: change 'playerId - 1' to playerId everywhere & related like 'which-1'
-	enemyTeam.players[playerId - 1].astar = new AStarClass();
-	enemyTeam.players[playerId - 1].astar->firstInitAStar();
-
-	enemyTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
-	enemyTeam.players[playerId - 1].curseType = CURSE_NONE;
-
-	switch (enemyTeam.players[playerId - 1].heroType) {
-	//TODO : decide & change attributes - strength,speedAttack,speedMove etc
-	case HERO_STUNNER:
-		enemyTeam.players[playerId - 1].strength = STRENGTH_H_STUNNER;
-		enemyTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_STUNNER;
-		enemyTeam.players[playerId - 1].charType = H_STUNNER;
-		break;
-
-	case HERO_DISABLER:
-		enemyTeam.players[playerId - 1].strength = STRENGTH_H_DISABLER;
-		enemyTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_DISABLER;
-		enemyTeam.players[playerId - 1].charType = H_DISABLER;
-		break;
-
-	case HERO_SLOWER:
-		enemyTeam.players[playerId - 1].strength = STRENGTH_H_SLOWER;
-		enemyTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_SLOWER;
-		enemyTeam.players[playerId - 1].charType = H_SLOWER;
-		break;
-
-	case HERO_BURSTER:
-		enemyTeam.players[playerId - 1].strength = STRENGTH_H_BURSTER;
-		enemyTeam.players[playerId - 1].speedMove = SPEED_MOVE_H_BURSTER;
-		enemyTeam.players[playerId - 1].charType = H_BURSTER;
-		break;
 	}
 
-	enemyTeam.players[playerId - 1].location = Coordinate_grid(19, 1);
-
-	int row = enemyTeam.players[playerId - 1].location.row;
-	int col = enemyTeam.players[playerId - 1].location.col;
-	//putCharToGrid(row, col, enemyTeam.players[playerId - 1].charType, true);
-
-	//TODO: temp, below remove
-	/*
-	 int row1 = 20;
-	 int col1 = 3;
-	 myTeam.players[1].location.row=row1;
-	 myTeam.players[1].location.col=col1;
-	 putCharToGrid(row1, col1, H_BURSTER, true);
-	 myTeam.players[1].speedMove = SPEED_MOVE_H_BURSTER;
-
-	 myTeam.players[1].astar = new AStarClass();
-	 myTeam.players[1].astar->firstInitAStar();
-	 myTeam.players[1].currentPowerMode = POWER_MODE_BASIC;
-	 myTeam.players[1].charType=H_BURSTER;
-	 */
+	int row = players[playerId].location.row;
+	int col = players[playerId].location.col;
+	putCharToGrid(row, col, players[playerId].charType, true);
 }
 
 void printGrid() {
@@ -237,7 +161,7 @@ void putTeamTypeAndTemples() {
 }
 
 void putMyAttributes() {
-	switch (currPlayer.currentPowerMode) {
+	switch (players[playerId].currentPowerMode) {
 	case POWER_MODE_BASIC:
 		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mBasic, 2, 1);
 		break;
@@ -249,7 +173,7 @@ void putMyAttributes() {
 		break;
 	}
 
-	switch (currPlayer.curseType) {
+	switch (players[playerId].curseType) {
 	case CURSE_NONE:
 		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cNone, 2, 1);
 		break;
@@ -269,11 +193,11 @@ void putMyAttributes() {
 
 	//Speed
 	putPngToLAttCell(Coordinate_grid(12, 1), texId_att_speed, 1, 1);
-	putTextToLAttCell(Coordinate_grid(12, 2), numToStr(currPlayer.speedMove));
+	putTextToLAttCell(Coordinate_grid(12, 2), numToStr(players[playerId].speedMove));
 
 	//Strength
 	putPngToLAttCell(Coordinate_grid(13, 1), texId_att_strength, 1, 1);
-	putTextToLAttCell(Coordinate_grid(13, 2), numToStr(currPlayer.strength));
+	putTextToLAttCell(Coordinate_grid(13, 2), numToStr(players[playerId].strength));
 }
 
 void putHealth() {
@@ -284,7 +208,7 @@ void putHealth() {
 	putTextToRAttCell(Coordinate_grid(5, 2), numToStr(enemyTeam.templeHealth));
 
 	putPngToLAttCell(Coordinate_grid(11, 1), texId_att_health, 1, 1);
-	putTextToLAttCell(Coordinate_grid(11, 2), numToStr(currPlayer.heroHealth));
+	putTextToLAttCell(Coordinate_grid(11, 2), numToStr(players[playerId].heroHealth));
 
 	putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
 	putTextToLAttCell(Coordinate_grid(17, 2),
@@ -300,7 +224,7 @@ void putHealth() {
 }
 
 void putHeroes() {
-	switch (currPlayer.heroType) {
+	switch (players[playerId].heroType) {
 	case HERO_STUNNER:
 		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
 		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
@@ -391,13 +315,13 @@ void putHeroes() {
 }
 
 void putTimers() {
-	if (currPlayer.isTimerItemGlobalRunning) {
+	if (players[playerId].isTimerItemGlobalRunning) {
 		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOn, 2, 1);
 	} else {
 		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOff, 2, 1);
 	}
 
-	if (currPlayer.isTimerMagicSpellRunning) {
+	if (players[playerId].isTimerMagicSpellRunning) {
 		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOn, 2, 1);
 	} else {
 		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOff, 2, 1);
@@ -437,7 +361,7 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_DISABLE:
 		cout << "disabled" << endl;
-		currPlayer.currentPowerMode = POWER_MODE_BASIC;
+		players[playerId].currentPowerMode = POWER_MODE_BASIC;
 		timerCurse(CURSE_DISABLE);
 		break;
 
@@ -448,7 +372,7 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_BURST:
 		cout << "bursted" << endl;
-		currPlayer.heroHealth -= CURSE_AMT_BURST_DAMAGE;
+		players[playerId].heroHealth -= CURSE_AMT_BURST_DAMAGE;
 		break;
 
 	case CURSE_NONE:
@@ -456,7 +380,7 @@ void iAmCursed(curse curseType) {
 		return;
 	}
 
-	currPlayer.curseType = curseType;
+	players[playerId].curseType = curseType;
 }
 
 void togglePlayer() { //TODO: check if required

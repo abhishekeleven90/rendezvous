@@ -83,8 +83,13 @@ void initRendering_main() {
 	}
 
 	loadTeamAttributes();
-	loadPlayerSpecificAttributesMy(1);
-	loadPlayerSpecificAttributesMy(2);
+	for(int)
+	loadPlayerSpecificAttributes(1);
+	loadPlayerSpecificAttributes(2);
+
+	myTeam.players[0].location = Coordinate_grid(19, 1);
+
+
 	blockOpponentsArea();
 
 	t3dInit();
@@ -123,7 +128,7 @@ void selectBasicPower() {
 }
 
 void selectMagicPower() {
-	if (currPlayer.curseType != CURSE_DISABLE) {
+	if (players[playerId].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic" << endl;
 		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
 	} else {

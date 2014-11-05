@@ -67,13 +67,13 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 	case 48: //key - '0'
 		isPrimaryNode = true;
 		myTeam.name = TEAM_ANGELS;
-		playerId = 1;
+		playerId = 0;
 		break;
 
 	case 49: //key - '1'
 		cout << "1 pressed" << endl;
 		myTeam.name = TEAM_ANGELS;
-		playerId = 2;
+		playerId = 1;
 		break;
 
 	case 50: //key - '2'
