@@ -84,6 +84,7 @@ void initRendering_main() {
 
 	loadTeamAttributes();
 	loadPlayerSpecificAttributes();
+	blockOpponentsArea();
 
 	t3dInit();
 	createServerThread();

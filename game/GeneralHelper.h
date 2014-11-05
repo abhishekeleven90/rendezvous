@@ -114,7 +114,6 @@ void loadPlayerSpecificAttributes() {
 	 myTeam.players[1].currentPowerMode = POWER_MODE_BASIC;
 	 myTeam.players[1].charType=H_BURSTER;
 	 */
-	blockOpponentsArea();
 }
 
 void printGrid() {
