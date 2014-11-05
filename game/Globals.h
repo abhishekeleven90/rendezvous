@@ -25,7 +25,7 @@ int g_item_index_angels = 0; //holds the global index of next item to be placed
 int g_item_index_demons = 0;
 
 bool isPrimaryNode = false; //default - false; true for primaryNode
-int playerId;
+int currPlayerId;
 TeamStruct angelsTeam, demonsTeam;
 Player players[4];
 

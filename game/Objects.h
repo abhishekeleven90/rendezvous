@@ -78,6 +78,12 @@ struct Temple {
 	int health;
 };
 
+
+struct TeamStruct {
+	teamName name;
+	int templeHealth;
+};
+
 struct Player {
 	int playerId;
 	nodeHelper* networkDetails;
@@ -103,14 +109,13 @@ struct Player {
 
 	bool toAttackTemple;
 
+	//for items
 	bool isTimerItemGlobalRunning;
+	Coordinate_grid itemCell;
+
 	bool isTimerMagicSpellRunning;
 	bool isTimerCurseRunning;
 };
 
-struct TeamStruct {
-	teamName name;
-	int templeHealth;
-};
 
 #endif

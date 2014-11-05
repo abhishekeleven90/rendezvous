@@ -94,14 +94,14 @@ void initRendering_main() {
 
 	t3dInit();
 
-	server_port = myTeam.players[playerId - 1].networkDetails->port;
+	server_port = myTeam.players[currPlayerId - 1].networkDetails->port;
 
 	createServerThread();
 }
 
 void renderGridMainWindow() {
-	moveHeroMine(1);
-	moveHeroMine(2); //TODO: check if not required..later may be required
+	moveHero(1);
+	moveHero(2); //TODO: check if not required..later may be required
 
 	loadAttributeSpace();
 	renderGrid();
@@ -124,13 +124,13 @@ void drawScene_main() {
 
 void selectBasicPower() {
 	cout << "selected power_basic" << endl;
-	myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_BASIC;
+	myTeam.players[currPlayerId - 1].currentPowerMode = POWER_MODE_BASIC;
 }
 
 void selectMagicPower() {
-	if (players[playerId].curseType != CURSE_DISABLE) {
+	if (players[currPlayerId].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic" << endl;
-		myTeam.players[playerId - 1].currentPowerMode = POWER_MODE_MAGIC;
+		myTeam.players[currPlayerId - 1].currentPowerMode = POWER_MODE_MAGIC;
 	} else {
 		cout << "can not use Magic power, you are cursed!!!" << endl; //TODO: show on wall
 	}

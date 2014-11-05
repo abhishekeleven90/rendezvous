@@ -28,9 +28,9 @@ void loadTeamAttributes() {
 	//TODO: the below attributes shall be coming from earlier screens
 	//myTeam.name = TEAM_ANGELS;
 	myTeam.templeHealth = HEALTH_FULL_TEMPLE;
-	players[playerId].heroHealth = HEALTH_FULL_HERO;
+	players[currPlayerId].heroHealth = HEALTH_FULL_HERO;
 
-	players[playerId].heroType = HERO_DISABLER;
+	players[currPlayerId].heroType = HERO_DISABLER;
 
 	myTeam.players[1].heroType = HERO_STUNNER; //TODO : might not be one
 	myTeam.players[1].heroHealth = HEALTH_FULL_HERO;
@@ -44,9 +44,9 @@ void loadTeamAttributes() {
 	//enemyTeam.players[0].heroType = HERO_SLOWER;
 	//enemyTeam.players[1].heroType = HERO_BURSTER;
 	//TODO: load other attributes
-	players[playerId].isTimerItemGlobalRunning = false;
-	players[playerId].isTimerMagicSpellRunning = false;
-	players[playerId].isTimerCurseRunning = false;
+	players[currPlayerId].isTimerItemGlobalRunning = false;
+	players[currPlayerId].isTimerMagicSpellRunning = false;
+	players[currPlayerId].isTimerCurseRunning = false;
 
 	//myTeam.players[1].location = Coordinate_grid(20, 3);
 }
@@ -86,7 +86,7 @@ void loadPlayerSpecificAttributes(int playerId) {
 		break;
 	}
 
-	if(players[playerId].team->name == TEAM_ANGELS && playerId%2==0){
+	if (players[playerId].team->name == TEAM_ANGELS && playerId % 2 == 0) {
 
 	}
 
@@ -106,31 +106,33 @@ void printGrid() {
 }
 
 //call this from the render function periodically
-void moveHeroMine(int type) {
-	Node* nodeToMove = findLocToMove(myTeam.players[type - 1].location, type);
+//on the master node, rest will be communicated to others
+void moveHero(int whichPlayer) {
+	Node* nodeToMove = findLocToMove(players[whichPlayer].location, whichPlayer);
 	if (nodeToMove == NULL) {
-		if (myTeam.players[type - 1].toAttackTemple)
-			decreaseEnemyTempleHealth();
+		if (players[whichPlayer].toAttackTemple)//TODO: Abhishek AND condition for is nearEnemyTemple
+			decreaseEnemyTempleHealth(whichPlayer);
 		return; //nothing to move
 	}
 	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
 			nodeToMove->col + ATTRIBUTE_WIDTH);
+
 	if (isItem(celltoMove)) {
-		setItemCell(celltoMove);
-		takeItem();
+		setItemCell(celltoMove, whichPlayer);
+		takeItem(whichPlayer);
 	}
 
 	putCharToGrid(
-			myTeam.players[type - 1].location.row,
-			myTeam.players[type - 1].location.col,
-			initialGridChar[myTeam.players[type - 1].location.row][myTeam.players[type
-					- 1].location.col + ATTRIBUTE_WIDTH], true);
+			players[whichPlayer].location.row,
+			players[whichPlayer].location.col,
+			initialGridChar[players[whichPlayer].location.row][players[whichPlayer].location.col
+					+ ATTRIBUTE_WIDTH], true);
 
-	myTeam.players[type - 1].location.row = nodeToMove->row;
-	myTeam.players[type - 1].location.col = nodeToMove->col;
-	putCharToGrid(myTeam.players[type - 1].location.row,
-			myTeam.players[type - 1].location.col,
-			myTeam.players[type - 1].charType, true);
+	myTeam.players[whichPlayer].location.row = nodeToMove->row;
+	myTeam.players[whichPlayer].location.col = nodeToMove->col;
+	putCharToGrid(myTeam.players[whichPlayer].location.row,
+			myTeam.players[whichPlayer].location.col, myTeam.players[whichPlayer].charType,
+			true);
 }
 
 void putTeamTypeAndTemples() {
@@ -161,7 +163,7 @@ void putTeamTypeAndTemples() {
 }
 
 void putMyAttributes() {
-	switch (players[playerId].currentPowerMode) {
+	switch (players[currPlayerId].currentPowerMode) {
 	case POWER_MODE_BASIC:
 		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mBasic, 2, 1);
 		break;
@@ -173,7 +175,7 @@ void putMyAttributes() {
 		break;
 	}
 
-	switch (players[playerId].curseType) {
+	switch (players[currPlayerId].curseType) {
 	case CURSE_NONE:
 		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cNone, 2, 1);
 		break;
@@ -193,11 +195,13 @@ void putMyAttributes() {
 
 	//Speed
 	putPngToLAttCell(Coordinate_grid(12, 1), texId_att_speed, 1, 1);
-	putTextToLAttCell(Coordinate_grid(12, 2), numToStr(players[playerId].speedMove));
+	putTextToLAttCell(Coordinate_grid(12, 2),
+			numToStr(players[currPlayerId].speedMove));
 
 	//Strength
 	putPngToLAttCell(Coordinate_grid(13, 1), texId_att_strength, 1, 1);
-	putTextToLAttCell(Coordinate_grid(13, 2), numToStr(players[playerId].strength));
+	putTextToLAttCell(Coordinate_grid(13, 2),
+			numToStr(players[currPlayerId].strength));
 }
 
 void putHealth() {
@@ -208,7 +212,8 @@ void putHealth() {
 	putTextToRAttCell(Coordinate_grid(5, 2), numToStr(enemyTeam.templeHealth));
 
 	putPngToLAttCell(Coordinate_grid(11, 1), texId_att_health, 1, 1);
-	putTextToLAttCell(Coordinate_grid(11, 2), numToStr(players[playerId].heroHealth));
+	putTextToLAttCell(Coordinate_grid(11, 2),
+			numToStr(players[currPlayerId].heroHealth));
 
 	putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
 	putTextToLAttCell(Coordinate_grid(17, 2),
@@ -224,7 +229,7 @@ void putHealth() {
 }
 
 void putHeroes() {
-	switch (players[playerId].heroType) {
+	switch (players[currPlayerId].heroType) {
 	case HERO_STUNNER:
 		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
 		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
@@ -315,13 +320,13 @@ void putHeroes() {
 }
 
 void putTimers() {
-	if (players[playerId].isTimerItemGlobalRunning) {
+	if (players[currPlayerId].isTimerItemGlobalRunning) {
 		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOn, 2, 1);
 	} else {
 		putPngToLAttCell(Coordinate_grid(19, 1), texId_att_time_itemOff, 2, 1);
 	}
 
-	if (players[playerId].isTimerMagicSpellRunning) {
+	if (players[currPlayerId].isTimerMagicSpellRunning) {
 		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOn, 2, 1);
 	} else {
 		putPngToLAttCell(Coordinate_grid(20, 1), texId_att_time_magicOff, 2, 1);
@@ -361,7 +366,7 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_DISABLE:
 		cout << "disabled" << endl;
-		players[playerId].currentPowerMode = POWER_MODE_BASIC;
+		players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
 		timerCurse(CURSE_DISABLE);
 		break;
 
@@ -372,7 +377,7 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_BURST:
 		cout << "bursted" << endl;
-		players[playerId].heroHealth -= CURSE_AMT_BURST_DAMAGE;
+		players[currPlayerId].heroHealth -= CURSE_AMT_BURST_DAMAGE;
 		break;
 
 	case CURSE_NONE:
@@ -380,13 +385,13 @@ void iAmCursed(curse curseType) {
 		return;
 	}
 
-	players[playerId].curseType = curseType;
+	players[currPlayerId].curseType = curseType;
 }
 
 void togglePlayer() { //TODO: check if required
-	if (playerId == 1)
-		playerId = 2;
+	if (currPlayerId == 1)
+		currPlayerId = 2;
 	else
-		playerId = 1;
+		currPlayerId = 1;
 }
 #endif

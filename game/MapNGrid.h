@@ -163,7 +163,7 @@ void copyInit() {
 }
 
 Node* findLocToMove(Coordinate_grid curr, int which) {
-	AStarClass* astarForPlayer = myTeam.players[which - 1].astar;
+	AStarClass* astarForPlayer = players[which].astar;
 	Node* neighbours[4];
 	neighbours[0] = astarForPlayer->getNodeFromGrid(curr.row + 1, curr.col);
 	neighbours[1] = astarForPlayer->getNodeFromGrid(curr.row - 1, curr.col);
