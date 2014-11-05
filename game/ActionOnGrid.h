@@ -175,7 +175,6 @@ itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
 }
 
 void updateHeroAttributesTakingItem(int playerId) {
-	//TODO: update hero attributes properly, notify & display in attribute space
 	itemType itemTaken = getItemTypeFromCharItem(itemCell);
 	switch (itemTaken) {
 	case ITEM_DAMAGE:

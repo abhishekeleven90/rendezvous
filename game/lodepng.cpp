@@ -1345,8 +1345,6 @@ typedef struct Hash
   unsigned short* chain;
   int* val; /*circular pos to hash value*/
 
-  /*TODO: do this not only for zeros but for any repeated byte. However for PNG
-  it's always going to be the zeros that dominate, so not important for PNG*/
   int* headz; /*similar to head, but for chainz*/
   unsigned short* chainz; /*those with same amount of zeros*/
   unsigned short* zeros; /*length of zeros streak, used as a second hash chain*/
