@@ -158,7 +158,6 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 49: //key - '1' : select basicPower
 		selectBasicPower();
-		createClientBroadcastThread(); //TODO: not required here
 		break;
 
 	case 50: //key - '2' : select magicPower

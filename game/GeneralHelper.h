@@ -25,8 +25,9 @@ bool isNotMyFriend(teamName team, int playerId) {
 void blockOpponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			if (isOponentCellForTeam(Coordinate_grid(r, c)), currPlayerId) {
-				putCharToGrid(r, c, BG_BLOCKED, true);
+			if (isOponentCellForTeam(Coordinate_grid(r, c), currPlayerId)) {
+				putCharToGrid(r, c, BG_BLOCKED, true, false);
+
 			}
 		}
 	}
@@ -96,7 +97,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 
 	int row = players[playerId].location.row;
 	int col = players[playerId].location.col;
-	putCharToGrid(row, col, players[playerId].charType, true);
+	putCharToGrid(row, col, players[playerId].charType, true, false);
 
 	//setting myFriend & enemyIds
 	teamName myTeam = players[currPlayerId].team->name;

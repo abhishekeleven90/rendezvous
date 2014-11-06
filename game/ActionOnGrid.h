@@ -63,20 +63,24 @@ void placeItemAtRandomPos(teamName name) {
 
 	switch (name) {
 	case TEAM_ANGELS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
+		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true, false);
 		break;
 
 	case TEAM_DEMONS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true);
+		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true, false);
 		break;
 
 	case TEAM_BOTH:
 		if (r > c) {
-			putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true);
-			putCharToGrid(c, r, itemCharCell[g_item_index_demons++], true);
+			putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true,
+					false);
+			putCharToGrid(c, r, itemCharCell[g_item_index_demons++], true,
+					false);
 		} else {
-			putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true);
-			putCharToGrid(c, r, itemCharCell[g_item_index_angels++], true);
+			putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true,
+					false);
+			putCharToGrid(c, r, itemCharCell[g_item_index_angels++], true,
+					false);
 		}
 		break;
 	}
@@ -189,7 +193,7 @@ void takeItem(int whichPlayer) {
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
 	putCharToGrid(players[whichPlayer].itemCell.row,
-			players[whichPlayer].itemCell.col, BG_GRASS, false);
+			players[whichPlayer].itemCell.col, BG_GRASS, false, false);
 	if (players[whichPlayer].itemCell.row > players[whichPlayer].itemCell.col) {
 		placeItemAtRandomPos(TEAM_ANGELS);
 	}
@@ -254,9 +258,8 @@ void attackDemonsTemple() { //this is ok
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
-	players[currPlayerId].targetCell = grid;
-	/*players[currPlayerId].targetCell.row = grid.row;
-	players[currPlayerId].targetCell.col = grid.col;*/ //TODO
+	players[currPlayerId].targetCell.row = grid.row;
+	players[currPlayerId].targetCell.col = grid.col;
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
@@ -270,8 +273,8 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		break;
 
 	case BG_WAR:
-		processCase(callType, grid, texId_bg_war, "BWa", sendServerMove,
-				wrong, false);
+		processCase(callType, grid, texId_bg_war, "BWa", sendServerMove, wrong,
+				false);
 		break;
 
 	case BG_ATTRIBUTE:

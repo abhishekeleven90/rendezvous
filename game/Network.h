@@ -121,8 +121,9 @@ void takeUpdateAction(const char* msg) {
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		cout<<"requestingPlayerID "<<requestingPlayerId<<endl;
-		cout<<players[requestingPlayerId].targetCell.row<<","<<players[requestingPlayerId].targetCell.col<<endl;
+		cout << "requestingPlayerID " << requestingPlayerId << endl;
+		cout << players[requestingPlayerId].targetCell.row << ","
+				<< players[requestingPlayerId].targetCell.col << endl;
 		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
 	}
 
@@ -274,9 +275,10 @@ void processBroadcast(char *data) {
 
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
-			if (!isOponentCellForTeam(Coordinate_grid(i, j))) {
+			if (!isOponentCellForTeam(Coordinate_grid(i, j), currPlayerId)) {
 				putCharToGrid(i, j,
-						static_cast<charCellType> (atoi(GLOBAL_ARR[k++])), true);
+						static_cast<charCellType> (atoi(GLOBAL_ARR[k++])),
+						true, false);
 			} else {
 				k++;
 			}

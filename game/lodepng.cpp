@@ -352,7 +352,7 @@ static void lodepng_set32bitInt(unsigned char* buffer, unsigned value)
 #ifdef LODEPNG_COMPILE_ENCODER
 static void lodepng_add32bitInt(ucvector* buffer, unsigned value)
 {
-  ucvector_resize(buffer, buffer->size + 4); /*todo: give error if resize failed*/
+  ucvector_resize(buffer, buffer->size + 4);
   lodepng_set32bitInt(&buffer->data[buffer->size - 4], value);
 }
 #endif /*LODEPNG_COMPILE_ENCODER*/
@@ -411,7 +411,7 @@ unsigned lodepng_save_file(const unsigned char* buffer, size_t buffersize, const
 
 #ifdef LODEPNG_COMPILE_ZLIB
 #ifdef LODEPNG_COMPILE_ENCODER
-/*TODO: this ignores potential out of memory errors*/
+
 #define addBitToStream(/*size_t**/ bitpointer, /*ucvector**/ bitstream, /*unsigned char*/ bit)\
 {\
   /*add a new byte at the end*/\
@@ -4085,8 +4085,6 @@ static unsigned postProcessScanlines(unsigned char* out, unsigned char* in,
     for(i = 0; i < 7; i++)
     {
       CERROR_TRY_RETURN(unfilter(&in[padded_passstart[i]], &in[filter_passstart[i]], passw[i], passh[i], bpp));
-      /*TODO: possible efficiency improvement: if in this reduced image the bits fit nicely in 1 scanline,
-      move bytes instead of bits or move not at all*/
       if(bpp < 8)
       {
         /*remove padding bits in scanlines; after this there still may be padding
@@ -5260,7 +5258,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
     for(type = 0; type < 5; type++)
     {
       ucvector_init(&attempt[type]);
-      ucvector_resize(&attempt[type], linebytes); /*todo: give error if resize failed*/
+      ucvector_resize(&attempt[type], linebytes);
     }
     for(y = 0; y < h; y++) /*try the 5 filter types*/
     {

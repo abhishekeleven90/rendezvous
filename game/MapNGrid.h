@@ -18,7 +18,7 @@ void initMap();
 GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
 void putCharToGrid(int row, int col, charCellType charType, bool isInner,
-		bool isPrimary = false);
+		bool isPrimary);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int xBlocks, int yBlocks, bool isInner);
 void copyInit();
@@ -31,13 +31,13 @@ void putAttributeSpace() {
 	//left attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_LEFT_ATTRIBUTE_COL; c <= END_LEFT_ATTRIBUTE_COL; c++) {
-			putCharToGrid(r, c, BG_ATTRIBUTE, false);
+			putCharToGrid(r, c, BG_ATTRIBUTE, false, false);
 		}
 	}
 	//right attribute space
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_RIGHT_ATTRIBUTE_COL; c <= END_RIGHT_ATTRIBUTE_COL; c++) {
-			putCharToGrid(r, c, BG_ATTRIBUTE, false);
+			putCharToGrid(r, c, BG_ATTRIBUTE, false, false);
 		}
 	}
 }
@@ -45,7 +45,7 @@ void putAttributeSpace() {
 void putGrass() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			putCharToGrid(r, c, BG_GRASS, true);
+			putCharToGrid(r, c, BG_GRASS, true, false);
 		}
 	}
 }
@@ -54,8 +54,8 @@ void putSpawnLocation() {
 	int k = 1;
 	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
 		for (int j = 1; j <= k; j++) {
-			putCharToGrid(i, j, BG_SPAWN, true);
-			putCharToGrid(j, i, BG_SPAWN, true);
+			putCharToGrid(i, j, BG_SPAWN, true, false);
+			putCharToGrid(j, i, BG_SPAWN, true, false);
 		}
 		k++;
 	}
@@ -66,8 +66,8 @@ void putWarGround() {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
 			if (r == c) {
 				for (int k = DIAG_BLOCKS; k >= 0; k--) {
-					putCharToGrid(r + k, c, BG_WAR, true);
-					putCharToGrid(r, c + k, BG_WAR, true);
+					putCharToGrid(r + k, c, BG_WAR, true, false);
+					putCharToGrid(r, c + k, BG_WAR, true, false);
 				}
 			}
 		}
@@ -92,9 +92,9 @@ void putToGridFromFile(string filePath, charCellType charCellType,
 			break;
 		} // error
 
-		putCharToGrid(a, b, charCellType, isInner);
+		putCharToGrid(a, b, charCellType, isInner, false);
 		if (isTeamArea) {
-			putCharToGrid(b, a, charCellType, isInner);
+			putCharToGrid(b, a, charCellType, isInner, false);
 		}
 	}
 }
@@ -311,12 +311,12 @@ void putMultipleCharToGrid(int row, int col, charCellType charType,
 	//Adding 'back' characters - required in case of covering multiple cells
 	for (int i = 0; i < xBlocks; i++) {
 		for (int j = 0; j < yBlocks; j++) {
-			putCharToGrid(row - i, col + j, backChar, isInner);
+			putCharToGrid(row - i, col + j, backChar, isInner, false);
 		}
 	}
 
 	//The first position(bottom-left) should be actual character
-	putCharToGrid(row, col, charType, isInner);
+	putCharToGrid(row, col, charType, isInner, false);
 }
 
 //In case some new charis added to grid, remember to add the some in renderGrid
@@ -345,7 +345,9 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner,
 
 //TODO: Abhishek move to code to ActionOnGrid
 //gray area for second player area handled by Harinder's code
-bool isBlockedSite(int r, int c) {
+bool isBlockedSite(int r, int c, int whichPlayer) {
+	if(isOponentCellForTeam(Coordinate_grid(r,c),whichPlayer))
+		return true;
 	charCellType type = getInnerGridChar(r, c, true);
 	switch (type) {
 	case BG_GRASS:
