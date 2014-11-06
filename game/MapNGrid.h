@@ -193,7 +193,7 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 }
 
 charCellType getInnerGridChar(int randomRow, int randomCol,
-		bool isPrimary = false) {
+		bool isPrimary) {
 	if (isPrimary) {
 		return gridCharPrimary[randomRow][randomCol + ATTRIBUTE_WIDTH];
 	}

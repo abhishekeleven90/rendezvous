@@ -18,7 +18,7 @@ void setItemCell(Coordinate_grid movingToCell, int whichPlayer) {
 
 //TODO: Abhishek: if more items add or try to add to the complex handleGridCharSwitch
 bool isItem(Coordinate_grid cell) {
-	switch (gridChar[cell.row][cell.col]) {
+	switch (gridCharPrimary[cell.row][cell.col]) {
 	case I_DAMAGE:
 	case I_HEALTH:
 	case I_SPEED_MOVE:
@@ -48,7 +48,7 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 			continue;
 		}
 
-		if (getInnerGridChar(randomRow, randomCol) == BG_GRASS) { //assuming that items can come only on 'grass'
+		if (getInnerGridChar(randomRow, randomCol, true) == BG_GRASS) { //assuming that items can come only on 'grass'
 			break;
 		}
 	}
@@ -63,11 +63,11 @@ void placeItemAtRandomPos(teamName name) {
 
 	switch (name) {
 	case TEAM_ANGELS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true, false);
+		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true, true);
 		break;
 
 	case TEAM_DEMONS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true, false);
+		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true, true);
 		break;
 
 	case TEAM_BOTH:
@@ -93,7 +93,7 @@ enum switchCallType {
 	PRINT_GRID, PROCESS_MOVE_RIGHT_CLICK, PROCESS_MOVE_LEFT_CLICK, RENDER_GRID
 };
 
-void sendServerMove() {
+void sendServerMoveThrough() {
 	helperSendServerMove();
 }
 
@@ -193,11 +193,12 @@ void takeItem(int whichPlayer) {
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
 	putCharToGrid(players[whichPlayer].itemCell.row,
-			players[whichPlayer].itemCell.col, BG_GRASS, false, false);
-	if (players[whichPlayer].itemCell.row > players[whichPlayer].itemCell.col) {
+			players[whichPlayer].itemCell.col, BG_GRASS, false, true);
+
+	if (players[whichPlayer].team->name==TEAM_ANGELS) {
 		placeItemAtRandomPos(TEAM_ANGELS);
 	}
-	if (players[whichPlayer].itemCell.row < players[whichPlayer].itemCell.col) {
+	if (players[whichPlayer].team->name==TEAM_DEMONS) {
 		placeItemAtRandomPos(TEAM_DEMONS);
 	}
 }
@@ -263,17 +264,17 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, texId_bg_grass, "Gra", sendServerMove,
+		processCase(callType, grid, texId_bg_grass, "Gra", sendServerMoveThrough,
 				wrong, false);
 		break;
 
 	case BG_SPAWN:
-		processCase(callType, grid, texId_bg_spawn, "BSp", sendServerMove,
+		processCase(callType, grid, texId_bg_spawn, "BSp", sendServerMoveThrough,
 				wrong, false);
 		break;
 
 	case BG_WAR:
-		processCase(callType, grid, texId_bg_war, "BWa", sendServerMove, wrong,
+		processCase(callType, grid, texId_bg_war, "BWa", sendServerMoveThrough, wrong,
 				false);
 		break;
 
@@ -333,25 +334,25 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	case I_SPEED_MOVE:
 		//setItemCell(grid, currPlayerId); //TODO: Abhishek i think we do not need
-		processCase(callType, grid, texId_i_speedMov, "ISM", aStarMoveThrough,
+		processCase(callType, grid, texId_i_speedMov, "ISM", sendServerMoveThrough,
 				wrong, false);
 		break;
 
 	case I_HEALTH:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_health, "IHe", aStarMoveThrough,
+		processCase(callType, grid, texId_i_health, "IHe", sendServerMoveThrough,
 				wrong, false);
 		break;
 
 	case I_DAMAGE:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_damage, "IDa", aStarMoveThrough,
+		processCase(callType, grid, texId_i_damage, "IDa", sendServerMoveThrough,
 				wrong, false);
 		break;
 
 	case I_TEMPLE_HEALER:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_tHealer, "ITH", aStarMoveThrough,
+		processCase(callType, grid, texId_i_tHealer, "ITH", sendServerMoveThrough,
 				wrong, false);
 		break;
 
