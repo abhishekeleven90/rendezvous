@@ -25,7 +25,7 @@ bool isNotMyFriend(teamName team, int playerId) {
 void blockOpponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
-			if (isOponentCellForTeam(Coordinate_grid(r, c))) {
+			if (isOponentCellForTeam(Coordinate_grid(r, c)), currPlayerId) {
 				putCharToGrid(r, c, BG_BLOCKED, true);
 			}
 		}

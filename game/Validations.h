@@ -27,8 +27,8 @@ bool isValidCell(Coordinate_grid grid) { //Checking it's not in black screen
 	return isValidRowNColIndex(grid, false);
 }
 
-bool isOponentCellForTeam(Coordinate_grid grid) { //returns true if the passed cell lies in my opponent area
-	int myTeam = players[currPlayerId].team->name;
+bool isOponentCellForTeam(Coordinate_grid grid, int whichPlayer) { //returns true if the passed cell lies in my opponent area
+	int myTeam = players[whichPlayer].team->name;
 
 	if (myTeam == TEAM_ANGELS && grid.col >= grid.row + DIAG_BLOCKS + 1) {
 		return true;
