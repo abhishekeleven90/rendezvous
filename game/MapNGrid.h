@@ -21,7 +21,6 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner,
 		bool isPrimary = false);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int xBlocks, int yBlocks, bool isInner);
-void renderGrid();
 void copyInit();
 void setHeroLocation(int which, Coordinate_grid loc);
 
@@ -136,6 +135,14 @@ void initMap() {
 	copyInit(); //Disclaimer: to be called before item put & hero put!!!
 }
 
+void copyPrimaryGrid() {
+	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+		for (int c = START_OUTER_GRID_COL; c <= END_OUTER_GRID_COL; c++) {
+			gridCharPrimary[r][c] = gridChar[r][c];
+		}
+	}
+}
+
 //copies the state of the initial map to another array
 //not modifiable now, as discussed
 void copyInit() {
@@ -144,7 +151,6 @@ void copyInit() {
 			initialGridChar[r][c] = gridChar[r][c];
 		}
 	}
-
 }
 
 Node* findLocToMove(Coordinate_grid curr, int which) {
@@ -326,22 +332,21 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner,
 	}
 
 	if (isPrimary) {
-		gridCharPrimary[row][col] = charType;
+		if (charType != BG_BLOCKED) {
+			gridCharPrimary[row][col] = charType;
+		}
 	}
 
-	//else {
+	else {
 		gridChar[row][col] = charType;
-	//}
-
-	if (charType != BG_BLOCKED) {
-		gridCharPrimary[row][col] = charType;
 	}
+
 }
 
 //TODO: Abhishek move to code to ActionOnGrid
 //gray area for second player area handled by Harinder's code
 bool isBlockedSite(int r, int c) {
-	charCellType type = getInnerGridChar(r, c);
+	charCellType type = getInnerGridChar(r, c, true);
 	switch (type) {
 	case BG_GRASS:
 	case BG_SPAWN:

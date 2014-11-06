@@ -88,6 +88,8 @@ void initRendering_main() {
 
 	loadPlayerSpecificAttributes();
 
+	copyPrimaryGrid();
+
 	blockOpponentsArea();
 
 	t3dInit();
@@ -103,8 +105,10 @@ void initRendering_main() {
 }
 
 void renderGridMainWindow() {
-	moveHero(currPlayerId);
-	moveHero(players[currPlayerId].idFriend); //TODO: check
+	moveHero(0);
+	moveHero(1);
+	moveHero(2);
+	moveHero(3);
 
 	loadAttributeSpace();
 	renderGrid();
@@ -163,11 +167,6 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 51: //key - '3' : curse //TODO: case may not be required later
 		iAmCursed(CURSE_STUN);
-		break;
-
-	case 48: //key - '0' //TODO: may not be required later : just for testing purpose
-		cout << "Switching player" << endl;
-		togglePlayer();
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose

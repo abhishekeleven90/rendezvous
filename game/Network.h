@@ -121,6 +121,8 @@ void takeUpdateAction(const char* msg) {
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
+		cout<<"requestingPlayerID "<<requestingPlayerId<<endl;
+		cout<<players[requestingPlayerId].targetCell.row<<","<<players[requestingPlayerId].targetCell.col<<endl;
 		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
 	}
 
@@ -179,7 +181,7 @@ void* threadUpdateServer(void* arg) {
 }
 
 void connectServerBroadcast() {
-	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data); //TODO: make generic for all nodes with for loop
+	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data); //TODO: make generic for all nodes with for loop -- kya likha hai ye?
 	int sock, bytes_recieved;
 	broad_client_recv_data[0] = '\0';
 	if (!connectToServer(sock, broadIp2Join, broadRemote_port)) {
@@ -200,13 +202,13 @@ void* threadClientBroadcast(void* arg) {
 	while (1) {
 		populateClientSendDataForBroadcast();
 
-		strcpy(broadIp2Join, "127.0.0.1");
-		broadRemote_port = 5001;
+		strcpy(broadIp2Join, "127.0.0.1"); //TODO: shall be for all clients
+		broadRemote_port = 5002;
 		connectServerBroadcast();
 
-		/*strcpy(broadIp2Join, "127.0.0.1");
+		strcpy(broadIp2Join, "127.0.0.1");
 		broadRemote_port = 5000;
-		connectServerBroadcast();*/
+		connectServerBroadcast();
 	}
 	return NULL;
 }
@@ -269,10 +271,15 @@ void processBroadcast(char *data) {
 	split(data, '|', GLOBAL_ARR);
 
 	int k = 0;
+
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
-			putCharToGrid(i, j,
-					static_cast<charCellType> (atoi(GLOBAL_ARR[k++])), true);
+			if (!isOponentCellForTeam(Coordinate_grid(i, j))) {
+				putCharToGrid(i, j,
+						static_cast<charCellType> (atoi(GLOBAL_ARR[k++])), true);
+			} else {
+				k++;
+			}
 		}
 	}
 

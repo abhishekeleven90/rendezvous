@@ -33,11 +33,6 @@ enum heroes {
 	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
 };
 
-//TODO: check if required
-enum magicPower {
-	MAGIC_DISABLE, MAGIC_SLOW, MAGIC_BURST, MAGIC_STUN
-};
-
 enum curse {
 	CURSE_DISABLE, CURSE_SLOW, CURSE_BURST, CURSE_STUN, CURSE_NONE
 };
@@ -69,8 +64,6 @@ public:
 
 	itemType item_type;
 
-	//TODO: check if required
-	//int itemUsetimer;
 };
 
 struct TeamStruct {

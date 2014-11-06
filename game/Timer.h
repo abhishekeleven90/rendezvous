@@ -7,8 +7,7 @@
 
 void timerRefresh(int value) {
 	glutPostRedisplay();
-	glutTimerFunc(SPEED_MAX - players[currPlayerId].speedMove + 100,
-			timerRefresh, 0); //'100' added because we don't want refresh rate to be 0
+	glutTimerFunc(100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0 //TODO: check
 }
 
 void timerItemGlobal(int whichPlayer) {

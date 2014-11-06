@@ -157,7 +157,7 @@ void moveHero(int whichPlayer) {
 			players[whichPlayer].location.row,
 			players[whichPlayer].location.col,
 			initialGridChar[players[whichPlayer].location.row][players[whichPlayer].location.col
-					+ ATTRIBUTE_WIDTH], true);
+					+ ATTRIBUTE_WIDTH], true, true);
 
 	players[whichPlayer].location.row = nodeToMove->row;
 	players[whichPlayer].location.col = nodeToMove->col;
@@ -438,10 +438,4 @@ void iAmCursed(curse curseType) {
 	players[currPlayerId].curseType = curseType;
 }
 
-void togglePlayer() { //TODO: check if required
-	if (currPlayerId == 1)
-		currPlayerId = 2;
-	else
-		currPlayerId = 1;
-}
 #endif

@@ -946,7 +946,6 @@ static unsigned huffmanDecodeSymbol(const unsigned char* in, size_t* bp,
 /*get the tree of a deflated block with fixed tree, as specified in the deflate specification*/
 static void getTreeInflateFixed(HuffmanTree* tree_ll, HuffmanTree* tree_d)
 {
-  /*TODO: check for out of memory errors*/
   generateFixedLitLenTree(tree_ll);
   generateFixedDistanceTree(tree_d);
 }
@@ -4605,8 +4604,6 @@ unsigned lodepng_decode(unsigned char** out, unsigned* w, unsigned* h,
     unsigned char* data = *out;
     size_t outsize;
 
-    /*TODO: check if this works according to the statement in the documentation: "The converter can convert
-    from greyscale input color type, to 8-bit greyscale or greyscale with alpha"*/
     if(!(state->info_raw.colortype == LCT_RGB || state->info_raw.colortype == LCT_RGBA)
        && !(state->info_raw.bitdepth == 8))
     {

@@ -265,12 +265,12 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		break;
 
 	case BG_SPAWN:
-		processCase(callType, grid, texId_bg_spawn, "BSp", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_spawn, "BSp", sendServerMove,
 				wrong, false);
 		break;
 
 	case BG_WAR:
-		processCase(callType, grid, texId_bg_war, "BWa", aStarMoveThrough,
+		processCase(callType, grid, texId_bg_war, "BWa", sendServerMove,
 				wrong, false);
 		break;
 
