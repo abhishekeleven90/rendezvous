@@ -8,10 +8,8 @@
 #include "CustomVectorStruct.h"
 #include "MapNGrid.h"
 #include "Timer.h"
+#include "OneMoreFile.h"
 #include "Network.h"
-
-Coordinate_grid targetCell;
-Coordinate_grid itemCell;
 
 void setItemCell(Coordinate_grid movingToCell, int whichPlayer) {
 	players[whichPlayer].itemCell.row = movingToCell.row;
@@ -91,6 +89,10 @@ enum switchCallType {
 	PRINT_GRID, PROCESS_MOVE_RIGHT_CLICK, PROCESS_MOVE_LEFT_CLICK, RENDER_GRID
 };
 
+void sendServerMove() {
+	helperSendServerMove();
+}
+
 void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 		string toPrint, void( rightClick)(void), void( leftClick)(void),
 		bool isBackChar, int xBlocks = 1, int yBlocks = 1) {
@@ -118,41 +120,6 @@ void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 
 void wrong() {
 	playEventSound(PATH_SOUND_WRONG_CLICK);
-}
-
-void aStarMove(int whichPlayer, bool through) {
-	//have to handle block status here itelf! phew :(
-	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
-		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
-			if (isBlockedSite(i, j)) {
-				players[whichPlayer].astar->blockSiteAStarGrid(i, j);
-			} else {
-				players[whichPlayer].astar->openSiteAStarGrid(i, j);
-			}
-		}
-	}
-	//for the not through, the target could be blocked actually, change it locally!
-	if (!through) {
-		players[whichPlayer].astar->openSiteAStarGrid(targetCell.row,
-				targetCell.col - ATTRIBUTE_WIDTH);
-	}
-	players[whichPlayer].astar->initAStar(players[whichPlayer].location,
-			targetCell);
-	players[whichPlayer].astar->AStar(through);
-}
-
-void aStarMoveThrough() {
-	aStarMove(currPlayerId, true); //TODO: Abhishek, changed for legacy code
-	//for testing with one player
-}
-
-void aStarMoveNotThrough() {
-	aStarMove(currPlayerId, false); //TODO: Abhishek, changed for legacy code
-	//for testing with one player
-}
-
-void sendServerMove() {
-	helperSendServerMove(targetCell);
 }
 
 itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
@@ -287,7 +254,9 @@ void attackDemonsTemple() { //this is ok
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
-	targetCell = Coordinate_grid(grid.row, grid.col);
+	players[currPlayerId].targetCell = grid;
+	/*players[currPlayerId].targetCell.row = grid.row;
+	players[currPlayerId].targetCell.col = grid.col;*/ //TODO
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:

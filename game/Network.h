@@ -17,6 +17,7 @@
 #include <math.h>
 #include <list>
 #include "MyString.h"
+#include "OneMoreFile.h"
 
 //----------Constants---------
 #define M 400
@@ -35,10 +36,15 @@ char GLOBAL_ARR[M][DATA_SIZE_KILO];
 
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
+char broad_client_send_data[DATA_SIZE_KILO],
+		broad_client_recv_data[DATA_SIZE_KILO];
 
 unsigned int server_port = 0;
 unsigned int remote_port = 0; // port with which to connect to server
+unsigned int broadRemote_port = 0;
+
 char ip2Join[IP_SIZE]; //used by client to join the server
+char broadIp2Join[IP_SIZE];
 
 char primaryNodeIp[IP_SIZE];
 int primaryNodePort;
@@ -62,13 +68,15 @@ pthread_mutex_t mutexQueuePrimary;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
+void takeUpdateAction(string msg);
+
 void sendDataAndWaitForResult();
 void sendDataDontWaitForResult();
 void sendDataToServer();
 void* threadSendDataToServer(void* arg);
 
-void enque(list<string> *l, string msg);
-string deque1(list<string> *l);
+void enqueMy(list<string> *l, string msg);
+string dequeMy(list<string> *l);
 void printQueue(list<string> *l);
 void emptyQueue(list<string> *queue);
 
@@ -92,12 +100,32 @@ void processBroadcast(char *data);
 void processMove(char *completeData);
 
 //-----TCP Functions-------
-bool connectToServer(int & sock);
+bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port);
 void* threadClientBroadcast(void* arg);
 void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
+void takeUpdateAction(const char* msg) {
+	char* type = substring(msg, 0, 2);
+	char* data = substring(msg, 3, strlen(msg));
+
+	char dataValArr[2][DATA_SIZE_KILO];
+	split(data, '?', dataValArr);
+
+	char* reqData = dataValArr[0];
+	int requestingPlayerId = atoi(dataValArr[1]);
+
+	if (strcmp(type, MSG_MOVE) == 0) {
+		char coordinates[2][DATA_SIZE_KILO];
+		split(reqData, ',', coordinates);
+		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
+		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
+		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
+	}
+
+}
+
 void sendDataAndWaitForResult() {
 	createSendServerDataThread();
 	while (client_recv_data[0] == '\0')
@@ -117,7 +145,7 @@ void sendDataToServer() {
 
 	client_recv_data[0] = '\0';
 
-	if (!connectToServer(sock)) {
+	if (!connectToServer(sock, ip2Join, remote_port)) {
 		client_recv_data[0] = SERVER_BUSY;
 		return;
 	}
@@ -140,9 +168,30 @@ void* threadSendDataToServer(void* arg) {
 
 void* threadUpdateServer(void* arg) {
 	while (1) {
-
+		if (!queuePrimary.empty()) {
+			pthread_mutex_lock(&mutexQueuePrimary);
+			string msg = dequeMy(&queuePrimary);
+			pthread_mutex_unlock(&mutexQueuePrimary);
+			takeUpdateAction(msg.c_str());
+		}
 	}
 	return NULL;
+}
+
+void connectServerBroadcast() {
+	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data); //TODO: make generic for all nodes with for loop
+	int sock, bytes_recieved;
+	broad_client_recv_data[0] = '\0';
+	if (!connectToServer(sock, broadIp2Join, broadRemote_port)) {
+		broad_client_recv_data[0] = SERVER_BUSY;
+		return;
+	}
+	//cout << "Client socket ID:" << sock << endl;
+	send(sock, broad_client_send_data, strlen(broad_client_send_data), 0);
+	bytes_recieved = recv(sock, broad_client_recv_data, DATA_SIZE_KILO, 0);
+	broad_client_recv_data[bytes_recieved] = '\0';
+	//cout << "Data successfully received" << client_recv_data << endl;
+	close(sock);
 }
 
 void* threadClientBroadcast(void* arg) {
@@ -151,21 +200,23 @@ void* threadClientBroadcast(void* arg) {
 	while (1) {
 		populateClientSendDataForBroadcast();
 
-		setRemoteNode("127.0.0.1", 5001); //TODO: make generic for all nodes with for loop
-		sendDataToServer();
+		strcpy(broadIp2Join, "127.0.0.1");
+		broadRemote_port = 5001;
+		connectServerBroadcast();
 
-		//setRemoteNode("10.192.11.114", 5000);
-		//sendDataToServer();
+		/*strcpy(broadIp2Join, "127.0.0.1");
+		broadRemote_port = 5000;
+		connectServerBroadcast();*/
 	}
 	return NULL;
 }
 
-void enque(list<string> *l, string msg) {
+void enqueMy(list<string> *l, string msg) {
 	(*l).push_back(msg);
 	cout << "enqued: " << endl;
 }
 
-string deque1(list<string> *l) {
+string dequeMy(list<string> *l) {
 	string msg = (*l).front();
 	(*l).pop_front();
 	return msg;
@@ -180,11 +231,15 @@ void printQueue(list<string> *l) {
 
 void emptyQueue(list<string> *queue) {
 	while (!(*queue).empty()) {
-		cout << deque1(queue);
+		cout << dequeMy(queue);
 	}
 }
 
-void helperSendServerMove(Coordinate_grid targetCell) {
+void helperSendServerMove() {
+	Coordinate_grid targetCell;
+	targetCell.row = players[currPlayerId].targetCell.row;
+	targetCell.col = players[currPlayerId].targetCell.col;
+
 	//Setting client_send_data
 	strcpy(client_send_data, MSG_MOVE);
 
@@ -227,7 +282,7 @@ void processBroadcast(char *data) {
 void processMove(char *completeData) {
 	cout << "data received for move: " << completeData << endl;
 	pthread_mutex_lock(&mutexQueuePrimary);
-	enque(&queuePrimary, completeData);
+	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
 }
 
@@ -248,12 +303,14 @@ void createUpdateServerThread() {
 }
 
 void populateClientSendDataForBroadcast() {
-	strcpy(client_send_data, MSG_BROADCAST);
+	strcpy(broad_client_send_data, MSG_BROADCAST);
 
+	//populating 'broad_client_send_data' with grid
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
-			strcat(client_send_data, numToStr(getInnerGridChar(i, j)).c_str());
-			strcat(client_send_data, "|");
+			strcat(broad_client_send_data,
+					numToStr(getInnerGridChar(i, j, true)).c_str());
+			strcat(broad_client_send_data, "|");
 		}
 	}
 }
@@ -365,7 +422,7 @@ void fillNodeEntries(struct sockaddr_in server_addr) {
 }
 
 //-----TCP Functions-------
-bool connectToServer(int & sock) {
+bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port) {
 	struct hostent *host;
 	struct sockaddr_in server_addr;
 	//cout << "Inside connect to server: " << ip2Join << ":" << remote_port
@@ -379,7 +436,7 @@ bool connectToServer(int & sock) {
 	//cout << "Client socket created" << endl;
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr = *((struct in_addr *) host->h_addr);
-	server_addr.sin_port = htons(remote_port);
+	server_addr.sin_port = htons(port);
 	bzero(&(server_addr.sin_zero), 8);
 
 	int retriedCount = 0;

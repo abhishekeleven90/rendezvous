@@ -96,6 +96,10 @@ void initRendering_main() {
 	primaryNodePort = players[0].networkDetails->port;
 
 	createServerThread();
+	if (currPlayerId == 0) { //primaryNode
+		createClientBroadcastThread();
+		createUpdateServerThread();
+	}
 }
 
 void renderGridMainWindow() {

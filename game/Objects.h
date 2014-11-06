@@ -107,6 +107,7 @@ struct Player {
 	bool toAttackTemple;
 
 	//for items
+	Coordinate_grid targetCell;
 	Coordinate_grid itemCell;
 
 	//timers

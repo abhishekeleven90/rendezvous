@@ -6,7 +6,7 @@ void intToChar(int intToChng, char* charToRet);
 string numToStr(int num);
 void tab(int count);
 bool startsWith(const char *a, const char *b);
-char* substring(char *string, int position, int length);
+char* substring(const char *string, int position, int length);
 int countOccurence(char* string, char splitter);
 void split(char* string, char splitter, char splittedArr[][1024]);
 void split(char* string, char splitter, char splittedArr[][16384]);
@@ -37,7 +37,7 @@ bool startsWith(const char *a, const char *b) {
 	return 1;
 }
 
-char* substring(char *string, int position, int length) {
+char* substring(const char *string, int position, int length) {
 	char *pointer;
 	int c;
 

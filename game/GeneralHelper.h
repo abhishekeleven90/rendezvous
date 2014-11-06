@@ -12,6 +12,7 @@
 #include "MapNGrid.h"
 #include "ActionOnGrid.h"
 #include "Validations.h"
+#include "Network.h"
 
 bool isMyFriend(teamName team, int playerId) {
 	return team == players[playerId].team->name;
@@ -162,7 +163,7 @@ void moveHero(int whichPlayer) {
 	players[whichPlayer].location.col = nodeToMove->col;
 	putCharToGrid(players[whichPlayer].location.row,
 			players[whichPlayer].location.col, players[whichPlayer].charType,
-			true);
+			true, true);
 }
 
 void putTeamTypeAndTemples() {

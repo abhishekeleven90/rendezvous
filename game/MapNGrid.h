@@ -17,7 +17,8 @@ void putSpawnLocation();
 void initMap();
 GLfloat getXFromCell(int col);
 GLfloat getYFromCell(int row);
-void putCharToGrid(int row, int col, charCellType charType, bool isInner);
+void putCharToGrid(int row, int col, charCellType charType, bool isInner,
+		bool isPrimary = false);
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int xBlocks, int yBlocks, bool isInner);
 void renderGrid();
@@ -185,8 +186,15 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 	return Coordinate_grid(row, col);
 }
 
-charCellType getInnerGridChar(int randomRow, int randomCol) {
-	return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
+charCellType getInnerGridChar(int randomRow, int randomCol,
+		bool isPrimary = false) {
+	if (isPrimary) {
+		return gridCharPrimary[randomRow][randomCol + ATTRIBUTE_WIDTH];
+	}
+
+	else {
+		return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
+	}
 }
 
 float t3dComputeScale(const char* str) {
@@ -306,7 +314,8 @@ void putMultipleCharToGrid(int row, int col, charCellType charType,
 }
 
 //In case some new charis added to grid, remember to add the some in renderGrid
-void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
+void putCharToGrid(int row, int col, charCellType charType, bool isInner,
+		bool isPrimary) {
 	if (!isValidRowNColIndex(Coordinate_grid(row, col), isInner)) {
 		return;
 	}
@@ -316,7 +325,13 @@ void putCharToGrid(int row, int col, charCellType charType, bool isInner) {
 		col = col + ATTRIBUTE_WIDTH;
 	}
 
-	gridChar[row][col] = charType;
+	if (isPrimary) {
+		gridCharPrimary[row][col] = charType;
+	}
+
+	//else {
+		gridChar[row][col] = charType;
+	//}
 
 	if (charType != BG_BLOCKED) {
 		gridCharPrimary[row][col] = charType;
