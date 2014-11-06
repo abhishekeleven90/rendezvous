@@ -176,20 +176,10 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 }
 
 void processRightClick_main() {
-
-	//TODO: remove below cout(s)
-	cout << " row: " << downGrid_click.row;
-	cout << " col: " << downGrid_click.col << endl;
-
 	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
 }
 
 void processLeftClick_main() {
-
-	//TODO: remove below cout(s)
-	cout << " left click row: " << downGrid_click.row;
-	cout << " left click col: " << downGrid_click.col << endl;
-
 	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_LEFT_CLICK);
 }
 
@@ -214,7 +204,6 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 }
 
 void create_window_main() {
-	cout << "reached2" << endl;
 	windowId_current = glutCreateWindow("Rendezvous!!!");
 	initRendering_main(); //Initialize rendering
 

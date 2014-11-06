@@ -12,11 +12,11 @@ void timerRefresh(int value) {
 
 void timerItemGlobal(int whichPlayer) {
 	if (!players[whichPlayer].isTimerItemGlobalRunning) {
-		cout << "starting timerItemGlobal" << endl;
+		cout << "starting timerItemGlobal for player: " << whichPlayer << endl;
 		players[whichPlayer].isTimerItemGlobalRunning = true;
 		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, whichPlayer);
 	} else {
-		cout << "stopping timerItemGlobal" << endl;
+		cout << "stopping timerItemGlobal for player: " << whichPlayer << endl;
 		players[whichPlayer].isTimerItemGlobalRunning = false;
 	}
 }

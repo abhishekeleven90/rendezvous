@@ -141,6 +141,7 @@ void printGrid() {
 void moveHero(int whichPlayer) {
 	Node* nodeToMove =
 			findLocToMove(players[whichPlayer].location, whichPlayer);
+
 	if (nodeToMove == NULL) {
 		if (players[whichPlayer].toAttackTemple)//TODO: Abhishek AND condition for is nearEnemyTemple
 			decreaseEnemyTempleHealth(whichPlayer);
@@ -150,11 +151,7 @@ void moveHero(int whichPlayer) {
 			nodeToMove->col + ATTRIBUTE_WIDTH);
 
 	if (isItem(celltoMove)) {
-		cout << "Item in next cell for  player " << whichPlayer << endl;
 		setItemCell(celltoMove, whichPlayer);
-		cout << "Set the item cell " << endl;
-		cout << players[whichPlayer].itemCell.row << ","
-				<< players[whichPlayer].itemCell.col << endl;
 		takeItem(whichPlayer);
 	}
 

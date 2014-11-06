@@ -104,8 +104,8 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 void processRightClick_selectHero(Coordinate_grid grid) {
 
 	//TODO: remove below cout(s)
-	cout << " row: " << downGrid_click.row;
-	cout << " col: " << downGrid_click.col << endl;
+	//cout << " row: " << downGrid_click.row;
+	//cout << " col: " << downGrid_click.col << endl;
 
 }
 

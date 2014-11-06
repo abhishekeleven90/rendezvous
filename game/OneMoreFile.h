@@ -2,9 +2,10 @@
 #define ONE_MORE_FILE_H
 
 void aStarMove(int whichPlayer, bool through) {
+	//Coordinate_grid targetCell = players[whichPlayer].targetCell;
 	Coordinate_grid targetCell;
-	targetCell.row = players[whichPlayer].targetCell.row;
-	targetCell.col = players[whichPlayer].targetCell.col;
+	targetCell.row = players[whichPlayer].targetCell.row; //TODO remove
+	 targetCell.col = players[whichPlayer].targetCell.col;
 
 	//have to handle block status here itelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {

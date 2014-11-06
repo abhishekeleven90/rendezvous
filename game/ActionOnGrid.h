@@ -157,15 +157,17 @@ void updateHeroAttributesTakingItem(int playerId) {
 	itemType itemTaken = getItemTypeFromCharItem(players[playerId].itemCell);
 	switch (itemTaken) {
 	case ITEM_DAMAGE:
-		cout << "item_damage taken" << endl;
+		cout << "item_damage taken by player: " << playerId << endl;
 		players[playerId].strength += GAIN_ITEM_DAMAGE;
 		break;
+
 	case ITEM_HEALTH:
-		cout << "item_health taken" << endl;
+		cout << "item_health taken by player: " << playerId << endl;
 		players[playerId].heroHealth += GAIN_ITEM_HEALTH;
 		break;
+
 	case ITEM_SPEED_MOVE:
-		cout << "item_speed_move taken" << endl;
+		cout << "item_speed_move taken by player: " << playerId << endl;
 		players[playerId].speedMove += GAIN_ITEM_SPEED_MOVE;
 
 		if (players[playerId].speedMove >= SPEED_MAX) {
@@ -174,9 +176,9 @@ void updateHeroAttributesTakingItem(int playerId) {
 			players[playerId].speedMove = SPEED_MAX;
 		}
 		break;
-	case ITEM_TEMPLE_HEALER:
 
-		cout << "item_temple_healer taken" << endl;
+	case ITEM_TEMPLE_HEALER:
+		cout << "item_temple_healer taken by player: " << playerId << endl;
 		switch (players[playerId].team->name) {
 		case TEAM_ANGELS:
 			angelsTeam.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
@@ -185,7 +187,12 @@ void updateHeroAttributesTakingItem(int playerId) {
 			demonsTeam.templeHealth += GAIN_ITEM_TEMPLE_HEALER;
 			break;
 		}
+		break;
 
+	default:
+
+		cout << "---updateHeroAttributesTakingItem: shall not come here---";
+		cout << itemTaken << endl;
 		break;
 	}
 }
@@ -195,7 +202,7 @@ void takeItem(int whichPlayer) {
 		timerItemGlobal(whichPlayer);
 		updateHeroAttributesTakingItem(whichPlayer);
 	} else {
-		cout << "Item not taken" << endl;
+		cout << "Item not taken by player: " << whichPlayer << endl;
 	}
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
@@ -266,8 +273,10 @@ void attackDemonsTemple() { //this is ok
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
-	players[currPlayerId].targetCell.row = grid.row;
-	players[currPlayerId].targetCell.col = grid.col;
+	//players[currPlayerId].targetCell = grid;
+
+	players[currPlayerId].targetCell.row = grid.row; //TODO remove
+	 players[currPlayerId].targetCell.col = grid.col;
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:

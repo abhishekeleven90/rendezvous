@@ -141,9 +141,6 @@ void takeUpdateAction(const char* msg) {
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		cout << "requestingPlayerID " << requestingPlayerId << endl;
-		cout << players[requestingPlayerId].targetCell.row << ","
-				<< players[requestingPlayerId].targetCell.col << endl;
 		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
 	}
 
@@ -230,17 +227,17 @@ void* threadClientBroadcast(void* arg) {
 		playerId = 2;
 		if (clientStatus[playerId] == CLIENT_ALIVE) {
 			//strcpy(broadIp2Join, "10.192.11.114");
-			//strcpy(broadIp2Join, "10.192.11.114");
+			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5002;
 			connectServerBroadcast(playerId);
 		}
 
-		/*playerId = 1;
-		if (clientStatus[playerId] == CLIENT_ALIVE) {
-			strcpy(broadIp2Join, "10.192.11.114");
-			broadRemote_port = 5001;
-			connectServerBroadcast(playerId);
-		}*/
+		/*	playerId = 1;
+		 if (clientStatus[playerId] == CLIENT_ALIVE) {
+		 strcpy(broadIp2Join, "10.192.11.114");
+		 broadRemote_port = 5001;
+		 connectServerBroadcast(playerId);
+		 }*/
 
 		playerId = 0;
 		if (clientStatus[playerId == CLIENT_ALIVE]) {
@@ -254,7 +251,6 @@ void* threadClientBroadcast(void* arg) {
 
 void enqueMy(list<string> *l, string msg) {
 	(*l).push_back(msg);
-	cout << "enqued: " << endl;
 }
 
 string dequeMy(list<string> *l) {
@@ -277,8 +273,9 @@ void emptyQueue(list<string> *queue) {
 }
 
 void helperSendServerMove() {
+	//Coordinate_grid targetCell = players[currPlayerId].targetCell;
 	Coordinate_grid targetCell;
-	targetCell.row = players[currPlayerId].targetCell.row;
+	targetCell.row = players[currPlayerId].targetCell.row;//TODO: remove
 	targetCell.col = players[currPlayerId].targetCell.col;
 
 	//Setting client_send_data
@@ -327,7 +324,6 @@ void processBroadcast(char *data) {
 }
 
 void processMove(char *completeData) {
-	cout << "data received for move: " << completeData << endl;
 	pthread_mutex_lock(&mutexQueuePrimary);
 	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
