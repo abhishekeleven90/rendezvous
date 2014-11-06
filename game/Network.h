@@ -38,7 +38,8 @@ enum CLIENT_STATUS {
 	CLIENT_NOT_REACHABLE, CLIENT_DEAD, CLIENT_ALIVE
 };
 
-char GLOBAL_ARR[M][DATA_SIZE_KILO];
+char GRID_RECEIVED[M][DATA_SIZE_KILO];
+char GLOBAL_ARR[2][DATA_SIZE_KILO];
 
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
@@ -64,7 +65,7 @@ int serverSock;
 
 int isCreated = false;
 int isJoined = false;
-int retry_count = 5;
+int retry_count = 20;
 
 CLIENT_STATUS clientStatus[NUM_OF_PLAYERS] = { CLIENT_ALIVE, CLIENT_ALIVE,
 		CLIENT_ALIVE, CLIENT_ALIVE }; //used for the logic for waiting if some client leaves
@@ -226,16 +227,23 @@ void* threadClientBroadcast(void* arg) {
 
 		playerId = 2;
 		if (clientStatus[playerId] == CLIENT_ALIVE) {
-			strcpy(broadIp2Join, "127.0.0.1"); //TODO: shall be for all clients
+			strcpy(broadIp2Join, "10.192.11.114"); //TODO: shall be for all clients
 			broadRemote_port = 5002;
-			connectServerBroadcast(2);
+			connectServerBroadcast(playerId);
+		}
+
+		playerId = 1;
+		if (clientStatus[playerId] == CLIENT_ALIVE) {
+			strcpy(broadIp2Join, "10.192.11.114");
+			broadRemote_port = 5001;
+			connectServerBroadcast(playerId);
 		}
 
 		playerId = 0;
 		if (clientStatus[playerId == CLIENT_ALIVE]) {
 			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5000;
-			connectServerBroadcast(0);
+			connectServerBroadcast(playerId);
 		}
 	}
 	return NULL;
@@ -293,10 +301,10 @@ void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
 	for (int i = 0; i < M; i++) {
-		memset(GLOBAL_ARR[i], 0, sizeof GLOBAL_ARR[i]);
+		memset(GRID_RECEIVED[i], 0, sizeof GRID_RECEIVED[i]);
 	}
 
-	split(data, '|', GLOBAL_ARR);
+	split(data, '|', GRID_RECEIVED);
 
 	int k = 0;
 
@@ -304,7 +312,7 @@ void processBroadcast(char *data) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (!isOponentCellForTeam(Coordinate_grid(i, j), currPlayerId)) {
 				putCharToGrid(i, j,
-						static_cast<charCellType> (atoi(GLOBAL_ARR[k++])),
+						static_cast<charCellType> (atoi(GRID_RECEIVED[k++])),
 						true, false);
 			} else {
 				k++;
@@ -586,6 +594,18 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	return true;
 }
 
+bool isValidRequest(int requestingPlayerId) {
+	if (!isAllClientsAlive()) {
+		return false;
+	}
+
+	if (!clientStatus[requestingPlayerId] == CLIENT_ALIVE) { //this is to ignore requests from dead client
+		return false;
+	}
+
+	return true;
+}
+
 void* server(void* arg) {
 	int sock, connected, trueint = 1;
 
@@ -644,8 +664,9 @@ void* server(void* arg) {
 		split(data, '?', dataValArr);
 
 		char* reqData = dataValArr[0];
+		int requestingPlayerId = atoi(dataValArr[1]);
 
-		if (!isAllClientsAlive()) {
+		if (!isValidRequest()) {
 			strcpy(server_send_data, MSG_SERVER_REQ_IGNORED);
 		}
 
