@@ -42,7 +42,7 @@ enum itemType {
 	ITEM_SPEED_MOVE, ITEM_HEALTH, ITEM_DAMAGE, ITEM_TEMPLE_HEALER
 };
 
-enum heroPowerMode {
+enum powerMode {
 	POWER_MODE_BASIC, POWER_MODE_MAGIC, POWER_MODE_STUN
 };
 
@@ -72,7 +72,7 @@ struct TeamStruct {
 };
 
 struct Player {
-	int playerId;
+	//int playerId;
 
 	nodeHelper* networkDetails;
 
@@ -82,7 +82,7 @@ struct Player {
 
 	TeamStruct* team;
 
-	heroPowerMode currentPowerMode;
+	powerMode currPowerMode;
 
 	//attributes
 	int heroHealth;
@@ -104,9 +104,9 @@ struct Player {
 	Coordinate_grid itemCell;
 
 	//timers
-	bool isTimerItemGlobalRunning;
-	bool isTimerMagicSpellRunning;
-	bool isTimerCurseRunning;
+	int isTimerItemGlobalRunning;
+	int isTimerMagicSpellRunning;
+	int isTimerCurseRunning;
 
 	//some extra info to help
 	bool isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location

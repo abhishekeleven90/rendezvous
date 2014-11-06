@@ -86,8 +86,6 @@ void initRendering_main() {
 		loadPlayerGeneralAttributes(i);
 	}
 
-	loadPlayerSpecificAttributes();
-
 	copyPrimaryGrid();
 
 	blockOpponentsArea();
@@ -96,6 +94,7 @@ void initRendering_main() {
 
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
+	server_port = players[currPlayerId].networkDetails->port;
 
 	createServerThread();
 	if (currPlayerId == 0) { //primaryNode
@@ -131,13 +130,13 @@ void drawScene_main() {
 
 void selectBasicPower() {
 	cout << "selected power_basic" << endl;
-	players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
+	players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
 }
 
 void selectMagicPower() {
 	if (players[currPlayerId].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic" << endl;
-		players[currPlayerId].currentPowerMode = POWER_MODE_MAGIC;
+		players[currPlayerId].currPowerMode = POWER_MODE_MAGIC;
 	} else {
 		cout << "can not use Magic power, you are cursed!!!" << endl; //TODO: show on wall
 	}

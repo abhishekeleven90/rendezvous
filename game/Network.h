@@ -38,7 +38,7 @@ enum CLIENT_STATUS {
 	CLIENT_NOT_REACHABLE, CLIENT_DEAD, CLIENT_ALIVE
 };
 
-char GRID_RECEIVED[M][DATA_SIZE_KILO];
+char DATA_RCVD[M][DATA_SIZE_KILO];
 char GLOBAL_ARR[2][DATA_SIZE_KILO];
 
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
@@ -301,23 +301,49 @@ void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
 	for (int i = 0; i < M; i++) {
-		memset(GRID_RECEIVED[i], 0, sizeof GRID_RECEIVED[i]);
+		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
 	}
 
-	split(data, '|', GRID_RECEIVED);
+	for (int i = 0; i < 2; i++) {
+		memset(GLOBAL_ARR[i], 0, sizeof GLOBAL_ARR[i]);
+	}
+
+	split(data, '+', GLOBAL_ARR);
+
+	//copying GridReceived
+	split(GLOBAL_ARR[0], '|', DATA_RCVD);
 
 	int k = 0;
-
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (!isOponentCellForTeam(Coordinate_grid(i, j), currPlayerId)) {
 				putChar2Grid(i, j,
-						static_cast<charCellType> (atoi(GRID_RECEIVED[k++])),
-						true, false);
+						static_cast<charCellType> (atoi(DATA_RCVD[k++])), true,
+						false);
 			} else {
 				k++;
 			}
 		}
+	}
+
+	for (int i = 0; i < M; i++) {
+		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
+	}
+
+	//copying player attributes
+	split(GLOBAL_ARR[1], ',', DATA_RCVD);
+	k = 0;
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
+		players[i].currPowerMode
+				= static_cast<powerMode> (atoi(DATA_RCVD[k++]));
+		players[i].heroHealth = atoi(DATA_RCVD[k++]);
+		players[i].strength = atoi(DATA_RCVD[k++]);
+		players[i].speedMove = atoi(DATA_RCVD[k++]);
+		players[i].curseType = static_cast<curse> (atoi(DATA_RCVD[k++]));
+		players[i].isTimerItemGlobalRunning = atoi(DATA_RCVD[k++]);
+		players[i].isTimerMagicSpellRunning = atoi(DATA_RCVD[k++]);
+		players[i].isTimerCurseRunning = atoi(DATA_RCVD[k++]);
 	}
 
 	strcpy(server_send_data, MSG_SERVER_ACK);
@@ -366,7 +392,7 @@ void populateClientSendDataForBroadcast() {
 		strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
 		strcat(broad_send_data, ",");
 
-		strcat(broad_send_data, numToStr(player.currentPowerMode).c_str());
+		strcat(broad_send_data, numToStr(player.currPowerMode).c_str());
 		strcat(broad_send_data, ",");
 
 		//attributes
@@ -380,9 +406,6 @@ void populateClientSendDataForBroadcast() {
 		strcat(broad_send_data, ",");
 
 		//related to curse
-		strcat(broad_send_data, numToStr(player.speedMoveTemp).c_str());
-		strcat(broad_send_data, ",");
-
 		strcat(broad_send_data, numToStr(player.curseType).c_str());
 		strcat(broad_send_data, ",");
 

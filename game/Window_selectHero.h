@@ -17,24 +17,20 @@ void initRendering_selectHero() {
 	loadTextures_main();//TODO: remove
 	putGrass();
 
-	players[0].playerId = currPlayerId; //TODO: check: shall be from server
-	players[0].heroType = HERO_DISABLER;
+	players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
 	players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
 	players[0].team = &angelsTeam;
 	players[0].isFirstPlayerInTeam = true;
 
-	players[1].playerId = currPlayerId;
 	players[1].heroType = HERO_STUNNER;
 	players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
 	players[1].team = &angelsTeam;
 
-	players[2].playerId = currPlayerId;
 	players[2].heroType = HERO_BURSTER;
 	players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
 	players[2].team = &demonsTeam;
 	players[2].isFirstPlayerInTeam = true;
 
-	players[3].playerId = currPlayerId;
 	players[3].heroType = HERO_SLOWER;
 	players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
 	players[3].team = &demonsTeam;
