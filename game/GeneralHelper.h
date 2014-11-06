@@ -150,7 +150,11 @@ void moveHero(int whichPlayer) {
 			nodeToMove->col + ATTRIBUTE_WIDTH);
 
 	if (isItem(celltoMove)) {
+		cout << "Item in next cell for  player " << whichPlayer << endl;
 		setItemCell(celltoMove, whichPlayer);
+		cout << "Set the item cell " << endl;
+		cout << players[whichPlayer].itemCell.row << ","
+				<< players[whichPlayer].itemCell.col << endl;
 		takeItem(whichPlayer);
 	}
 
@@ -162,6 +166,7 @@ void moveHero(int whichPlayer) {
 
 	players[whichPlayer].location.row = nodeToMove->row;
 	players[whichPlayer].location.col = nodeToMove->col;
+
 	putCharToGrid(players[whichPlayer].location.row,
 			players[whichPlayer].location.col, players[whichPlayer].charType,
 			true, true);
