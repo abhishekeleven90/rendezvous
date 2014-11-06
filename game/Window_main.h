@@ -76,7 +76,7 @@ void initRendering_main() {
 
 	//Placing items in the map
 	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
-		placeItemAtRandomPos(TEAM_BOTH);
+		initItemAtRandomPos();
 	}
 
 	//load Attributes

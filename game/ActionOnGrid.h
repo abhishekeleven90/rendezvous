@@ -31,7 +31,7 @@ bool isItem(Coordinate_grid cell) {
 	return false;
 }
 
-Coordinate_grid getRandomCoordinatesForItem(teamName name) {
+Coordinate_grid getRandomCoordinatesForItem(teamName name, bool isPrimary) {
 	int randomRow;
 	int randomCol;
 
@@ -48,7 +48,7 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 			continue;
 		}
 
-		if (getInnerGridChar(randomRow, randomCol, true) == BG_GRASS) { //assuming that items can come only on 'grass'
+		if (getInnerGridChar(randomRow, randomCol, isPrimary) == BG_GRASS) { //assuming that items can come only on 'grass'
 			break;
 		}
 	}
@@ -57,32 +57,39 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name) {
 }
 
 void placeItemAtRandomPos(teamName name) {
-	Coordinate_grid grid = getRandomCoordinatesForItem(name);
+	Coordinate_grid grid = getRandomCoordinatesForItem(name, true); //passed 'isPrimary' as true since changing the primaryGrid
 	int r = grid.row;
 	int c = grid.col;
 
 	switch (name) {
 	case TEAM_ANGELS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true, true);
+		putChar2Grid(r, c, itemCharCell[g_item_index_angels++], true, true);
 		break;
 
 	case TEAM_DEMONS:
-		putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true, true);
+		putChar2Grid(r, c, itemCharCell[g_item_index_demons++], true, true);
 		break;
 
 	case TEAM_BOTH:
-		if (r > c) {
-			putCharToGrid(r, c, itemCharCell[g_item_index_angels++], true,
-					false);
-			putCharToGrid(c, r, itemCharCell[g_item_index_demons++], true,
-					false);
-		} else {
-			putCharToGrid(r, c, itemCharCell[g_item_index_demons++], true,
-					false);
-			putCharToGrid(c, r, itemCharCell[g_item_index_angels++], true,
-					false);
-		}
+		cout << "---placeItemAtRandomPos: shall not reach here ever" << endl;
 		break;
+	}
+
+	g_item_index_angels = g_item_index_angels % ARRAY_SIZE(itemCharCell);
+	g_item_index_demons = g_item_index_demons % ARRAY_SIZE(itemCharCell);
+}
+
+void initItemAtRandomPos() {
+	Coordinate_grid grid = getRandomCoordinatesForItem(TEAM_BOTH, false); //passed 'isPrimary' as false since changing the normal grid
+	int r = grid.row;
+	int c = grid.col;
+
+	if (r > c) {
+		putChar2Grid(r, c, itemCharCell[g_item_index_angels++], true, false);
+		putChar2Grid(c, r, itemCharCell[g_item_index_demons++], true, false);
+	} else {
+		putChar2Grid(r, c, itemCharCell[g_item_index_demons++], true, false);
+		putChar2Grid(c, r, itemCharCell[g_item_index_angels++], true, false);
 	}
 
 	g_item_index_angels = g_item_index_angels % ARRAY_SIZE(itemCharCell);
@@ -192,13 +199,13 @@ void takeItem(int whichPlayer) {
 	}
 
 	//Irrespective of the GLOBAL_ITEM_TIMER, a new item is displayed at random pos
-	putCharToGrid(players[whichPlayer].itemCell.row,
+	putChar2Grid(players[whichPlayer].itemCell.row,
 			players[whichPlayer].itemCell.col, BG_GRASS, false, true);
 
-	if (players[whichPlayer].team->name==TEAM_ANGELS) {
+	if (players[whichPlayer].team->name == TEAM_ANGELS) {
 		placeItemAtRandomPos(TEAM_ANGELS);
 	}
-	if (players[whichPlayer].team->name==TEAM_DEMONS) {
+	if (players[whichPlayer].team->name == TEAM_DEMONS) {
 		placeItemAtRandomPos(TEAM_DEMONS);
 	}
 }
@@ -264,18 +271,18 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
-		processCase(callType, grid, texId_bg_grass, "Gra", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_bg_grass, "Gra",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case BG_SPAWN:
-		processCase(callType, grid, texId_bg_spawn, "BSp", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_bg_spawn, "BSp",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case BG_WAR:
-		processCase(callType, grid, texId_bg_war, "BWa", sendServerMoveThrough, wrong,
-				false);
+		processCase(callType, grid, texId_bg_war, "BWa", sendServerMoveThrough,
+				wrong, false);
 		break;
 
 	case BG_ATTRIBUTE:
@@ -334,26 +341,26 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 
 	case I_SPEED_MOVE:
 		//setItemCell(grid, currPlayerId); //TODO: Abhishek i think we do not need
-		processCase(callType, grid, texId_i_speedMov, "ISM", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_i_speedMov, "ISM",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case I_HEALTH:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_health, "IHe", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_i_health, "IHe",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case I_DAMAGE:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_damage, "IDa", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_i_damage, "IDa",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case I_TEMPLE_HEALER:
 		//setItemCell(grid, currPlayerId);
-		processCase(callType, grid, texId_i_tHealer, "ITH", sendServerMoveThrough,
-				wrong, false);
+		processCase(callType, grid, texId_i_tHealer, "ITH",
+				sendServerMoveThrough, wrong, false);
 		break;
 
 	case TREE_BACK:

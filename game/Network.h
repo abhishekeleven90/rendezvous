@@ -225,19 +225,22 @@ void* threadClientBroadcast(void* arg) {
 
 		int playerId;
 
+		//TODO: shall be for all clients
+
 		playerId = 2;
 		if (clientStatus[playerId] == CLIENT_ALIVE) {
-			strcpy(broadIp2Join, "10.192.11.114"); //TODO: shall be for all clients
+			//strcpy(broadIp2Join, "10.192.11.114");
+			//strcpy(broadIp2Join, "10.192.11.114");
 			broadRemote_port = 5002;
 			connectServerBroadcast(playerId);
 		}
 
-		playerId = 1;
+		/*playerId = 1;
 		if (clientStatus[playerId] == CLIENT_ALIVE) {
 			strcpy(broadIp2Join, "10.192.11.114");
 			broadRemote_port = 5001;
 			connectServerBroadcast(playerId);
-		}
+		}*/
 
 		playerId = 0;
 		if (clientStatus[playerId == CLIENT_ALIVE]) {
@@ -311,7 +314,7 @@ void processBroadcast(char *data) {
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (!isOponentCellForTeam(Coordinate_grid(i, j), currPlayerId)) {
-				putCharToGrid(i, j,
+				putChar2Grid(i, j,
 						static_cast<charCellType> (atoi(GRID_RECEIVED[k++])),
 						true, false);
 			} else {
@@ -666,7 +669,7 @@ void* server(void* arg) {
 		char* reqData = dataValArr[0];
 		int requestingPlayerId = atoi(dataValArr[1]);
 
-		if (!isValidRequest()) {
+		if (!isValidRequest(requestingPlayerId)) {
 			strcpy(server_send_data, MSG_SERVER_REQ_IGNORED);
 		}
 

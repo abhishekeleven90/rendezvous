@@ -26,7 +26,7 @@ void blockOpponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
 		for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
 			if (isOponentCellForTeam(Coordinate_grid(r, c), currPlayerId)) {
-				putCharToGrid(r, c, BG_BLOCKED, true, false);
+				putChar2Grid(r, c, BG_BLOCKED, true, false);
 
 			}
 		}
@@ -97,7 +97,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 
 	int row = players[playerId].location.row;
 	int col = players[playerId].location.col;
-	putCharToGrid(row, col, players[playerId].charType, true, false);
+	putChar2Grid(row, col, players[playerId].charType, true, false);
 
 	//setting myFriend & enemyIds
 	teamName myTeam = players[currPlayerId].team->name;
@@ -158,7 +158,7 @@ void moveHero(int whichPlayer) {
 		takeItem(whichPlayer);
 	}
 
-	putCharToGrid(
+	putChar2Grid(
 			players[whichPlayer].location.row,
 			players[whichPlayer].location.col,
 			initialGridChar[players[whichPlayer].location.row][players[whichPlayer].location.col
@@ -167,7 +167,7 @@ void moveHero(int whichPlayer) {
 	players[whichPlayer].location.row = nodeToMove->row;
 	players[whichPlayer].location.col = nodeToMove->col;
 
-	putCharToGrid(players[whichPlayer].location.row,
+	putChar2Grid(players[whichPlayer].location.row,
 			players[whichPlayer].location.col, players[whichPlayer].charType,
 			true, true);
 }
