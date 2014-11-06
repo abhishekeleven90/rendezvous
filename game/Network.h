@@ -27,17 +27,22 @@
 
 #define MSG_BROADCAST "b:"
 #define MSG_MOVE "m:"
-#define MSG_ACK "a:"
+
+#define MSG_SERVER_ACK "a:"
+#define MSG_SERVER_REQ_IGNORED "i:"
 
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
+enum CLIENT_STATUS {
+	CLIENT_NOT_REACHABLE, CLIENT_DEAD, CLIENT_ALIVE
+};
+
 char GLOBAL_ARR[M][DATA_SIZE_KILO];
 
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
 char client_send_data[DATA_SIZE_KILO], client_recv_data[DATA_SIZE_KILO];
-char broad_client_send_data[DATA_SIZE_KILO],
-		broad_client_recv_data[DATA_SIZE_KILO];
+char broad_send_data[DATA_SIZE_KILO], broad_client_recv_data[DATA_SIZE_KILO];
 
 unsigned int server_port = 0;
 unsigned int remote_port = 0; // port with which to connect to server
@@ -61,6 +66,9 @@ int isCreated = false;
 int isJoined = false;
 int retry_count = 5;
 
+CLIENT_STATUS clientStatus[NUM_OF_PLAYERS] = { CLIENT_ALIVE, CLIENT_ALIVE,
+		CLIENT_ALIVE, CLIENT_ALIVE }; //used for the logic for waiting if some client leaves
+
 nodeHelper* selfNode = new nodeHelper;
 
 list<string> queuePrimary;
@@ -68,6 +76,7 @@ pthread_mutex_t mutexQueuePrimary;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
+bool isAllClientsAlive();
 void takeUpdateAction(string msg);
 
 void sendDataAndWaitForResult();
@@ -100,12 +109,22 @@ void processBroadcast(char *data);
 void processMove(char *completeData);
 
 //-----TCP Functions-------
-bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port);
+bool connectToServer(int & sock);
+bool connectToServerBroadcast(int & sock, int playerId);
 void* threadClientBroadcast(void* arg);
 void* server(void* arg);
 
 //****************Function Definitions*******************
 //-----Helper Functions----
+bool isAllClientsAlive() {
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		if (clientStatus[i] == CLIENT_NOT_REACHABLE) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void takeUpdateAction(const char* msg) {
 	char* type = substring(msg, 0, 2);
 	char* data = substring(msg, 3, strlen(msg));
@@ -148,7 +167,7 @@ void sendDataToServer() {
 
 	client_recv_data[0] = '\0';
 
-	if (!connectToServer(sock, ip2Join, remote_port)) {
+	if (!connectToServer(sock)) {
 		client_recv_data[0] = SERVER_BUSY;
 		return;
 	}
@@ -181,16 +200,16 @@ void* threadUpdateServer(void* arg) {
 	return NULL;
 }
 
-void connectServerBroadcast() {
+void connectServerBroadcast(int playerId) {
 	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data); //TODO: make generic for all nodes with for loop -- kya likha hai ye?
 	int sock, bytes_recieved;
 	broad_client_recv_data[0] = '\0';
-	if (!connectToServer(sock, broadIp2Join, broadRemote_port)) {
+	if (!connectToServerBroadcast(sock, playerId)) {
 		broad_client_recv_data[0] = SERVER_BUSY;
 		return;
 	}
 	//cout << "Client socket ID:" << sock << endl;
-	send(sock, broad_client_send_data, strlen(broad_client_send_data), 0);
+	send(sock, broad_send_data, strlen(broad_send_data), 0);
 	bytes_recieved = recv(sock, broad_client_recv_data, DATA_SIZE_KILO, 0);
 	broad_client_recv_data[bytes_recieved] = '\0';
 	//cout << "Data successfully received" << client_recv_data << endl;
@@ -203,13 +222,21 @@ void* threadClientBroadcast(void* arg) {
 	while (1) {
 		populateClientSendDataForBroadcast();
 
-		strcpy(broadIp2Join, "127.0.0.1"); //TODO: shall be for all clients
-		broadRemote_port = 5002;
-		connectServerBroadcast();
+		int playerId;
 
-		strcpy(broadIp2Join, "127.0.0.1");
-		broadRemote_port = 5000;
-		connectServerBroadcast();
+		playerId = 2;
+		if (clientStatus[playerId] == CLIENT_ALIVE) {
+			strcpy(broadIp2Join, "127.0.0.1"); //TODO: shall be for all clients
+			broadRemote_port = 5002;
+			connectServerBroadcast(2);
+		}
+
+		playerId = 0;
+		if (clientStatus[playerId == CLIENT_ALIVE]) {
+			strcpy(broadIp2Join, "127.0.0.1");
+			broadRemote_port = 5000;
+			connectServerBroadcast(0);
+		}
 	}
 	return NULL;
 }
@@ -285,7 +312,7 @@ void processBroadcast(char *data) {
 		}
 	}
 
-	strcpy(server_send_data, MSG_ACK);
+	strcpy(server_send_data, MSG_SERVER_ACK);
 }
 
 void processMove(char *completeData) {
@@ -312,15 +339,58 @@ void createUpdateServerThread() {
 }
 
 void populateClientSendDataForBroadcast() {
-	strcpy(broad_client_send_data, MSG_BROADCAST);
+	strcpy(broad_send_data, MSG_BROADCAST);
 
 	//populating 'broad_client_send_data' with grid
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
-			strcat(broad_client_send_data,
+			strcat(broad_send_data,
 					numToStr(getInnerGridChar(i, j, true)).c_str());
-			strcat(broad_client_send_data, "|");
+			strcat(broad_send_data, "|");
 		}
+	}
+
+	strcat(broad_send_data, "+");
+
+	//populating 'broad_client_send_data' with attributes
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		Player player = players[i];
+
+		strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data, numToStr(player.currentPowerMode).c_str());
+		strcat(broad_send_data, ",");
+
+		//attributes
+		strcat(broad_send_data, numToStr(player.heroHealth).c_str());
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data, numToStr(player.strength).c_str());
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data, numToStr(player.speedMove).c_str());
+		strcat(broad_send_data, ",");
+
+		//related to curse
+		strcat(broad_send_data, numToStr(player.speedMoveTemp).c_str());
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data, numToStr(player.curseType).c_str());
+		strcat(broad_send_data, ",");
+
+		//timers
+		strcat(broad_send_data,
+				numToStr(player.isTimerItemGlobalRunning).c_str());
+
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data,
+				numToStr(player.isTimerMagicSpellRunning).c_str());
+		strcat(broad_send_data, ",");
+
+		strcat(broad_send_data, numToStr(player.isTimerCurseRunning).c_str());
+		strcat(broad_send_data, ",");
 	}
 }
 
@@ -431,21 +501,20 @@ void fillNodeEntries(struct sockaddr_in server_addr) {
 }
 
 //-----TCP Functions-------
-bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port) {
+bool connectToServer(int & sock) {
 	struct hostent *host;
 	struct sockaddr_in server_addr;
-	//cout << "Inside connect to server: " << ip2Join << ":" << remote_port
-	//<< endl;
+
 	host = gethostbyname(ip2Join);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("Socket");
 		exit(1);
 	}
-	//cout << "Client socket created" << endl;
+
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr = *((struct in_addr *) host->h_addr);
-	server_addr.sin_port = htons(port);
+	server_addr.sin_port = htons(remote_port);
 	bzero(&(server_addr.sin_zero), 8);
 
 	int retriedCount = 0;
@@ -454,8 +523,8 @@ bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port) {
 
 		//trying again assuming the server is busy
 		retriedCount++;
-		//cout << "Server busy --- retrying(" << retriedCount << "/"
-		//	<< retry_count << ")" << endl;
+		cout << "Server busy --- retrying(" << retriedCount << "/"
+				<< retry_count << ")" << endl;
 		sleep(1);
 		if (retriedCount == retry_count) {
 			cout
@@ -465,6 +534,54 @@ bool connectToServer(int & sock, char ip2Join[IP_SIZE], int port) {
 			return false;
 		}
 	}
+
+	return true;
+}
+
+bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundant with above fxn
+	struct hostent *host;
+	struct sockaddr_in server_addr;
+
+	host = gethostbyname(broadIp2Join);
+
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		perror("Socket");
+		exit(1);
+	}
+
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_addr = *((struct in_addr *) host->h_addr);
+	server_addr.sin_port = htons(broadRemote_port);
+	bzero(&(server_addr.sin_zero), 8);
+
+	int retriedCount = 0;
+	while (connect(sock, (struct sockaddr *) &server_addr,
+			sizeof(struct sockaddr)) == -1) {
+
+		clientStatus[playerId] = CLIENT_NOT_REACHABLE;
+
+		//trying again assuming the server is busy
+		retriedCount++;
+		cout << "BroadCast-playerId: " << playerId << " busy --- retrying("
+				<< retriedCount << "/" << retry_count << ")" << endl;
+		sleep(1);
+		if (retriedCount == retry_count) {
+
+			//client is DEAD!!!
+			cout << "playerId: " << playerId
+					<< " is no more alive, let's continue" << endl;
+			clientStatus[playerId] = CLIENT_DEAD;
+
+			close(sock);
+			return false;
+		}
+	}
+
+	if (clientStatus[playerId] == CLIENT_NOT_REACHABLE) {
+		clientStatus[playerId] = CLIENT_ALIVE;
+		cout << "playerId: " << playerId << " back now" << endl;
+	}
+
 	//cout << "Client successfully connected to server" << endl;
 	return true;
 }
@@ -528,7 +645,11 @@ void* server(void* arg) {
 
 		char* reqData = dataValArr[0];
 
-		if (strcmp(type, MSG_BROADCAST) == 0) {
+		if (!isAllClientsAlive()) {
+			strcpy(server_send_data, MSG_SERVER_REQ_IGNORED);
+		}
+
+		else if (strcmp(type, MSG_BROADCAST) == 0) {
 			processBroadcast(reqData);
 		}
 
