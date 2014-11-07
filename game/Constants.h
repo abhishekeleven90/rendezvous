@@ -7,8 +7,10 @@
 #define CELL_LENGTH 0.2f
 
 #define NUM_OF_PLAYERS 4
+#define PLAYER_ID_PRIMARY 0
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
+#define SPEED_ACTUAL(id) (SPEED_MAX-players[id].speedMove+1)
 
 //Grid related
 #define MAX_XCELL 1.0f
@@ -45,17 +47,17 @@
 #define CURSE_AMT_SLOW_STRENGTH 1
 #define CURSE_AMT_STUN_SPEED 500
 
-#define SPEED_MOVE_H_STUNNER 600
-#define SPEED_MOVE_H_DISABLER 700
-#define SPEED_MOVE_H_SLOWER 800
-#define SPEED_MOVE_H_BURSTER 500
+#define SPEED_MOVE_H_STUNNER 2
+#define SPEED_MOVE_H_DISABLER 3
+#define SPEED_MOVE_H_SLOWER 3
+#define SPEED_MOVE_H_BURSTER 2
 
 #define GAIN_ITEM_DAMAGE 1
 #define GAIN_ITEM_HEALTH 5
-#define GAIN_ITEM_SPEED_MOVE 25
+#define GAIN_ITEM_SPEED_MOVE 1
 #define GAIN_ITEM_TEMPLE_HEALER 10
 
-#define SPEED_MAX 1000
+#define SPEED_MAX 5
 
 //Number of Blocks
 #define SPAWN_BLOCKS 3

@@ -71,8 +71,13 @@ struct TeamStruct {
 	int templeHealth;
 };
 
+enum clientStatus {
+	CLIENT_ALIVE, CLIENT_DEAD, CLIENT_NOT_REACHABLE
+};
+
 struct Player {
 	//int playerId;
+	clientStatus status;
 
 	nodeHelper* networkDetails;
 

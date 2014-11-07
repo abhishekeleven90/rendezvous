@@ -42,6 +42,8 @@ void loadTeamAttributes() {
 }
 
 void loadPlayerGeneralAttributes(int playerId) {
+	players[playerId].status = CLIENT_ALIVE;
+
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;

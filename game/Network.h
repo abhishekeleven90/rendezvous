@@ -22,6 +22,7 @@
 //----------Constants---------
 #define M 400
 #define QUEUE_LIMIT 5
+#define RETRY_COUNT 5
 
 #define DATA_SIZE_KILO 1024
 
@@ -34,10 +35,6 @@
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
-enum CLIENT_STATUS {
-	CLIENT_NOT_REACHABLE, CLIENT_DEAD, CLIENT_ALIVE
-};
-
 char DATA_RCVD[M][DATA_SIZE_KILO];
 char GLOBAL_ARR[2][DATA_SIZE_KILO];
 
@@ -65,10 +62,6 @@ int serverSock;
 
 int isCreated = false;
 int isJoined = false;
-int retry_count = 20;
-
-CLIENT_STATUS clientStatus[NUM_OF_PLAYERS] = { CLIENT_ALIVE, CLIENT_ALIVE,
-		CLIENT_ALIVE, CLIENT_ALIVE }; //used for the logic for waiting if some client leaves
 
 nodeHelper* selfNode = new nodeHelper;
 
@@ -119,7 +112,7 @@ void* server(void* arg);
 //-----Helper Functions----
 bool isAllClientsAlive() {
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (clientStatus[i] == CLIENT_NOT_REACHABLE) {
+		if (players[i].status == CLIENT_NOT_REACHABLE) {
 			return false;
 		}
 	}
@@ -225,7 +218,7 @@ void* threadClientBroadcast(void* arg) {
 		//TODO: shall be for all clients
 
 		playerId = 2;
-		if (clientStatus[playerId] == CLIENT_ALIVE) {
+		if (players[playerId].status == CLIENT_ALIVE) {
 			//strcpy(broadIp2Join, "10.192.11.114");
 			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5002;
@@ -240,7 +233,7 @@ void* threadClientBroadcast(void* arg) {
 		 }*/
 
 		playerId = 0;
-		if (clientStatus[playerId == CLIENT_ALIVE]) {
+		if (players[playerId].status == CLIENT_ALIVE) {
 			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5000;
 			connectServerBroadcast(playerId);
@@ -327,7 +320,7 @@ void processBroadcast(char *data) {
 		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
 	}
 
-	if (currPlayerId != 0) { //copying the players information only if I am not the primary Node
+	if (currPlayerId != PLAYER_ID_PRIMARY) { //copying the players information only if I am not the primary Node
 		//copying player attributes
 		split(GLOBAL_ARR[1], ',', DATA_RCVD);
 		k = 0;
@@ -553,9 +546,9 @@ bool connectToServer(int & sock) {
 		//trying again assuming the server is busy
 		retriedCount++;
 		cout << "Server busy --- retrying(" << retriedCount << "/"
-				<< retry_count << ")" << endl;
+				<< RETRY_COUNT << ")" << endl;
 		sleep(1);
-		if (retriedCount == retry_count) {
+		if (retriedCount == RETRY_COUNT) {
 			cout
 					<< "Server is not up or not responding, terminating client...please try again"
 					<< endl;
@@ -587,27 +580,27 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	while (connect(sock, (struct sockaddr *) &server_addr,
 			sizeof(struct sockaddr)) == -1) {
 
-		clientStatus[playerId] = CLIENT_NOT_REACHABLE;
+		players[playerId].status = CLIENT_NOT_REACHABLE;
 
 		//trying again assuming the server is busy
 		retriedCount++;
 		cout << "BroadCast-playerId: " << playerId << " busy --- retrying("
-				<< retriedCount << "/" << retry_count << ")" << endl;
+				<< retriedCount << "/" << RETRY_COUNT << ")" << endl;
 		sleep(1);
-		if (retriedCount == retry_count) {
+		if (retriedCount == RETRY_COUNT) {
 
 			//client is DEAD!!!
 			cout << "playerId: " << playerId
 					<< " is no more alive, let's continue" << endl;
-			clientStatus[playerId] = CLIENT_DEAD;
+			players[playerId].status = CLIENT_DEAD;
 
 			close(sock);
 			return false;
 		}
 	}
 
-	if (clientStatus[playerId] == CLIENT_NOT_REACHABLE) {
-		clientStatus[playerId] = CLIENT_ALIVE;
+	if (players[playerId].status == CLIENT_NOT_REACHABLE) {
+		players[playerId].status = CLIENT_ALIVE;
 		cout << "playerId: " << playerId << " back now" << endl;
 	}
 
@@ -620,7 +613,7 @@ bool isValidRequest(int requestingPlayerId) {
 		return false;
 	}
 
-	if (!clientStatus[requestingPlayerId] == CLIENT_ALIVE) { //this is to ignore requests from dead client
+	if (!players[requestingPlayerId].status == CLIENT_ALIVE) { //this is to ignore requests from dead client
 		return false;
 	}
 

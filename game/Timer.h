@@ -5,9 +5,11 @@
 #define TIMER_MAGIC_SPELL 12000
 #define TIMER_CURSE 5000
 
+#define REFRESH_RATE 100
+
 void timerRefresh(int value) {
 	glutPostRedisplay();
-	glutTimerFunc(100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0 //TODO: check
+	glutTimerFunc(REFRESH_RATE, timerRefresh, 0);
 }
 
 void timerItemGlobal(int whichPlayer) {
