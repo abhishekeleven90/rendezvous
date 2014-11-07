@@ -2,10 +2,7 @@
 #define ONE_MORE_FILE_H
 
 void aStarMove(int whichPlayer, bool through) {
-	//Coordinate_grid targetCell = players[whichPlayer].targetCell;
-	Coordinate_grid targetCell;
-	targetCell.row = players[whichPlayer].targetCell.row; //TODO remove
-	targetCell.col = players[whichPlayer].targetCell.col;
+	Coordinate_grid targetCell = players[whichPlayer].targetCell;
 
 	//have to handle block status here itelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
@@ -22,8 +19,8 @@ void aStarMove(int whichPlayer, bool through) {
 		players[whichPlayer].astar->openSiteAStarGrid(targetCell.row,
 				targetCell.col - ATTRIBUTE_WIDTH);
 	}
-	players[whichPlayer].astar->initAStar(
-			players[whichPlayer].location, targetCell);
+	players[whichPlayer].astar->initAStar(players[whichPlayer].location,
+			targetCell);
 	players[whichPlayer].astar->AStar(through);
 }
 

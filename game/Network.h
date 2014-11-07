@@ -273,10 +273,7 @@ void emptyQueue(list<string> *queue) {
 }
 
 void helperSendServerMove() {
-	//Coordinate_grid targetCell = players[currPlayerId].targetCell;
-	Coordinate_grid targetCell;
-	targetCell.row = players[currPlayerId].targetCell.row;//TODO: remove
-	targetCell.col = players[currPlayerId].targetCell.col;
+	Coordinate_grid targetCell = players[currPlayerId].targetCell;
 
 	//Setting client_send_data
 	strcpy(client_send_data, MSG_MOVE);
@@ -330,20 +327,22 @@ void processBroadcast(char *data) {
 		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
 	}
 
-	//copying player attributes
-	split(GLOBAL_ARR[1], ',', DATA_RCVD);
-	k = 0;
-	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
-		players[i].currPowerMode
-				= static_cast<powerMode> (atoi(DATA_RCVD[k++]));
-		players[i].heroHealth = atoi(DATA_RCVD[k++]);
-		players[i].strength = atoi(DATA_RCVD[k++]);
-		players[i].speedMove = atoi(DATA_RCVD[k++]);
-		players[i].curseType = static_cast<curse> (atoi(DATA_RCVD[k++]));
-		players[i].isTimerItemGlobalRunning = atoi(DATA_RCVD[k++]);
-		players[i].isTimerMagicSpellRunning = atoi(DATA_RCVD[k++]);
-		players[i].isTimerCurseRunning = atoi(DATA_RCVD[k++]);
+	if (currPlayerId != 0) { //copying the players information only if I am not the primary Node
+		//copying player attributes
+		split(GLOBAL_ARR[1], ',', DATA_RCVD);
+		k = 0;
+		for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+			players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
+			players[i].currPowerMode = static_cast<powerMode> (atoi(
+					DATA_RCVD[k++]));
+			players[i].heroHealth = atoi(DATA_RCVD[k++]);
+			players[i].strength = atoi(DATA_RCVD[k++]);
+			players[i].speedMove = atoi(DATA_RCVD[k++]);
+			players[i].curseType = static_cast<curse> (atoi(DATA_RCVD[k++]));
+			players[i].isTimerItemGlobalRunning = atoi(DATA_RCVD[k++]);
+			players[i].isTimerMagicSpellRunning = atoi(DATA_RCVD[k++]);
+			players[i].isTimerCurseRunning = atoi(DATA_RCVD[k++]);
+		}
 	}
 
 	strcpy(server_send_data, MSG_SERVER_ACK);

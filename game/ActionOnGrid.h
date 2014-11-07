@@ -273,10 +273,7 @@ void attackDemonsTemple() { //this is ok
 }
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
-	//players[currPlayerId].targetCell = grid;
-
-	players[currPlayerId].targetCell.row = grid.row; //TODO remove
-	 players[currPlayerId].targetCell.col = grid.col;
+	players[currPlayerId].targetCell = grid;
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
