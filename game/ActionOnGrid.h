@@ -48,7 +48,7 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name, bool isPrimary) {
 			continue;
 		}
 
-		if (getInnerGridChar(randomRow, randomCol, isPrimary) == BG_GRASS) { //assuming that items can come only on 'grass'
+		if (getGridChar(randomRow, randomCol,true, isPrimary) == BG_GRASS) { //assuming that items can come only on 'grass'
 			break;
 		}
 	}

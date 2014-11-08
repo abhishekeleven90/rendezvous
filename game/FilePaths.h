@@ -39,7 +39,21 @@
 #define PATH_IMG_ITEM_HEALTH "data/images/item_health.bmp"
 #define PATH_IMG_ITEM_TEMPLE_HEALER "data/images/item_temple_healer.bmp"
 
+#define PATH_IMG_BG "data/images/bg.png"
 #define PATH_IMG_LOGO "data/images/logo.png"
 #define PATH_IMG_HELP "data/images/help.png"
+#define PATH_IMG_BACK "data/images/back.png"
+
+#define PATH_IMG_PICK_TEAM "data/images/pick_team.png"
+
+#define PATH_IMG_JOIN_GAME "data/images/join_game.png"
+#define PATH_IMG_HOST_GAME "data/images/host_game.png"
+
+#define PATH_IMG_WHITE "data/images/white.png"
+#define PATH_IMG_INPUT "data/images/input.png"
+#define PATH_IMG_BTN_NEXT "data/images/btn_next.png"
+
+#define PATH_IMG_PLAYER_SINGLE "data/images/player_single.png"
+#define PATH_IMG_PLAYER_MULTI "data/images/player_multi.png"
 
 #endif

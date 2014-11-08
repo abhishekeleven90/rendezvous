@@ -210,14 +210,23 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 	return Coordinate_grid(row, col);
 }
 
-charCellType getInnerGridChar(int randomRow, int randomCol, bool isPrimary) {
+charCellType getGridChar(int randomRow, int randomCol, bool isInner,
+		bool isPrimary) {
+	if (isInner) {
+		randomCol += ATTRIBUTE_WIDTH;
+	}
+
 	if (isPrimary) {
-		return gridCharPrimary[randomRow][randomCol + ATTRIBUTE_WIDTH];
+		return gridCharPrimary[randomRow][randomCol];
 	}
 
 	else {
-		return gridChar[randomRow][randomCol + ATTRIBUTE_WIDTH];
+		return gridChar[randomRow][randomCol];
 	}
+}
+
+charCellType getGridChar(Coordinate_grid grid) {
+	return getGridChar(grid.row, grid.col, false, false);
 }
 
 float t3dComputeScale(const char* str) {
@@ -322,13 +331,36 @@ void putPngToRAttCell(Coordinate_grid grid, MyTexture myTexture, int xBlocks,
 	putPngToCell(grid, myTexture, xBlocks, yBlocks);
 }
 
+void putChars(int xBlocks, int yBlocks, int row, int col, charCellType charType) {
+	for (int i = 0; i < xBlocks; i++) {
+		for (int j = 0; j < yBlocks; j++) {
+			gridChar[row - j][col + i] = charType;
+		}
+	}
+
+}
+
+void putPngWithChar(int row, int col, MyTexture texId, charCellType charType,
+		int xBlocks, int yBlocks) { //this is not used for rendering
+
+	putPngToCell(Coordinate_grid(row, col), texId, xBlocks, yBlocks);
+	putChars(xBlocks, yBlocks, row, col, charType);
+}
+
+void putBmpWithChar(int row, int col, GLuint texId, charCellType charType,
+		int xBlocks, int yBlocks) { //this is not used for rendering
+
+	putBmpToCell(Coordinate_grid(row, col), texId, xBlocks, yBlocks);
+	putChars(xBlocks, yBlocks, row, col, charType);
+}
+
 void putMultipleCharToGrid(int row, int col, charCellType charType,
 		charCellType backChar, int xBlocks, int yBlocks, bool isInner) {
 
 	//Adding 'back' characters - required in case of covering multiple cells
 	for (int i = 0; i < xBlocks; i++) {
 		for (int j = 0; j < yBlocks; j++) {
-			putChar2Grid(row - i, col + j, backChar, isInner, false);
+			putChar2Grid(row - j, col + i, backChar, isInner, false);
 		}
 	}
 
@@ -365,7 +397,7 @@ void putChar2Grid(int row, int col, charCellType charType, bool isInner,
 bool isBlockedSite(int r, int c, int whichPlayer) {
 	if (isOponentCellForTeam(Coordinate_grid(r, c), whichPlayer))
 		return true;
-	charCellType type = getInnerGridChar(r, c, true);
+	charCellType type = getGridChar(r, c, true, true);
 	switch (type) {
 	case BG_GRASS:
 	case BG_SPAWN:

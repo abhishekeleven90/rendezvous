@@ -6,6 +6,11 @@
 
 #define IP_SIZE 40
 
+struct GameDetails {
+	bool isSinglePlayerGame;
+	bool isHost;
+};
+
 struct nodeHelper {
 	char ip[IP_SIZE];
 	unsigned int port;
@@ -23,7 +28,17 @@ enum charCellType {
 
 	I_SPEED_MOVE, I_HEALTH, I_DAMAGE, I_TEMPLE_HEALER,
 
-	TREE_BACK, T_ANGELS_BACK, T_DEMONS_BACK
+	TREE_BACK, T_ANGELS_BACK, T_DEMONS_BACK,
+
+	CLICK_PLAYER_SINGLE, CLICK_PLAYER_MULTI,
+
+	CLICK_HELP, CLICK_BACK,
+
+	CLICK_ANGELS, CLICK_DEMONS, CLICK_PICK_TEAM,
+
+	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT,
+
+	INPUT1, INPUT2, INPUT3, INPUT4, INPUT5
 };
 
 charCellType itemCharCell[] = { I_SPEED_MOVE, I_HEALTH, I_DAMAGE,

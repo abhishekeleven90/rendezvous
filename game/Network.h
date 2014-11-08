@@ -138,7 +138,8 @@ void takeUpdateAction(const char* msg) {
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
 
-		cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
+		players[requestingPlayerId].atleastOnceAstar = true;
+		//cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
 
 		aStarMove(requestingPlayerId, true); //TODO: AStar through
 	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
@@ -229,9 +230,8 @@ void* threadClientBroadcast(void* arg) {
 
 		playerId = 1;
 		if (players[playerId].status == CLIENT_ALIVE) {
-			//strcpy(broadIp2Join, "10.192.11.114");
-			//strcpy(broadIp2Join, "10.208.23.158");
-			strcpy(broadIp2Join, "127.0.0.1");
+			strcpy(broadIp2Join, "10.192.11.114");
+			//strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5001;
 			connectServerBroadcast(playerId);
 		}
@@ -295,7 +295,7 @@ void helperSendServerMove() {
 	setRemoteNode(primaryNodeIp, primaryNodePort);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
-	cout << "sending move data to remote node " << client_send_data << endl;
+	//cout << "sending move data to remote node " << client_send_data << endl; //TODO:remove
 	sendDataDontWaitForResult();
 }
 
@@ -373,7 +373,7 @@ void processGeneral(char *completeData) {
 	pthread_mutex_lock(&mutexQueuePrimary);
 	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
-	cout << "enqueued " << completeData << endl;
+	//cout << "enqueued " << completeData << endl; //TODO:remove
 }
 
 void createServerThread() {
@@ -399,7 +399,7 @@ void populateClientSendDataForBroadcast() {
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			strcat(broad_send_data,
-					numToStr(getInnerGridChar(i, j, true)).c_str());
+					numToStr(getGridChar(i, j,true, true)).c_str());
 			strcat(broad_send_data, "|");
 		}
 	}

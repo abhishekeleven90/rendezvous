@@ -5,6 +5,8 @@
 #include "Constants.h"
 #include "CustomVectorStruct.h"
 
+GameDetails gameDetails;
+
 float windowWidth = 850, windowHeight = 700;
 
 float cellWidth = windowWidth / (END_OUTER_GRID_COL - START_OUTER_GRID_COL + 1);
@@ -74,8 +76,8 @@ MyTexture texId_att_mBasic;
 MyTexture texId_att_mMagic;
 MyTexture texId_att_mStun;
 
-MyTexture texId_att_team_Angels;
-MyTexture texId_att_team_Demons;
+MyTexture texId_att_team_angels;
+MyTexture texId_att_team_demons;
 
 MyTexture texId_att_team_enemy;
 MyTexture texId_att_team_my;
@@ -93,8 +95,21 @@ MyTexture texId_att_speed;
 
 MyTexture texId_att_wall;
 
-MyTexture textId_logo;
-MyTexture textId_help;
+MyTexture texId_bg;
+MyTexture texId_logo;
+MyTexture texId_help;
+MyTexture texId_btn_back;
+
+MyTexture texId_join_game;
+MyTexture texId_host_game;
+MyTexture texId_white;
+MyTexture texId_input;
+MyTexture texId_btn_next;
+
+MyTexture texId_pick_team;
+
+MyTexture texId_player_single;
+MyTexture texId_player_multi;
 
 //window IDs
 int windowId_current;
@@ -104,6 +119,5 @@ Coordinate_grid downGrid_click; //used for clickHandler
 //locks
 pthread_mutex_t mutexQueuePrimary;
 pthread_mutex_t mutexTargetCell;
-
 
 #endif

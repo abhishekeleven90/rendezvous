@@ -147,7 +147,6 @@ void moveHero(int whichPlayer) {
 		return;
 
 	//Collision Detection patch
-	cout<<"here!!"<<endl;
 	aStarMove(whichPlayer, true);//TODO: AStar through
 
 	Node* nodeToMove =
@@ -185,16 +184,16 @@ void putTeamTypeAndTemples() {
 
 	switch (players[currPlayerId].team->name) {
 	case TEAM_ANGELS:
-		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_Angels, 2, 1);
-		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_Demons, 2, 1);
+		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_angels, 2, 1);
+		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_demons, 2, 1);
 
 		putBmpToLAttCell(Coordinate_grid(4, 1), texId_t_angels, 2, 1); //temples
 		putBmpToRAttCell(Coordinate_grid(4, 1), texId_t_demons, 2, 1);
 		break;
 
 	case TEAM_DEMONS:
-		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_Demons, 2, 1);
-		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_Angels, 2, 1);
+		putPngToLAttCell(Coordinate_grid(2, 1), texId_att_team_demons, 2, 1);
+		putPngToRAttCell(Coordinate_grid(2, 1), texId_att_team_angels, 2, 1);
 
 		putBmpToLAttCell(Coordinate_grid(4, 1), texId_t_demons, 2, 1); //temples
 		putBmpToRAttCell(Coordinate_grid(4, 1), texId_t_angels, 2, 1);

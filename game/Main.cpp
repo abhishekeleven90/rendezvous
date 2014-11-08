@@ -6,9 +6,9 @@
 #include "Objects.h"
 #include "SoundAll.h"
 #include "Timer.h"
-#include "Window_first.h"
-
 #include "Network.h"
+
+#include "Windows.h"
 
 int main(int argc, char** argv) {
 	//Initialize GLUT

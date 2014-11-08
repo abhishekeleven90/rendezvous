@@ -1,6 +1,3 @@
-//----------Constants---------
-
-
 //****************Function Declarations*******************
 void intToChar(int intToChng, char* charToRet);
 string numToStr(int num);
@@ -16,6 +13,13 @@ int indexOf(char* string, char of);
 void intToChar(int intToChng, char* charToRet) {
 	size_t size = sizeof(charToRet);
 	snprintf(charToRet, size, "%d", intToChng);
+}
+
+char* str2Char(string str) {
+	char *cstr = new char[str.length() + 1];
+	strcpy(cstr, str.c_str());
+	delete[] cstr;
+	return cstr;
 }
 
 string numToStr(int num) {
