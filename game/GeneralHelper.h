@@ -47,6 +47,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;
+	players[playerId].atleastOnceAstar = false;
 
 	players[playerId].astar = new AStarClass();
 	players[playerId].astar->firstInitAStar();
@@ -144,7 +145,9 @@ void moveHero(int whichPlayer) {
 
 	if (!players[whichPlayer].atleastOnceAstar)
 		return;
+
 	//Collision Detection patch
+	cout<<"here!!"<<endl;
 	aStarMove(whichPlayer, true);//TODO: AStar through
 
 	Node* nodeToMove =

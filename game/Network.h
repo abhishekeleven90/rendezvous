@@ -69,7 +69,6 @@ int isJoined = false;
 nodeHelper* selfNode = new nodeHelper;
 
 list<string> queuePrimary;
-pthread_mutex_t mutexQueuePrimary;
 
 //****************Function Declarations*******************
 //-----Helper Functions----
@@ -135,12 +134,13 @@ void takeUpdateAction(const char* msg) {
 	if (strcmp(type, MSG_MOVE) == 0) {
 		char coordinates[2][DATA_SIZE_KILO];
 		split(reqData, ',', coordinates);
+
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		players[requestingPlayerId].atleastOnceAstar = true;
-		//Collison Detection patch
 
-		//aStarMove(requestingPlayerId, true); //TODO: AStar through
+		cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
+
+		aStarMove(requestingPlayerId, true); //TODO: AStar through
 	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
 		selectBasicPower(requestingPlayerId);
 	} else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
@@ -295,6 +295,7 @@ void helperSendServerMove() {
 	setRemoteNode(primaryNodeIp, primaryNodePort);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	cout << "sending move data to remote node " << client_send_data << endl;
 	sendDataDontWaitForResult();
 }
 
@@ -372,6 +373,7 @@ void processGeneral(char *completeData) {
 	pthread_mutex_lock(&mutexQueuePrimary);
 	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
+	cout << "enqueued " << completeData << endl;
 }
 
 void createServerThread() {

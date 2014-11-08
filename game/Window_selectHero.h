@@ -44,6 +44,7 @@ void initRendering_selectHero() {
 
 	players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
 	players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
+	//players[0].networkDetails = convertToNodeHelper("10.208.23.254:5000");
 	players[0].team = &angelsTeam;
 	players[0].isFirstPlayerInTeam = true;
 
