@@ -137,8 +137,9 @@ void takeUpdateAction(const char* msg) {
 
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
+		players[requestingPlayerId].atleastOnceAstar = true;
 
-		cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
+		cout << "at master, player for move processed " << requestingPlayerId << endl; //TODO: remove
 
 		aStarMove(requestingPlayerId, true); //TODO: AStar through
 	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
