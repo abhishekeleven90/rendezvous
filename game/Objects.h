@@ -117,6 +117,8 @@ struct Player {
 	bool isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location
 	int idFriend;
 	int idEnemy[2];
+
+	bool atleastOnceAstar;
 };
 
 #endif

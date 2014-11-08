@@ -84,20 +84,24 @@ void loadPlayerGeneralAttributes(int playerId) {
 	if (players[playerId].team->name == TEAM_ANGELS) {
 		if (players[playerId].isFirstPlayerInTeam) {
 			players[playerId].location = Coordinate_grid(19, 1);
+			//players[playerId].targetCell=Coordinate_grid(19, 1);
 		}
 
 		else {
 			players[playerId].location = Coordinate_grid(20, 2);
+			//players[playerId].targetCell=Coordinate_grid(20, 2);
 		}
 	}
 
 	if (players[playerId].team->name == TEAM_DEMONS) {
 		if (players[playerId].isFirstPlayerInTeam) {
 			players[playerId].location = Coordinate_grid(1, 19);
+			//players[playerId].targetCell=Coordinate_grid(1, 19);
 		}
 
 		else {
 			players[playerId].location = Coordinate_grid(2, 20);
+			//players[playerId].targetCell=Coordinate_grid(2, 20);
 		}
 	}
 
@@ -137,6 +141,12 @@ void printGrid() {
 //call this from the render function periodically
 //on the master node, rest will be communicated to others
 void moveHero(int whichPlayer) {
+
+	if(!players[whichPlayer].atleastOnceAstar)
+		return;
+	//Collision Detection patch
+	aStarMove(whichPlayer, true);//TODO: AStar through
+
 	Node* nodeToMove =
 			findLocToMove(players[whichPlayer].location, whichPlayer);
 	if (nodeToMove == NULL) {

@@ -137,7 +137,10 @@ void takeUpdateAction(const char* msg) {
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
+		players[requestingPlayerId].atleastOnceAstar=true;
+		//Collison Detection patch
+
+		//aStarMove(requestingPlayerId, true); //TODO: AStar through
 	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
 		selectBasicPower(requestingPlayerId);
 	} else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
