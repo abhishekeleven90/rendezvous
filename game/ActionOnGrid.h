@@ -134,7 +134,7 @@ void wrong() {
 }
 
 itemType getItemTypeFromCharItem(Coordinate_grid cellForChar) {
-	charCellType charItem = gridChar[cellForChar.row][cellForChar.col];
+	charCellType charItem = gridCharPrimary[cellForChar.row][cellForChar.col];
 	itemType item;
 	switch (charItem) {
 	case I_DAMAGE:

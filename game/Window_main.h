@@ -129,20 +129,6 @@ void drawScene_main() {
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
-void selectBasicPower() {
-	cout << "selected power_basic" << endl;
-	players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
-}
-
-void selectMagicPower() {
-	if (players[currPlayerId].curseType != CURSE_DISABLE) {
-		cout << "selected power_magic" << endl;
-		players[currPlayerId].currentPowerMode = POWER_MODE_MAGIC;
-	} else {
-		cout << "can not use Magic power, you are cursed!!!" << endl; //TODO: show on wall
-	}
-}
-
 //Called when a key is pressed
 void handleKeypress_main(unsigned char key, //The key that was pressed
 		int x, int y) { //The current mouse coordinates
@@ -157,11 +143,11 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 49: //key - '1' : select basicPower
-		selectBasicPower();
+		requestBasicPower();
 		break;
 
 	case 50: //key - '2' : select magicPower
-		selectMagicPower();
+		requestMagicPower();
 		break;
 
 	case 51: //key - '3' : curse //TODO: case may not be required later

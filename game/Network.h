@@ -31,6 +31,9 @@
 #define MSG_SERVER_ACK "a:"
 #define MSG_SERVER_REQ_IGNORED "i:"
 
+#define MSG_BASIC_POWER "B:"
+#define MSG_MAGIC_POWER "M:"
+
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
@@ -107,7 +110,7 @@ int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
 
 void processBroadcast(char *data);
-void processMove(char *completeData);
+void processGeneral(char *completeData);
 
 //-----TCP Functions-------
 bool connectToServer(int & sock);
@@ -142,6 +145,10 @@ void takeUpdateAction(const char* msg) {
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
 		aStarMove(requestingPlayerId, true); //TODO: abhi ke liye through
+	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
+		selectBasicPower(requestingPlayerId);
+	} else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
+		selectMagicPower(requestingPlayerId);
 	}
 
 }
@@ -297,6 +304,22 @@ void helperSendServerMove() {
 	sendDataDontWaitForResult();
 }
 
+void helperSendPowerMode(int type) {
+
+	if (type == 0)
+		strcpy(client_send_data, MSG_BASIC_POWER);
+	else if (type == 1)
+		strcpy(client_send_data, MSG_MAGIC_POWER);
+	else
+		return;//something is wrong
+
+	//setting the remoteNode ip & port
+	setRemoteNode(primaryNodeIp, primaryNodePort);
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataDontWaitForResult();
+}
+
 void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
@@ -323,7 +346,7 @@ void processBroadcast(char *data) {
 	strcpy(server_send_data, MSG_SERVER_ACK);
 }
 
-void processMove(char *completeData) {
+void processGeneral(char *completeData) {
 	pthread_mutex_lock(&mutexQueuePrimary);
 	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
@@ -673,8 +696,8 @@ void* server(void* arg) {
 			processBroadcast(reqData);
 		}
 
-		else if (strcmp(type, MSG_MOVE) == 0) {
-			processMove(server_recv_data);
+		else {
+			processGeneral(server_recv_data);
 		}
 
 		send(connected, server_send_data, strlen(server_send_data), 0);

@@ -441,4 +441,21 @@ void iAmCursed(curse curseType) {
 	players[currPlayerId].curseType = curseType;
 }
 
+void requestBasicPower() {
+	cout << "requesting basic_power by player " << currPlayerId << endl;
+	if (players[currPlayerId].currentPowerMode != POWER_MODE_BASIC)
+		helperSendPowerMode(0);
+}
+
+void requestMagicPower() {
+	if (players[currPlayerId].curseType != CURSE_DISABLE
+			&& players[currPlayerId].currentPowerMode != POWER_MODE_MAGIC) {
+		cout << "requesting power_magic by player " << currPlayerId << endl;
+		helperSendPowerMode(1);
+	} else {
+		cout << "Player can not use Magic power, you are cursed!!!" << endl;
+		//TODO: show on player's wall, will have to send through server
+	}
+}
+
 #endif

@@ -37,4 +37,22 @@ void aStarMoveNotThrough() {
 	//for testing with one player
 }
 
+//used by primary node
+void selectBasicPower(int whichPlayer) {
+	cout << "selected power_basic by player" << whichPlayer << endl;
+	players[whichPlayer].currentPowerMode = POWER_MODE_BASIC;
+}
+
+//used by primary node
+//TODO: magic timer
+void selectMagicPower(int whichPlayer) {
+	if (players[whichPlayer].curseType != CURSE_DISABLE) {
+		cout << "selected power_magic by player " << whichPlayer << endl;
+		players[whichPlayer].currentPowerMode = POWER_MODE_MAGIC;
+	} else {
+		cout << "Player can not use Magic power, you are cursed!!!" << endl;
+		//TODO: show on player's wall, will have to send through server
+	}
+}
+
 #endif
