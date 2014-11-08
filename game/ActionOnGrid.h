@@ -118,6 +118,7 @@ void processCase(switchCallType callType, Coordinate_grid grid, GLuint texId,
 		break;
 
 	case PROCESS_MOVE_LEFT_CLICK:
+		//cout << "left click at grass" << endl;
 		leftClick();
 		break;
 
@@ -217,10 +218,9 @@ void takeItem(int whichPlayer) {
 	}
 }
 
-void setAttackTemple(int whichPlayer, bool value) {
-	players[whichPlayer].toAttackTemple = value;
-}
+//--------------TEMPLE METHODS-------------------
 
+//only to be called by server, moveHero()
 void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 	TeamStruct* enemyTeam;
 	if (players[whichPlayer].team->name == TEAM_ANGELS)
@@ -229,7 +229,9 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 		enemyTeam = &angelsTeam;
 
 	enemyTeam->templeHealth -= players[whichPlayer].strength;
-	if (enemyTeam->templeHealth < 0)
+
+	////TODO: ABHISHEK win lose logic
+	if (enemyTeam->templeHealth <= 0)
 		enemyTeam->templeHealth = 0;
 	setAttackTemple(whichPlayer, false);
 	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
@@ -239,41 +241,60 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 
 }
 
-void attackEnemyTemple() {
-	aStarMoveNotThrough();
-	setAttackTemple(currPlayerId, true);
+//only to be called by server, moveHero()
+void decreaseEnemyPlayerHealth(int whichPlayer) { //this is ok, use it
+	int enemyPlayer = players[whichPlayer].whichEnemyPlayerToAttack;
+	players[enemyPlayer].heroHealth -= players[whichPlayer].strength;
+	if (players[enemyPlayer].heroHealth <= 0) {
+		//reborn logic
+		players[enemyPlayer].heroHealth = 0;
+		giveBirthToPlayer(enemyPlayer, true);//reborn
+		//reborn
+	}
+	setAttackEnemyPlayer(whichPlayer, -1);
+	cout << "Yayy " << whichPlayer << " decreased health of " << enemyPlayer
+			<< " to " << players[enemyPlayer].heroHealth << endl;
+	//TODO: Abhishek play temple attack sound
+	//TODO: Abhishek gif attack animation
+
 }
 
-void attackEnemyTempleGeneric(int whichPlayer) {
-	setAttackTemple(whichPlayer, false);
-	//above is imp, if path changed in between
-	//then the previous value would be true
-	//and if arrives by way of moving, and not attacking near temple
-	//then will attack even when attack was cancelled
-
-	aStarMove(whichPlayer, false);
-	setAttackTemple(whichPlayer, true);
-}
-
-void attackAngelsTemple() { //this is ok
+//to be called by client
+void attackAngelsTemple() {
+	//note: validation is done itself at the client side
 	if (players[currPlayerId].team->name == TEAM_DEMONS) {
-		//TODO: Abhishek ask the server to attack the angels temple
-		//TODO: Abhishek just send the player's ID,with attack temple msg
-		//server will call attackEnemyTempleGeneric
-		attackEnemyTempleGeneric(currPlayerId);
+		helperSendAttackTemple();
 	}
 }
 
-void attackDemonsTemple() { //this is ok
+//to be called by client
+void attackDemonsTemple() {
+	//note: validation is done itself at the client side
 	if (players[currPlayerId].team->name == TEAM_ANGELS) {
-		//TODO: Abhishek ask the server to attack demons temple
-		//TODO: Abhishek just send the player's ID,with attack temple msg
-		attackEnemyTempleGeneric(currPlayerId);
+		helperSendAttackTemple();
 	}
 }
+
+//to be called by client, currentPlayer
+void attackEnemy() {
+	cout << "requesting to attack enemy" << endl;
+	//note: validation is done itself at the client side
+	charCellType toAttackHeroCellType =
+			gridChar[onClickTargetCell.row][onClickTargetCell.col];
+	int enemy1 = players[currPlayerId].idEnemy[0];
+	int enemy2 = players[currPlayerId].idEnemy[1];
+	if (players[enemy1].charType == toAttackHeroCellType) {
+		helperSendAttackHero(enemy1);
+	} else if (players[enemy2].charType == toAttackHeroCellType) {
+		helperSendAttackHero(enemy2);
+	}
+}
+
+//--------------TEMPLE METHODS-------------------
 
 void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
-	players[currPlayerId].targetCell = grid;
+	//players[currPlayerId].targetCell = grid;
+	onClickTargetCell = grid;
 
 	switch (gridChar[grid.row][grid.col]) {
 	case BG_GRASS:
@@ -327,32 +348,33 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 				attackDemonsTemple, false, TEMPLE_BLOCKS, TEMPLE_BLOCKS);
 		break;
 
-		//TODO: Abhishek : leftClick on enemy and on friend and on self
 	case H_DISABLER:
-		processCase(callType, grid, texId_h_disabler, "HDi", wrong, wrong,
-				false);
+		processCase(callType, grid, texId_h_disabler, "HDi", wrong,
+				attackEnemy, false);
 		break;
 
 	case H_SLOWER:
-		processCase(callType, grid, texId_h_slower, "HSl", wrong, wrong, false);
+		processCase(callType, grid, texId_h_slower, "HSl", wrong, attackEnemy,
+				false);
 		break;
 
 	case H_BURSTER:
-		processCase(callType, grid, texId_h_burster, "HBu", wrong, wrong, false);
+		//cout << "burster clicked!!" << endl;
+		processCase(callType, grid, texId_h_burster, "HBu", wrong, attackEnemy,
+				false);
 		break;
 
 	case H_STUNNER:
-		processCase(callType, grid, texId_h_stunner, "HSt", wrong, wrong, false);
+		processCase(callType, grid, texId_h_stunner, "HSt", wrong, attackEnemy,
+				false);
 		break;
 
 	case I_SPEED_MOVE:
-		//setItemCell(grid, currPlayerId); //TODO: Abhishek i think we do not need
 		processCase(callType, grid, texId_i_speedMov, "ISM",
 				sendServerMoveThrough, wrong, false);
 		break;
 
 	case I_HEALTH:
-		//setItemCell(grid, currPlayerId);
 		processCase(callType, grid, texId_i_health, "IHe",
 				sendServerMoveThrough, wrong, false);
 		break;

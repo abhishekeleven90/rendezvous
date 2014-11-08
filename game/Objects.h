@@ -118,6 +118,7 @@ struct Player {
 	Coordinate_grid location;
 
 	bool toAttackTemple;
+	int whichEnemyPlayerToAttack;
 
 	//for items
 	Coordinate_grid targetCell;
@@ -134,6 +135,9 @@ struct Player {
 	int idEnemy[2];
 
 	bool atleastOnceAstar;
+	bool aStarThrough;
 };
+
+Coordinate_grid onClickTargetCell;
 
 #endif
