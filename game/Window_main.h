@@ -203,7 +203,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 }
 
 void create_window_main() {
-	windowId_current = glutCreateWindow("Rendezvous!!!");
+	windowId_current = glutCreateWindow("Game is on!!!");
 	initRendering_main(); //Initialize rendering
 
 	//set handler functions

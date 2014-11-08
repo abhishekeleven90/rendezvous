@@ -1,8 +1,35 @@
 #ifndef WINDOW_SELECT_HERO_H
 #define WINDOW_SELECT_HERO_H
 
-void loadTextures_first() {
+#include "Window_main.h"
+
+void loadTextures_selectHero() {
 	btn_start_texId = getTextureFromBmp(PATH_IMG_BTN_START);
+	texId_bg_grass = getTextureFromBmp(PATH_IMG_BG_WINDOW_MAIN);
+
+	texId_h_stunner = getTextureFromBmp(PATH_IMG_HERO_STUNNER);
+	texId_h_disabler = getTextureFromBmp(PATH_IMG_HERO_DISABLER);
+	texId_h_slower = getTextureFromBmp(PATH_IMG_HERO_SLOWER);
+	texId_h_burster = getTextureFromBmp(PATH_IMG_HERO_BURSTER);
+
+	texId_att_h_burster = getTextureFromPng(PATH_IMG_ATT_HERO_BURSTER);
+	texId_att_h_disabler = getTextureFromPng(PATH_IMG_ATT_HERO_DISABLER);
+	texId_att_h_slower = getTextureFromPng(PATH_IMG_ATT_HERO_SLOWER);
+	texId_att_h_stunner = getTextureFromPng(PATH_IMG_ATT_HERO_STUNNER);
+}
+
+void PutHeros() {
+	putBmpToCell(Coordinate_grid(7, 6), texId_h_slower, 4, 4);
+	putPngToCell(Coordinate_grid(8, 6), texId_att_h_slower, 4, 1);
+
+	putBmpToCell(Coordinate_grid(7, 16), texId_h_burster, 4, 4);
+	putPngToCell(Coordinate_grid(8, 16), texId_att_h_burster, 4, 1);
+
+	putBmpToCell(Coordinate_grid(17, 6), texId_h_stunner, 4, 4);
+	putPngToCell(Coordinate_grid(18, 6), texId_att_h_stunner, 4, 1);
+
+	putBmpToCell(Coordinate_grid(17, 16), texId_h_disabler, 4, 4);
+	putPngToCell(Coordinate_grid(18, 16), texId_att_h_disabler, 4, 1);
 }
 
 //Initializes 3D rendering
@@ -12,9 +39,7 @@ void initRendering_selectHero() {
 	glEnable(( GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//Loading all the textures from images
-	//loadTextures_first(); //TODO: uncomment
-	loadTextures_main();//TODO: remove
+	loadTextures_selectHero();
 	putGrass();
 
 	players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
@@ -38,29 +63,15 @@ void initRendering_selectHero() {
 	t3dInit();
 }
 
-void PutHeros() {
-	putBmpToCell(Coordinate_grid(7, 6), texId_h_slower, 4, 4);
-	putPngToCell(Coordinate_grid(8, 6), texId_att_h_slower, 4, 1);
-
-	putBmpToCell(Coordinate_grid(7, 16), texId_h_burster, 4, 4);
-	putPngToCell(Coordinate_grid(8, 16), texId_att_h_burster, 4, 1);
-
-	putBmpToCell(Coordinate_grid(17, 6), texId_h_stunner, 4, 4);
-	putPngToCell(Coordinate_grid(18, 6), texId_att_h_stunner, 4, 1);
-
-	putBmpToCell(Coordinate_grid(17, 16), texId_h_disabler, 4, 4);
-	putPngToCell(Coordinate_grid(18, 16), texId_att_h_disabler, 4, 1);
-}
-
 //Draws the 3D scene
 void drawScene_selectHero() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode( GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
+
+
 	PutHeros();
-
 	renderGrid();
-
 	glutSwapBuffers();
 }
 

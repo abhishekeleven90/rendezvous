@@ -142,7 +142,7 @@ void printGrid() {
 //on the master node, rest will be communicated to others
 void moveHero(int whichPlayer) {
 
-	if(!players[whichPlayer].atleastOnceAstar)
+	if (!players[whichPlayer].atleastOnceAstar)
 		return;
 	//Collision Detection patch
 	aStarMove(whichPlayer, true);//TODO: AStar through

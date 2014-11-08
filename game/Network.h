@@ -137,7 +137,7 @@ void takeUpdateAction(const char* msg) {
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		players[requestingPlayerId].atleastOnceAstar=true;
+		players[requestingPlayerId].atleastOnceAstar = true;
 		//Collison Detection patch
 
 		//aStarMove(requestingPlayerId, true); //TODO: AStar through
@@ -227,11 +227,12 @@ void* threadClientBroadcast(void* arg) {
 
 		//TODO: shall be for all clients
 
-		playerId = 2;
+		playerId = 1;
 		if (players[playerId].status == CLIENT_ALIVE) {
 			//strcpy(broadIp2Join, "10.192.11.114");
+			//strcpy(broadIp2Join, "10.208.23.158");
 			strcpy(broadIp2Join, "127.0.0.1");
-			broadRemote_port = 5002;
+			broadRemote_port = 5001;
 			connectServerBroadcast(playerId);
 		}
 

@@ -93,6 +93,9 @@ MyTexture texId_att_speed;
 
 MyTexture texId_att_wall;
 
+MyTexture textId_logo;
+MyTexture textId_help;
+
 //window IDs
 int windowId_current;
 

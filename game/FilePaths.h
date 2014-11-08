@@ -39,4 +39,7 @@
 #define PATH_IMG_ITEM_HEALTH "data/images/item_health.bmp"
 #define PATH_IMG_ITEM_TEMPLE_HEALER "data/images/item_temple_healer.bmp"
 
+#define PATH_IMG_LOGO "data/images/logo.png"
+#define PATH_IMG_HELP "data/images/help.png"
+
 #endif
