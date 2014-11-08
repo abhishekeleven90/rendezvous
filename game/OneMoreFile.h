@@ -15,6 +15,7 @@ void aStarMove(int whichPlayer, bool through) {
 		}
 	}
 	//for the not through, the target could be blocked actually, change it locally!
+
 	if (!through) {
 		players[whichPlayer].astar->openSiteAStarGrid(targetCell.row,
 				targetCell.col - ATTRIBUTE_WIDTH);
