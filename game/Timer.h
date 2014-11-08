@@ -5,9 +5,11 @@
 #define TIMER_MAGIC_SPELL 12000
 #define TIMER_CURSE 5000
 
+#define REFRESH_RATE 100
+
 void timerRefresh(int value) {
 	glutPostRedisplay();
-	glutTimerFunc(100, timerRefresh, 0); //'100' added because we don't want refresh rate to be 0 //TODO: check
+	glutTimerFunc(REFRESH_RATE, timerRefresh, 0);
 }
 
 void timerItemGlobal(int whichPlayer) {
@@ -27,7 +29,7 @@ void timerMagicSpell(int value) {
 	if (!players[currPlayerId].isTimerMagicSpellRunning) {
 		cout << "starting timerMagicSpell" << endl;
 		players[currPlayerId].isTimerMagicSpellRunning = true;
-		players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
+		players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
 		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, 0);
 	} else {
 		cout << "stopping timerMagicSpell" << endl;
@@ -45,7 +47,7 @@ void timerCurse(int value) {
 			players[currPlayerId].speedMoveTemp
 					= players[currPlayerId].speedMove;
 			players[currPlayerId].speedMove = 0;
-			players[currPlayerId].currentPowerMode = POWER_MODE_STUN;
+			players[currPlayerId].currPowerMode = POWER_MODE_STUN;
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here
@@ -68,7 +70,7 @@ void timerCurse(int value) {
 
 		switch (value) {
 		case CURSE_STUN:
-			players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
+			players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
 			players[currPlayerId].speedMove
 					+= players[currPlayerId].speedMoveTemp;
 			if (players[currPlayerId].speedMove > SPEED_MAX) {

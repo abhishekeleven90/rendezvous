@@ -42,10 +42,16 @@ void loadTeamAttributes() {
 }
 
 void loadPlayerGeneralAttributes(int playerId) {
+	players[playerId].status = CLIENT_ALIVE;
+
+	players[playerId].isTimerItemGlobalRunning = false;
+	players[playerId].isTimerMagicSpellRunning = false;
+	players[playerId].isTimerCurseRunning = false;
+
 	players[playerId].astar = new AStarClass();
 	players[playerId].astar->firstInitAStar();
 
-	players[playerId].currentPowerMode = POWER_MODE_BASIC;
+	players[playerId].currPowerMode = POWER_MODE_BASIC;
 	players[playerId].curseType = CURSE_NONE;
 	players[playerId].heroHealth = HEALTH_FULL_HERO;
 	switch (players[playerId].heroType) {
@@ -118,14 +124,6 @@ void loadPlayerGeneralAttributes(int playerId) {
 	}
 }
 
-void loadPlayerSpecificAttributes() {
-	players[currPlayerId].isTimerItemGlobalRunning = false;
-	players[currPlayerId].isTimerMagicSpellRunning = false;
-	players[currPlayerId].isTimerCurseRunning = false;
-
-	server_port = players[currPlayerId].networkDetails->port;
-}
-
 void printGrid() {
 	cout << "Printing grid" << endl;
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -141,7 +139,6 @@ void printGrid() {
 void moveHero(int whichPlayer) {
 	Node* nodeToMove =
 			findLocToMove(players[whichPlayer].location, whichPlayer);
-
 	if (nodeToMove == NULL) {
 		if (players[whichPlayer].toAttackTemple)//TODO: Abhishek AND condition for is nearEnemyTemple
 			decreaseEnemyTempleHealth(whichPlayer);
@@ -197,7 +194,7 @@ void putTeamTypeAndTemples() {
 }
 
 void putMyAttributes() {
-	switch (players[currPlayerId].currentPowerMode) {
+	switch (players[currPlayerId].currPowerMode) {
 	case POWER_MODE_BASIC:
 		putPngToLAttCell(Coordinate_grid(9, 1), texId_att_mBasic, 2, 1);
 		break;
@@ -419,7 +416,7 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_DISABLE:
 		cout << "disabled" << endl;
-		players[currPlayerId].currentPowerMode = POWER_MODE_BASIC;
+		players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
 		timerCurse(CURSE_DISABLE);
 		break;
 
@@ -443,13 +440,13 @@ void iAmCursed(curse curseType) {
 
 void requestBasicPower() {
 	cout << "requesting basic_power by player " << currPlayerId << endl;
-	if (players[currPlayerId].currentPowerMode != POWER_MODE_BASIC)
+	if (players[currPlayerId].currPowerMode != POWER_MODE_BASIC)
 		helperSendPowerMode(0);
 }
 
 void requestMagicPower() {
 	if (players[currPlayerId].curseType != CURSE_DISABLE
-			&& players[currPlayerId].currentPowerMode != POWER_MODE_MAGIC) {
+			&& players[currPlayerId].currPowerMode != POWER_MODE_MAGIC) {
 		cout << "requesting power_magic by player " << currPlayerId << endl;
 		helperSendPowerMode(1);
 	} else {

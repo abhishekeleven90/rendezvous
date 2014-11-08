@@ -86,8 +86,6 @@ void initRendering_main() {
 		loadPlayerGeneralAttributes(i);
 	}
 
-	loadPlayerSpecificAttributes();
-
 	copyPrimaryGrid();
 
 	blockOpponentsArea();
@@ -96,19 +94,33 @@ void initRendering_main() {
 
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
+	server_port = players[currPlayerId].networkDetails->port;
 
 	createServerThread();
-	if (currPlayerId == 0) { //primaryNode
+	if (currPlayerId == PLAYER_ID_PRIMARY) { //primaryNode
 		createClientBroadcastThread();
 		createUpdateServerThread();
 	}
 }
 
+int i = 0;
+
 void renderGridMainWindow() {
-	moveHero(0);
-	moveHero(1);
-	moveHero(2);
-	moveHero(3);
+	if (currPlayerId == PLAYER_ID_PRIMARY) {
+		if (i % SPEED_ACTUAL(0) == 0) {
+			moveHero(0);
+		}
+		if (i % SPEED_ACTUAL(1) == 0) {
+			moveHero(1);
+		}
+		if (i % SPEED_ACTUAL(2) == 0) {
+			moveHero(2);
+		}
+		if (i % SPEED_ACTUAL(3) == 0) {
+			moveHero(3);
+		}
+		i++;
+	}
 
 	loadAttributeSpace();
 	renderGrid();
@@ -128,6 +140,7 @@ void drawScene_main() {
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
+
 
 //Called when a key is pressed
 void handleKeypress_main(unsigned char key, //The key that was pressed

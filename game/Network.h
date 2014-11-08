@@ -22,6 +22,7 @@
 //----------Constants---------
 #define M 400
 #define QUEUE_LIMIT 5
+#define RETRY_COUNT 5
 
 #define DATA_SIZE_KILO 1024
 
@@ -37,11 +38,7 @@
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
-enum CLIENT_STATUS {
-	CLIENT_NOT_REACHABLE, CLIENT_DEAD, CLIENT_ALIVE
-};
-
-char GRID_RECEIVED[M][DATA_SIZE_KILO];
+char DATA_RCVD[M][DATA_SIZE_KILO];
 char GLOBAL_ARR[2][DATA_SIZE_KILO];
 
 char server_send_data[DATA_SIZE_KILO], server_recv_data[DATA_SIZE_KILO];
@@ -68,10 +65,6 @@ int serverSock;
 
 int isCreated = false;
 int isJoined = false;
-int retry_count = 20;
-
-CLIENT_STATUS clientStatus[NUM_OF_PLAYERS] = { CLIENT_ALIVE, CLIENT_ALIVE,
-		CLIENT_ALIVE, CLIENT_ALIVE }; //used for the logic for waiting if some client leaves
 
 nodeHelper* selfNode = new nodeHelper;
 
@@ -122,7 +115,7 @@ void* server(void* arg);
 //-----Helper Functions----
 bool isAllClientsAlive() {
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (clientStatus[i] == CLIENT_NOT_REACHABLE) {
+		if (players[i].status == CLIENT_NOT_REACHABLE) {
 			return false;
 		}
 	}
@@ -232,7 +225,7 @@ void* threadClientBroadcast(void* arg) {
 		//TODO: shall be for all clients
 
 		playerId = 2;
-		if (clientStatus[playerId] == CLIENT_ALIVE) {
+		if (players[playerId].status == CLIENT_ALIVE) {
 			//strcpy(broadIp2Join, "10.192.11.114");
 			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5002;
@@ -247,7 +240,7 @@ void* threadClientBroadcast(void* arg) {
 		 }*/
 
 		playerId = 0;
-		if (clientStatus[playerId == CLIENT_ALIVE]) {
+		if (players[playerId].status == CLIENT_ALIVE) {
 			strcpy(broadIp2Join, "127.0.0.1");
 			broadRemote_port = 5000;
 			connectServerBroadcast(playerId);
@@ -280,10 +273,7 @@ void emptyQueue(list<string> *queue) {
 }
 
 void helperSendServerMove() {
-	//Coordinate_grid targetCell = players[currPlayerId].targetCell;
-	Coordinate_grid targetCell;
-	targetCell.row = players[currPlayerId].targetCell.row;//TODO: remove
-	targetCell.col = players[currPlayerId].targetCell.col;
+	Coordinate_grid targetCell = players[currPlayerId].targetCell;
 
 	//Setting client_send_data
 	strcpy(client_send_data, MSG_MOVE);
@@ -324,22 +314,50 @@ void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
 	for (int i = 0; i < M; i++) {
-		memset(GRID_RECEIVED[i], 0, sizeof GRID_RECEIVED[i]);
+		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
 	}
 
-	split(data, '|', GRID_RECEIVED);
+	for (int i = 0; i < 2; i++) {
+		memset(GLOBAL_ARR[i], 0, sizeof GLOBAL_ARR[i]);
+	}
+
+	split(data, '+', GLOBAL_ARR);
+
+	//copying GridReceived
+	split(GLOBAL_ARR[0], '|', DATA_RCVD);
 
 	int k = 0;
-
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
 		for (int j = START_INNER_GRID_COL; j <= END_INNER_GRID_COL; j++) {
 			if (!isOponentCellForTeam(Coordinate_grid(i, j), currPlayerId)) {
 				putChar2Grid(i, j,
-						static_cast<charCellType> (atoi(GRID_RECEIVED[k++])),
-						true, false);
+						static_cast<charCellType> (atoi(DATA_RCVD[k++])), true,
+						false);
 			} else {
 				k++;
 			}
+		}
+	}
+
+	for (int i = 0; i < M; i++) {
+		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
+	}
+
+	if (currPlayerId != PLAYER_ID_PRIMARY) { //copying the players information only if I am not the primary Node
+		//copying player attributes
+		split(GLOBAL_ARR[1], ',', DATA_RCVD);
+		k = 0;
+		for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+			players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
+			players[i].currPowerMode = static_cast<powerMode> (atoi(
+					DATA_RCVD[k++]));
+			players[i].heroHealth = atoi(DATA_RCVD[k++]);
+			players[i].strength = atoi(DATA_RCVD[k++]);
+			players[i].speedMove = atoi(DATA_RCVD[k++]);
+			players[i].curseType = static_cast<curse> (atoi(DATA_RCVD[k++]));
+			players[i].isTimerItemGlobalRunning = atoi(DATA_RCVD[k++]);
+			players[i].isTimerMagicSpellRunning = atoi(DATA_RCVD[k++]);
+			players[i].isTimerCurseRunning = atoi(DATA_RCVD[k++]);
 		}
 	}
 
@@ -389,7 +407,7 @@ void populateClientSendDataForBroadcast() {
 		strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
 		strcat(broad_send_data, ",");
 
-		strcat(broad_send_data, numToStr(player.currentPowerMode).c_str());
+		strcat(broad_send_data, numToStr(player.currPowerMode).c_str());
 		strcat(broad_send_data, ",");
 
 		//attributes
@@ -403,9 +421,6 @@ void populateClientSendDataForBroadcast() {
 		strcat(broad_send_data, ",");
 
 		//related to curse
-		strcat(broad_send_data, numToStr(player.speedMoveTemp).c_str());
-		strcat(broad_send_data, ",");
-
 		strcat(broad_send_data, numToStr(player.curseType).c_str());
 		strcat(broad_send_data, ",");
 
@@ -554,9 +569,9 @@ bool connectToServer(int & sock) {
 		//trying again assuming the server is busy
 		retriedCount++;
 		cout << "Server busy --- retrying(" << retriedCount << "/"
-				<< retry_count << ")" << endl;
+				<< RETRY_COUNT << ")" << endl;
 		sleep(1);
-		if (retriedCount == retry_count) {
+		if (retriedCount == RETRY_COUNT) {
 			cout
 					<< "Server is not up or not responding, terminating client...please try again"
 					<< endl;
@@ -588,27 +603,27 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	while (connect(sock, (struct sockaddr *) &server_addr,
 			sizeof(struct sockaddr)) == -1) {
 
-		clientStatus[playerId] = CLIENT_NOT_REACHABLE;
+		players[playerId].status = CLIENT_NOT_REACHABLE;
 
 		//trying again assuming the server is busy
 		retriedCount++;
 		cout << "BroadCast-playerId: " << playerId << " busy --- retrying("
-				<< retriedCount << "/" << retry_count << ")" << endl;
+				<< retriedCount << "/" << RETRY_COUNT << ")" << endl;
 		sleep(1);
-		if (retriedCount == retry_count) {
+		if (retriedCount == RETRY_COUNT) {
 
 			//client is DEAD!!!
 			cout << "playerId: " << playerId
 					<< " is no more alive, let's continue" << endl;
-			clientStatus[playerId] = CLIENT_DEAD;
+			players[playerId].status = CLIENT_DEAD;
 
 			close(sock);
 			return false;
 		}
 	}
 
-	if (clientStatus[playerId] == CLIENT_NOT_REACHABLE) {
-		clientStatus[playerId] = CLIENT_ALIVE;
+	if (players[playerId].status == CLIENT_NOT_REACHABLE) {
+		players[playerId].status = CLIENT_ALIVE;
 		cout << "playerId: " << playerId << " back now" << endl;
 	}
 
@@ -621,7 +636,7 @@ bool isValidRequest(int requestingPlayerId) {
 		return false;
 	}
 
-	if (!clientStatus[requestingPlayerId] == CLIENT_ALIVE) { //this is to ignore requests from dead client
+	if (!players[requestingPlayerId].status == CLIENT_ALIVE) { //this is to ignore requests from dead client
 		return false;
 	}
 

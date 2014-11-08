@@ -143,6 +143,24 @@ void copyPrimaryGrid() {
 	}
 }
 
+void copyPrimaryPlayers() {
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		players[i].currPowerMode = players[i].currPowerMode;
+
+		players[i].heroHealth = players[i].heroHealth;
+		players[i].strength = players[i].strength;
+		players[i].speedMove = players[i].speedMove;
+
+		players[i].curseType = players[i].curseType;
+
+		players[i].isTimerItemGlobalRunning
+				= players[i].isTimerItemGlobalRunning;
+		players[i].isTimerMagicSpellRunning
+				= players[i].isTimerMagicSpellRunning;
+		players[i].isTimerCurseRunning = players[i].isTimerCurseRunning;
+	}
+}
+
 //copies the state of the initial map to another array
 //not modifiable now, as discussed
 void copyInit() {
@@ -192,8 +210,7 @@ Coordinate_grid getGridCoordinatesFromOpenGl(Coordinate_openGl openGl) {
 	return Coordinate_grid(row, col);
 }
 
-charCellType getInnerGridChar(int randomRow, int randomCol,
-		bool isPrimary) {
+charCellType getInnerGridChar(int randomRow, int randomCol, bool isPrimary) {
 	if (isPrimary) {
 		return gridCharPrimary[randomRow][randomCol + ATTRIBUTE_WIDTH];
 	}
@@ -346,7 +363,7 @@ void putChar2Grid(int row, int col, charCellType charType, bool isInner,
 //TODO: Abhishek move to code to ActionOnGrid
 //gray area for second player area handled by Harinder's code
 bool isBlockedSite(int r, int c, int whichPlayer) {
-	if(isOponentCellForTeam(Coordinate_grid(r,c),whichPlayer))
+	if (isOponentCellForTeam(Coordinate_grid(r, c), whichPlayer))
 		return true;
 	charCellType type = getInnerGridChar(r, c, true);
 	switch (type) {

@@ -2,10 +2,7 @@
 #define ONE_MORE_FILE_H
 
 void aStarMove(int whichPlayer, bool through) {
-	//Coordinate_grid targetCell = players[whichPlayer].targetCell;
-	Coordinate_grid targetCell;
-	targetCell.row = players[whichPlayer].targetCell.row; //TODO remove
-	 targetCell.col = players[whichPlayer].targetCell.col;
+	Coordinate_grid targetCell = players[whichPlayer].targetCell;
 
 	//have to handle block status here itelf! phew :(
 	for (int i = START_GRID_ROW; i <= END_GRID_ROW; i++) {
@@ -40,7 +37,7 @@ void aStarMoveNotThrough() {
 //used by primary node
 void selectBasicPower(int whichPlayer) {
 	cout << "selected power_basic by player" << whichPlayer << endl;
-	players[whichPlayer].currentPowerMode = POWER_MODE_BASIC;
+	players[whichPlayer].currPowerMode = POWER_MODE_BASIC;
 }
 
 //used by primary node
@@ -48,7 +45,7 @@ void selectBasicPower(int whichPlayer) {
 void selectMagicPower(int whichPlayer) {
 	if (players[whichPlayer].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic by player " << whichPlayer << endl;
-		players[whichPlayer].currentPowerMode = POWER_MODE_MAGIC;
+		players[whichPlayer].currPowerMode = POWER_MODE_MAGIC;
 	} else {
 		cout << "Player can not use Magic power, you are cursed!!!" << endl;
 		//TODO: show on player's wall, will have to send through server
