@@ -22,7 +22,7 @@
 //----------Constants---------
 #define M 400
 #define QUEUE_LIMIT 5
-#define RETRY_COUNT 5
+#define RETRY_COUNT 3
 
 #define DATA_SIZE_KILO 1024
 
@@ -34,6 +34,9 @@
 
 #define MSG_BASIC_POWER "B:"
 #define MSG_MAGIC_POWER "M:"
+
+#define MSG_ATTACK_TEMPLE "t:"
+#define MSG_ATTACK_HERO "h:"
 
 #define SERVER_BUSY 'x'
 
@@ -134,18 +137,36 @@ void takeUpdateAction(const char* msg) {
 	if (strcmp(type, MSG_MOVE) == 0) {
 		char coordinates[2][DATA_SIZE_KILO];
 		split(reqData, ',', coordinates);
-
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
-		players[requestingPlayerId].atleastOnceAstar = true;
-
-		cout << "at master, player for move processed " << requestingPlayerId << endl; //TODO: remove
-
-		aStarMove(requestingPlayerId, true); //TODO: AStar through
+		aStarMove(requestingPlayerId, true);
 	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
 		selectBasicPower(requestingPlayerId);
 	} else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
 		selectMagicPower(requestingPlayerId);
+	} else if (strcmp(type, MSG_ATTACK_TEMPLE) == 0) {
+		char coordinates[2][DATA_SIZE_KILO];
+		split(reqData, ',', coordinates);
+		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
+		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
+		players[requestingPlayerId].atleastOnceAstar = true;
+		//TODO: remove attack cout
+		cout << "calling attack enemy temple generic for player "
+				<< requestingPlayerId << " at :  " << coordinates[0] << ","
+				<< coordinates[1] << endl;
+		attackEnemyTempleGeneric(requestingPlayerId);
+	} else if (strcmp(type, MSG_ATTACK_HERO) == 0) {
+		char coordinates[3][DATA_SIZE_KILO];
+		split(reqData, ',', coordinates);
+		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
+		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
+		int enemyPlayerId = atoi(coordinates[2]);
+		players[requestingPlayerId].atleastOnceAstar = true;
+		//TODO: remove attack cout
+		cout << "calling attack hero temple generic for player "
+				<< requestingPlayerId << " at :  " << coordinates[0] << ","
+				<< coordinates[1] << endl;
+		attackHeroEnemyGeneric(requestingPlayerId, enemyPlayerId);
 	}
 
 }
@@ -228,12 +249,12 @@ void* threadClientBroadcast(void* arg) {
 
 		//TODO: shall be for all clients
 
-		playerId = 1;
+		playerId = 2;
 		if (players[playerId].status == CLIENT_ALIVE) {
 			//strcpy(broadIp2Join, "10.192.11.114");
 			//strcpy(broadIp2Join, "10.208.23.158");
 			strcpy(broadIp2Join, "127.0.0.1");
-			broadRemote_port = 5001;
+			broadRemote_port = 5002;
 			connectServerBroadcast(playerId);
 		}
 
@@ -278,7 +299,8 @@ void emptyQueue(list<string> *queue) {
 }
 
 void helperSendServerMove() {
-	Coordinate_grid targetCell = players[currPlayerId].targetCell;
+	//Coordinate_grid targetCell = players[currPlayerId].targetCell;
+	Coordinate_grid targetCell = onClickTargetCell;
 
 	//Setting client_send_data
 	strcpy(client_send_data, MSG_MOVE);
@@ -308,6 +330,52 @@ void helperSendPowerMode(int type) {
 		strcpy(client_send_data, MSG_MAGIC_POWER);
 	else
 		return;//something is wrong
+
+	//setting the remoteNode ip & port
+	setRemoteNode(primaryNodeIp, primaryNodePort);
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataDontWaitForResult();
+}
+
+void helperSendAttackTemple() {
+	Coordinate_grid targetCell = onClickTargetCell;
+
+	strcpy(client_send_data, MSG_ATTACK_TEMPLE);
+
+	char rowChar[4];
+	intToChar(targetCell.row, rowChar);
+	char colChar[4];
+	intToChar(targetCell.col, colChar);
+
+	strcat(client_send_data, rowChar);
+	strcat(client_send_data, ",");
+	strcat(client_send_data, colChar);
+
+	//setting the remoteNode ip & port
+	setRemoteNode(primaryNodeIp, primaryNodePort);
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataDontWaitForResult();
+}
+
+void helperSendAttackHero(int enemyPlayer) {
+	Coordinate_grid targetCell = onClickTargetCell;
+
+	strcpy(client_send_data, MSG_ATTACK_HERO);
+
+	char rowChar[4];
+	intToChar(targetCell.row, rowChar);
+	char colChar[4];
+	intToChar(targetCell.col, colChar);
+	char enemyIdChar[4];
+	intToChar(enemyPlayer, enemyIdChar);
+
+	strcat(client_send_data, rowChar);
+	strcat(client_send_data, ",");
+	strcat(client_send_data, colChar);
+	strcat(client_send_data, ",");
+	strcat(client_send_data, enemyIdChar);
 
 	//setting the remoteNode ip & port
 	setRemoteNode(primaryNodeIp, primaryNodePort);

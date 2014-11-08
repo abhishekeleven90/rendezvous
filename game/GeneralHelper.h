@@ -14,12 +14,79 @@
 #include "Validations.h"
 #include "Network.h"
 
-bool isMyFriend(teamName team, int playerId) {
-	return team == players[playerId].team->name;
+bool isSameLocation(Coordinate_grid one, Coordinate_grid two) {
+	if (one.row == two.row && one.col == two.col)
+		return true;
+	else
+		return false;
 }
 
-bool isNotMyFriend(teamName team, int playerId) {
-	return team != players[playerId].team->name;
+void ifSpawnLocationFullHealth(int whichPlayer) {
+	int k = 1;
+	for (int i = END_GRID_ROW - SPAWN_BLOCKS + 1; i <= END_GRID_ROW; i++) {
+		for (int j = 1; j <= k; j++) {
+			bool oneSide = isSameLocation(Coordinate_grid(i, j),
+					players[whichPlayer].location);
+			bool otherSide = isSameLocation(Coordinate_grid(j, i),
+					players[whichPlayer].location);
+			if (oneSide || otherSide) {
+				if (players[whichPlayer].heroHealth < HEALTH_FULL_HERO) {
+					players[whichPlayer].heroHealth = HEALTH_FULL_HERO;
+					return;
+				}
+			}
+		}
+		k++;
+	}
+}
+
+//to be called by server
+bool isNearEnemyTempleArea(int whichPlayer) {
+	Coordinate_grid pLoc = players[whichPlayer].location;
+	charCellType neighbours[4];
+	neighbours[0] = getInnerGridChar(pLoc.row + 1, pLoc.col, true);
+	neighbours[1] = getInnerGridChar(pLoc.row, pLoc.col + 1, true);
+	neighbours[2] = getInnerGridChar(pLoc.row - 1, pLoc.col, true);
+	neighbours[3] = getInnerGridChar(pLoc.row, pLoc.col - 1, true);
+
+	charCellType enemyTemple, enemyTempleBack;
+
+	if (players[whichPlayer].team->name == TEAM_ANGELS) {
+		enemyTemple = TEMPLE_DEMONS;
+		enemyTempleBack = T_DEMONS_BACK;
+	} else {
+		enemyTemple = TEMPLE_ANGELS;
+		enemyTempleBack = T_ANGELS_BACK;
+	}
+
+	for (int i = 0; i <= 3; i++) {
+		if (neighbours[i] == enemyTemple || neighbours[i] == enemyTempleBack) {
+			return true;
+		}
+	}
+	return false;
+
+}
+
+//to be called by server
+bool isNearEnemyPlayerArea(int whichPlayer) {
+	int enemyPlayer = players[whichPlayer].whichEnemyPlayerToAttack;
+	Coordinate_grid myLoc = players[whichPlayer].location;
+	Coordinate_grid enemyLoc = players[enemyPlayer].location;
+
+	Coordinate_grid myNeighbours[4];
+	myNeighbours[0] = Coordinate_grid(myLoc.row + 1, myLoc.col);
+	myNeighbours[1] = Coordinate_grid(myLoc.row, myLoc.col + 1);
+	myNeighbours[2] = Coordinate_grid(myLoc.row - 1, myLoc.col);
+	myNeighbours[3] = Coordinate_grid(myLoc.row, myLoc.col - 1);
+
+	for (int i = 0; i <= 3; i++) {
+		if (isSameLocation(enemyLoc, myNeighbours[i])) {
+			return true;
+		}
+	}
+	return false;
+
 }
 
 void blockOpponentsArea() {
@@ -48,6 +115,8 @@ void loadPlayerGeneralAttributes(int playerId) {
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;
 	players[playerId].atleastOnceAstar = false;
+	players[playerId].toAttackTemple = false;
+	players[playerId].whichEnemyPlayerToAttack = -1;
 
 	players[playerId].astar = new AStarClass();
 	players[playerId].astar->firstInitAStar();
@@ -143,18 +212,40 @@ void printGrid() {
 //on the master node, rest will be communicated to others
 void moveHero(int whichPlayer) {
 
+	//TODO: remove for collison detetcion
 	if (!players[whichPlayer].atleastOnceAstar)
 		return;
 
 	//Collision Detection patch
-	cout<<"here!!"<<endl;
-	aStarMove(whichPlayer, true);//TODO: AStar through
+	aStarMove(whichPlayer, players[whichPlayer].aStarThrough);
 
 	Node* nodeToMove =
 			findLocToMove(players[whichPlayer].location, whichPlayer);
 	if (nodeToMove == NULL) {
-		if (players[whichPlayer].toAttackTemple)//TODO: Abhishek AND condition for is nearEnemyTemple
-			decreaseEnemyTempleHealth(whichPlayer);
+		if (players[whichPlayer].toAttackTemple) {
+			if (isNearEnemyTempleArea(whichPlayer))
+				decreaseEnemyTempleHealth(whichPlayer);
+			else {
+				players[whichPlayer].toAttackTemple = false;
+				//TODO: Abhishek temple attack remove the attack as stooped in between?
+				//or continue??? //both seem fine
+				//first option has a problem that, the player may not find any area to move
+				//due to some player blocking, then!!!
+				//but can't save all clicks that way someone can cheat -->
+			}
+		} else if (players[whichPlayer].whichEnemyPlayerToAttack != -1) {
+			if (isNearEnemyPlayerArea(whichPlayer))
+				decreaseEnemyPlayerHealth(whichPlayer);
+			else {
+				players[whichPlayer].whichEnemyPlayerToAttack = -1;
+				//TODO: Abhishek enemy attack remove the attack as stopped in between?
+				//or continue??? //both seem fine
+				//first option has a problem that, the player may not find any area to move
+				//due to some player blocking, then!!!
+				//but can't save all clicks that way someone can cheat -->
+				//
+			}
+		}
 		return; //nothing to move
 	}
 	Coordinate_grid celltoMove = Coordinate_grid(nodeToMove->row,
@@ -173,6 +264,8 @@ void moveHero(int whichPlayer) {
 
 	players[whichPlayer].location.row = nodeToMove->row;
 	players[whichPlayer].location.col = nodeToMove->col;
+
+	ifSpawnLocationFullHealth(whichPlayer);
 
 	putChar2Grid(players[whichPlayer].location.row,
 			players[whichPlayer].location.col, players[whichPlayer].charType,

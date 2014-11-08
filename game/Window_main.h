@@ -83,7 +83,8 @@ void initRendering_main() {
 	loadTeamAttributes();
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		loadPlayerGeneralAttributes(i);
+		//loadPlayerGeneralAttributes(i);//TODO: may be fatal
+		giveBirthToPlayer(i, false);//false as not taking re-birth
 	}
 
 	copyPrimaryGrid();
@@ -141,7 +142,6 @@ void drawScene_main() {
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
-
 //Called when a key is pressed
 void handleKeypress_main(unsigned char key, //The key that was pressed
 		int x, int y) { //The current mouse coordinates
@@ -179,6 +179,7 @@ void processRightClick_main() {
 }
 
 void processLeftClick_main() {
+	//cout << "left click being processed" << endl;
 	handleGridCharSwitch(downGrid_click, PROCESS_MOVE_LEFT_CLICK);
 }
 
@@ -197,7 +198,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 
 	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
 		processRightClick_main();
-	} else {
+	} else if (button == GLUT_LEFT_BUTTON) {
 		processLeftClick_main();
 	}
 }
