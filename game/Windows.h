@@ -752,6 +752,9 @@ void processLeftClick_selectTeam() {
 	case CLICK_BACK:
 		moveToWindow(create_window_first);
 		break;
+	case CLICK_ANGELS:
+		moveToWindow(create_window_selectHero);
+		break;
 	}
 }
 

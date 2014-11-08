@@ -44,10 +44,10 @@ void ifSpawnLocationFullHealth(int whichPlayer) {
 bool isNearEnemyTempleArea(int whichPlayer) {
 	Coordinate_grid pLoc = players[whichPlayer].location;
 	charCellType neighbours[4];
-	neighbours[0] = getInnerGridChar(pLoc.row + 1, pLoc.col, true);
-	neighbours[1] = getInnerGridChar(pLoc.row, pLoc.col + 1, true);
-	neighbours[2] = getInnerGridChar(pLoc.row - 1, pLoc.col, true);
-	neighbours[3] = getInnerGridChar(pLoc.row, pLoc.col - 1, true);
+	neighbours[0] = getGridChar(pLoc.row + 1, pLoc.col, true, true);
+	neighbours[1] = getGridChar(pLoc.row, pLoc.col + 1, true, true);
+	neighbours[2] = getGridChar(pLoc.row - 1, pLoc.col, true, true);
+	neighbours[3] = getGridChar(pLoc.row, pLoc.col - 1, true, true);
 
 	charCellType enemyTemple, enemyTempleBack;
 
