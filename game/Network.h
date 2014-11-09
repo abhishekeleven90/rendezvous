@@ -23,7 +23,7 @@
 //----------Constants---------
 #define M 400
 #define QUEUE_LIMIT 5
-#define RETRY_COUNT 3
+#define RETRY_COUNT 5
 
 #define DATA_SIZE_KILO 1024
 
@@ -91,6 +91,7 @@ string dequeMy(list<string> *l);
 void printQueue(list<string> *l);
 void emptyQueue(list<string> *queue);
 
+void helperSendConnect();
 void helperSendServerMove(Coordinate_grid targetCell);
 
 void createServerThread();
@@ -147,11 +148,17 @@ void takeUpdateAction(const char* msg) {
 		//cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
 
 		aStarMove(requestingPlayerId, true); //TODO: AStar through
-	} else if (strcmp(type, MSG_BASIC_POWER) == 0) {
+	}
+
+	else if (strcmp(type, MSG_BASIC_POWER) == 0) {
 		selectBasicPower(requestingPlayerId);
-	} else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
+	}
+
+	else if (strcmp(type, MSG_MAGIC_POWER) == 0) {
 		selectMagicPower(requestingPlayerId);
-	} else if (strcmp(type, MSG_ATTACK_TEMPLE) == 0) {
+	}
+
+	else if (strcmp(type, MSG_ATTACK_TEMPLE) == 0) {
 		char coordinates[2][DATA_SIZE_KILO];
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
@@ -162,7 +169,9 @@ void takeUpdateAction(const char* msg) {
 				<< requestingPlayerId << " at :  " << coordinates[0] << ","
 				<< coordinates[1] << endl;
 		attackEnemyTempleGeneric(requestingPlayerId);
-	} else if (strcmp(type, MSG_ATTACK_HERO) == 0) {
+	}
+
+	else if (strcmp(type, MSG_ATTACK_HERO) == 0) {
 		char coordinates[3][DATA_SIZE_KILO];
 		split(reqData, ',', coordinates);
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
@@ -256,14 +265,14 @@ void* threadClientBroadcast(void* arg) {
 
 		//TODO: shall be for all clients
 
-		playerId = 2;
+		playerId = 1;
 		if (players[playerId].status == CLIENT_ALIVE) {
-			strcpy(broadIp2Join, "10.192.11.114");
+			///strcpy(broadIp2Join, "10.192.11.114");
 			//strcpy(broadIp2Join, "127.0.0.1");
 			//strcpy(broadIp2Join, "10.192.11.114");
 			//strcpy(broadIp2Join, "10.208.23.158");
-			strcpy(broadIp2Join, "127.0.0.1");
-			broadRemote_port = 5002;
+			strcpy(broadIp2Join, "10.250.214.111");
+			broadRemote_port = 5001;
 			connectServerBroadcast(playerId);
 		}
 
@@ -309,12 +318,24 @@ void emptyQueue(list<string> *queue) {
 
 void helperSendConnect() {
 
+	cout << "reached: " << gameDetails.hostIp << endl;
 	strcpy(client_send_data, MSG_CONNECT);
 	strcat(client_send_data, selfNode->ipWithPort);
-	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
+	nodeHelper* hostDetails = convertToNodeHelper(str2Char(gameDetails.hostIp));
+	setRemoteNode(hostDetails->ip, hostDetails->port);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataAndWaitForResult();
+	cout << client_recv_data;
+	if (client_recv_data[0] == 'x') {
+		gameDetails.isConnectedToServer = false;
+		gameDetails.isIssueConnectingToServer = true;
+	}
+
+	else {
+		gameDetails.isConnectedToServer = true;
+		gameDetails.isIssueConnectingToServer = false;
+	}
 }
 
 void helperSendServerMove() {

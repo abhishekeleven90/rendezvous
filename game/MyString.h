@@ -18,7 +18,6 @@ void intToChar(int intToChng, char* charToRet) {
 char* str2Char(string str) {
 	char *cstr = new char[str.length() + 1];
 	strcpy(cstr, str.c_str());
-	delete[] cstr;
 	return cstr;
 }
 

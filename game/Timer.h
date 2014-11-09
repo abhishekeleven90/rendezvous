@@ -4,6 +4,7 @@
 #define TIMER_ITEM_GLOBAL 8000
 #define TIMER_MAGIC_SPELL 12000
 #define TIMER_CURSE 5000
+#define TIMER_HOST_WAIT 10000
 
 #define REFRESH_RATE 100
 
@@ -34,6 +35,18 @@ void timerMagicSpell(int value) {
 	} else {
 		cout << "stopping timerMagicSpell" << endl;
 		players[currPlayerId].isTimerMagicSpellRunning = false;
+	}
+}
+
+bool started = false;
+void timerHostWait(int value) {
+	if (!started) {
+		cout << "started timerHostWait" << endl;
+		started = true;
+		glutTimerFunc(TIMER_HOST_WAIT, timerHostWait, 0);
+	} else {
+		cout << "stopping timerHostWait" << endl;
+		gameDetails.isTimerHostWaitDone = true;
 	}
 }
 

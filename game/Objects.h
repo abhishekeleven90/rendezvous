@@ -12,10 +12,25 @@ struct nodeHelper {
 	char ipWithPort[IP_SIZE];
 };
 
+//Angels - left, Demons - right
+enum teamName {
+	TEAM_ANGELS, TEAM_DEMONS, TEAM_BOTH
+};
+
+enum heroes {
+	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
+};
+
 struct GameDetails {
 	bool isSinglePlayerGame;
 	bool isHost;
-	nodeHelper* hostDetails;
+	string hostIp;
+	bool isConnectedToServer;
+	bool isIssueConnectingToServer;
+	bool isTimerHostWaitDone;
+
+	teamName myTeam;
+	heroes myHero;
 };
 
 enum charCellType {
@@ -37,17 +52,13 @@ enum charCellType {
 
 	CLICK_ANGELS, CLICK_DEMONS, CLICK_PICK_TEAM,
 
-	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT,
+	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT, CLICK_TRY_AGAIN,
 
 	INPUT
 };
 
 charCellType itemCharCell[] = { I_SPEED_MOVE, I_HEALTH, I_DAMAGE,
 		I_TEMPLE_HEALER };
-
-enum heroes {
-	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
-};
 
 enum curse {
 	CURSE_DISABLE, CURSE_SLOW, CURSE_BURST, CURSE_STUN, CURSE_NONE
@@ -60,11 +71,6 @@ enum itemType {
 
 enum powerMode {
 	POWER_MODE_BASIC, POWER_MODE_MAGIC, POWER_MODE_STUN
-};
-
-//Angels - left, Demons - right
-enum teamName {
-	TEAM_ANGELS, TEAM_DEMONS, TEAM_BOTH
 };
 
 //TODO: check if required

@@ -105,8 +105,12 @@ MyTexture texId_host_game;
 MyTexture texId_white;
 MyTexture texId_input;
 MyTexture texId_btn_next;
+MyTexture texId_try_again;
 
 MyTexture texId_pick_team;
+MyTexture texId_pick_hero;
+
+MyTexture texId_bg_waiting;
 
 MyTexture texId_player_single;
 MyTexture texId_player_multi;
