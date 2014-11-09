@@ -90,7 +90,7 @@ void giveBirthToPlayer(int playerId, bool reborn) {
 
 	int row = players[playerId].location.row;
 	int col = players[playerId].location.col;
-	putChar2Grid(row, col, players[playerId].charType, true, false);//it works with only false :(
+	putChar2Grid(row, col, players[playerId].charType, true, reborn);//it works with only false :(
 
 
 	//if reborn, no need to set the enemy and friend ids again
