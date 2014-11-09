@@ -18,6 +18,7 @@
 #include <list>
 #include "MyString.h"
 #include "OneMoreFile.h"
+#include "Globals.h"
 
 //----------Constants---------
 #define M 400
@@ -37,6 +38,8 @@
 
 #define MSG_ATTACK_TEMPLE "t:"
 #define MSG_ATTACK_HERO "h:"
+
+#define MSG_CONNECT "c:"
 
 #define SERVER_BUSY 'x'
 
@@ -302,6 +305,16 @@ void emptyQueue(list<string> *queue) {
 	while (!(*queue).empty()) {
 		cout << dequeMy(queue);
 	}
+}
+
+void helperSendConnect() {
+
+	strcpy(client_send_data, MSG_CONNECT);
+	strcat(client_send_data, selfNode->ipWithPort);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataAndWaitForResult();
 }
 
 void helperSendServerMove() {

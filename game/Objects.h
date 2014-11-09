@@ -6,15 +6,16 @@
 
 #define IP_SIZE 40
 
-struct GameDetails {
-	bool isSinglePlayerGame;
-	bool isHost;
-};
-
 struct nodeHelper {
 	char ip[IP_SIZE];
 	unsigned int port;
 	char ipWithPort[IP_SIZE];
+};
+
+struct GameDetails {
+	bool isSinglePlayerGame;
+	bool isHost;
+	nodeHelper* hostDetails;
 };
 
 enum charCellType {
@@ -38,7 +39,7 @@ enum charCellType {
 
 	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT,
 
-	INPUT1, INPUT2, INPUT3, INPUT4, INPUT5
+	INPUT
 };
 
 charCellType itemCharCell[] = { I_SPEED_MOVE, I_HEALTH, I_DAMAGE,

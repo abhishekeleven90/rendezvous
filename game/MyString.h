@@ -28,6 +28,11 @@ string numToStr(int num) {
 	return ss.str();
 }
 
+string concat(string s1, string s2) {
+	stringstream ss;
+	ss << s1 << s2;
+	return ss.str();
+}
 void tab(int count) {
 	for (int i = 0; i < count; i++) {
 		cout << "\t";

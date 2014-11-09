@@ -41,8 +41,8 @@ void putImages_first() {
 //Initializes 3D rendering
 void initRendering_first() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
@@ -54,7 +54,7 @@ void initRendering_first() {
 void drawScene_first() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 
@@ -139,8 +139,8 @@ void loadTextures_final() {
 //Initializes 3D rendering
 void initRendering_final() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
@@ -153,7 +153,7 @@ void initRendering_final() {
 void drawScene_final() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 
@@ -232,8 +232,8 @@ void putImages_help() {
 //Initializes 3D rendering
 void initRendering_help() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
@@ -245,7 +245,7 @@ void initRendering_help() {
 void drawScene_help() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 	putImages_help();
@@ -313,13 +313,7 @@ void create_window_help() {
 /* --------------------------------------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------WINDOW_MULTIPLAYER--------------------------------------------
  * --------------------------------------------------------------------------------------------------------------------------------*/
-
-char* ip1 = str2Char("  192");
-char* ip2 = str2Char("  168");
-char* ip3 = str2Char("  120");
-char* ip4 = str2Char("  10");
-char* port = str2Char("5000");
-int inputNum = 0;
+string hostIp;
 
 void loadTextures_multiplayer() {
 	texId_bg = getTextureFromPng(PATH_IMG_BG);
@@ -329,11 +323,11 @@ void loadTextures_multiplayer() {
 	texId_join_game = getTextureFromPng(PATH_IMG_JOIN_GAME);
 	texId_host_game = getTextureFromPng(PATH_IMG_HOST_GAME);
 
-	texId_input = getTextureFromPng(PATH_IMG_INPUT);
+	texId_white = getTextureFromPng(PATH_IMG_WHITE);
 	texId_btn_next = getTextureFromPng(PATH_IMG_BTN_NEXT);
 }
 
-int join_click_count = 1;
+int join_click_count;
 void putImages_multiplayer() {
 	putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
 
@@ -341,26 +335,13 @@ void putImages_multiplayer() {
 	putPngWithChar(7, 16, texId_join_game, CLICK_JOIN_GAME, 4, 2);
 
 	if (join_click_count % 2 == 0) {
-		putTextToCell(Coordinate_grid(9, 16), ip1);
-		putTextToCell(Coordinate_grid(9, 17), ip2);
-		putTextToCell(Coordinate_grid(9, 18), ip3);
-		putTextToCell(Coordinate_grid(9, 19), ip4);
-		putTextToCell(Coordinate_grid(9, 20), port);
+		putTextToCell(Coordinate_grid(9, 16), concat("  ", hostIp));
 
-		putPngWithChar(9, 16, texId_input, INPUT1, 1, 1);
-		putPngWithChar(9, 17, texId_input, INPUT2, 1, 1);
-		putPngWithChar(9, 18, texId_input, INPUT3, 1, 1);
-		putPngWithChar(9, 19, texId_input, INPUT4, 1, 1);
-		putPngWithChar(9, 20, texId_input, INPUT5, 1, 1);
+		putPngWithChar(9, 16, texId_input, INPUT, 4, 1);
 
 		putPngWithChar(9, 22, texId_btn_next, CLICK_NEXT, 1, 1);
 	} else {
-		/*ip1 = "  ";
-		 ip2 = "  ";
-		 ip3 = "  ";
-		 ip4 = "  ";
-		 port = "";
-		 inputNum = 0;*/
+		hostIp = "";
 		putChars(1, 1, 9, 21, BG_GRASS);
 	}
 
@@ -370,12 +351,13 @@ void putImages_multiplayer() {
 //Initializes 3D rendering
 void initRendering_multiplayer() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
 	gameDetails.isHost = true;
+	join_click_count = 1;
 	loadTextures_multiplayer();
 
 	t3dInit();
@@ -385,35 +367,11 @@ void initRendering_multiplayer() {
 void drawScene_multiplayer() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 	putImages_multiplayer();
 	glutSwapBuffers(); //Send the 3D scene to the screen
-}
-
-void appendInput(string num) {
-	cout << "here" << endl;
-	cout << "num:" << num << endl;
-	if (inputNum == 1) {
-		strcat(str2Char(ip1), num.c_str());
-	}
-
-	else if (inputNum == 2) {
-		//strcat(str2Char(ip2), num.c_str());
-	}
-
-	else if (inputNum == 3) {
-		//strcat(str2Char(ip3), num.c_str());
-	}
-
-	else if (inputNum == 4) {
-		//strcat(str2Char(ip4), num.c_str());
-	}
-
-	else if (inputNum == 5) {
-		//strcat(str2Char(port), num.c_str());
-	}
 }
 
 //Called when a key is pressed
@@ -425,37 +383,41 @@ void handleKeypress_multiplayer(unsigned char key, //The key that was pressed
 		exit(0);
 		break;
 	case 57: //'9'
-		appendInput("9");
+		hostIp = concat(hostIp, "9");
 		break;
 	case 56://'8'
-		appendInput("8");
+		hostIp = concat(hostIp, "8");
 		break;
 	case 55://'7'
-		appendInput("7");
+		hostIp = concat(hostIp, "7");
 		break;
 	case 54://'6'
-		appendInput("6");
+		hostIp = concat(hostIp, "6");
 		break;
 	case 53://'5'
-		appendInput("5");
+		hostIp = concat(hostIp, "5");
 		break;
 	case 52://'4'
-		appendInput("4");
+		hostIp = concat(hostIp, "4");
 		break;
 	case 51://'3'
-		appendInput("3");
+		hostIp = concat(hostIp, "3");
 		break;
 	case 50://'2'
-		appendInput("2");
+		hostIp = concat(hostIp, "2");
 		break;
 	case 49://'1'
-		cout << "reached1" << endl;
-		appendInput("1");
+		hostIp = concat(hostIp, "1");
 		break;
 	case 48://'0'
-		appendInput("0");
+		hostIp = concat(hostIp, "0");
 		break;
-
+	case 46://'.'
+		hostIp = concat(hostIp, ".");
+		break;
+	case 47://':' //TODO: change case as ":"
+		hostIp = concat(hostIp, ":");
+		break;
 	}
 }
 
@@ -470,6 +432,7 @@ void processLeftClick_multiplayer() {
 		break;
 	case CLICK_JOIN_GAME:
 		join_click_count++;
+		hostIp = "";
 		gameDetails.isHost = false;
 		break;
 	case CLICK_HOST_GAME:
@@ -477,22 +440,9 @@ void processLeftClick_multiplayer() {
 		moveToWindow(create_window_selectTeam);
 		break;
 	case CLICK_NEXT:
+		gameDetails.hostDetails = convertToNodeHelper(str2Char(hostIp));
+		helperSendConnect();
 		moveToWindow(create_window_selectTeam);
-		break;
-	case INPUT1:
-		inputNum = 1;
-		break;
-	case INPUT2:
-		inputNum = 2;
-		break;
-	case INPUT3:
-		inputNum = 3;
-		break;
-	case INPUT4:
-		inputNum = 4;
-		break;
-	case INPUT5:
-		inputNum = 5;
 		break;
 	}
 }
@@ -567,8 +517,8 @@ void PutHeros_selectHero() {
 //Initializes 3D rendering
 void initRendering_selectHero() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	loadTextures_selectHero();
@@ -599,7 +549,7 @@ void initRendering_selectHero() {
 //Draws the 3D scene
 void drawScene_selectHero() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 
@@ -684,7 +634,7 @@ void create_window_selectHero() {
  * --------------------------------------------------------------------------------------------------------------------------------*/
 void loadTextures_selectTeam() {
 	texId_bg = getTextureFromPng(PATH_IMG_BG);
-	texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
+	//texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
 
 	texId_pick_team = getTextureFromPng(PATH_IMG_PICK_TEAM);
 
@@ -696,7 +646,7 @@ void loadTextures_selectTeam() {
 }
 
 void putImages_selectTeam() {
-	putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
+	//putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
 
 	putPngWithChar(5, 8, texId_pick_team, CLICK_PICK_TEAM, 9, 2);
 
@@ -711,8 +661,8 @@ void putImages_selectTeam() {
 //Initializes 3D rendering
 void initRendering_selectTeam() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
@@ -725,7 +675,7 @@ void initRendering_selectTeam() {
 void drawScene_selectTeam() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 	putImages_selectTeam();
@@ -749,9 +699,9 @@ void processRightClick_selectTeam() {
 
 void processLeftClick_selectTeam() {
 	switch (getGridChar(downGrid_click)) {
-	case CLICK_BACK:
-		moveToWindow(create_window_first);
-		break;
+	/*case CLICK_BACK:
+	 moveToWindow(create_window_first);
+	 break;*/
 	case CLICK_ANGELS:
 		moveToWindow(create_window_selectHero);
 		break;
@@ -858,8 +808,8 @@ void loadTextures_main() {
 //Initializes 3D rendering
 void initRendering_main() {
 	//Makes 3D drawing work when something is in front of something else
-	glEnable( GL_DEPTH_TEST);
-	glEnable(( GL_BLEND));
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
@@ -921,7 +871,7 @@ void renderGridMainWindow() {
 void drawScene_main() {
 	//Clear information from last draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); //Reset the drawing perspective
 
 
