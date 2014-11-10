@@ -1,6 +1,9 @@
 //****************Function Declarations*******************
 void intToChar(int intToChng, char* charToRet);
+char* str2Char(string str);
 string numToStr(int num);
+char* numToChar(int num);
+string concat(string s1, string s2);
 void tab(int count);
 bool startsWith(const char *a, const char *b);
 char* substring(const char *string, int position, int length);
@@ -25,6 +28,11 @@ string numToStr(int num) {
 	stringstream ss;
 	ss << num;
 	return ss.str();
+}
+
+char* numToChar(int num) {
+	string str = numToStr(num);
+	return str2Char(str);
 }
 
 string concat(string s1, string s2) {
@@ -122,6 +130,7 @@ void split(char* string, char splitter, char splittedArr[][16384]) {
 			k++;
 		}
 	}
+
 	if (string[len - 1] != splitter) { //Adding this check to get the last array
 		tmp[j] = '\0';
 		strcpy(splittedArr[k], tmp);

@@ -45,7 +45,7 @@ void initRendering_first() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	gameDetails.isConnectedToServer = false;
+	//gameDetails.isConnectedToServer = false; //TODO: remove
 
 	//Loading all the textures from images
 	loadTextures_first();
@@ -329,6 +329,7 @@ void loadTextures_multiplayer() {
 	texId_white = getTextureFromPng(PATH_IMG_WHITE);
 	texId_btn_next = getTextureFromPng(PATH_IMG_BTN_NEXT);
 	texId_try_again = getTextureFromPng(PATH_IMG_TRY_AGAIN);
+	texId_btn_reset = getTextureFromPng(PATH_IMG_BTN_RESET);
 }
 
 void putImages_multiplayer() {
@@ -338,7 +339,7 @@ void putImages_multiplayer() {
 	putPngWithChar(7, 16, texId_join_game, CLICK_JOIN_GAME, 4, 2);
 
 	if (isShowInput) {
-		putTextToCell(Coordinate_grid(9, 16), concat("  ", hostIp));
+		putTextToCell(Coordinate_grid(9, 16), hostIp);
 
 		//Important - keep the "coordinates & blocks" same here & in below(else) part
 		putPngWithChar(9, 16, texId_input, INPUT, 4, 1);
@@ -346,16 +347,16 @@ void putImages_multiplayer() {
 		putPngWithChar(9, 22, texId_btn_next, CLICK_NEXT, 1, 1);
 
 		if (gameDetails.isIssueConnectingToServer) {
-			putPngWithChar(11, 16, texId_try_again, CLICK_TRY_AGAIN, 2, 1);
+			putPngWithChar(11, 16, texId_try_again, CLICK_TRY_AGAIN, 4, 1);
 		} else {
-			putChars(2, 1, 11, 16, BG_GRASS);
+			putPngWithChar(11, 16, texId_btn_reset, CLICK_RESET, 4, 1);
 		}
 	} else {
 		hostIp = "";
-		//below is imp to avoid clicks if the button is not visibles
-		putChars(4, 1, 9, 16, BG_GRASS); //input btn
-		putChars(1, 1, 9, 22, BG_GRASS); //next btn
-		putChars(2, 1, 11, 16, BG_GRASS); //tryAgain btn
+		//below is imp to avoid clicks if the button is not visible
+		putChars(4, 1, 9, 16, BG_GRASS); //input button
+		putChars(1, 1, 9, 22, BG_GRASS); //next button
+		putChars(4, 1, 11, 16, BG_GRASS); //tryAgain button
 	}
 
 	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20);
@@ -369,10 +370,12 @@ void initRendering_multiplayer() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
-	gameDetails.isHost = true;
+	//gameDetails.isHost = true; //TODO: check is required, else remove (intuitively: not required)
 	gameDetails.isIssueConnectingToServer = false;
 	isShowInput = false;
 	loadTextures_multiplayer();
+	createServerThread();
+	gameDetails.isTimerNotHostWaiting = true; //making this true over here because we don't want any client to connect
 
 	t3dInit();
 }
@@ -439,31 +442,61 @@ void processRightClick_multiplayer() {
 	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
 }
 
+void processClickNext() {
+	if (hostIp == "") {
+		return;
+	}
+	gameDetails.hostDetails = convertToNodeHelper(str2Char(hostIp));
+	connectStatus connect = helperSendConnect();
+	switch (connect) {
+	case CONNECTED_NOT:
+		break;
+	case CONNECTED_ALREADY:
+		moveToWindow(create_window_main);
+		break;
+	case CONNECTED_NEW:
+		moveToWindow(create_window_selectTeam);
+		break;
+	}
+}
+
+void processClickHost() {
+	isShowInput = false;
+	gameDetails.isHost = true;
+
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		players[i].status = CLIENT_NOT_JOINED;
+	}
+
+	players[0].status = CLIENT_JOINED; //Obviously I have joined
+	gameDetails.isIssueConnectingToServer = false;
+	moveToWindow(create_window_selectTeam);
+}
+
 void processLeftClick_multiplayer() {
 	switch (getGridChar(downGrid_click)) {
 	case CLICK_BACK:
 		moveToWindow(create_window_first);
 		break;
+
 	case CLICK_JOIN_GAME:
 		gameDetails.isHost = false;
 		isShowInput = true;
 		break;
+
 	case CLICK_HOST_GAME:
-		isShowInput = false;
-		gameDetails.isHost = true;
-		gameDetails.isIssueConnectingToServer = false;
-		moveToWindow(create_window_selectTeam);
+		processClickHost();
 		break;
+
 	case CLICK_NEXT:
-		if (hostIp != "") {
-			gameDetails.hostIp = hostIp;
-			helperSendConnect();
-			if (gameDetails.isConnectedToServer) {
-				moveToWindow(create_window_selectTeam);
-			}
-		}
+		processClickNext();
 		break;
+
 	case CLICK_TRY_AGAIN:
+		hostIp = "";
+		break;
+
+	case CLICK_RESET:
 		hostIp = "";
 		break;
 	}
@@ -524,7 +557,7 @@ void initRendering_waiting() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Loading all the textures from images
-	gameDetails.isTimerHostWaitDone = false;
+	gameDetails.isTimerNotHostWaiting = false;
 	timerHostWait(0);
 	loadTextures_waiting();
 
@@ -542,7 +575,7 @@ void drawScene_waiting() {
 			concat("Host Ip-> ", selfNode->ipWithPort));
 	putImages_waiting();
 
-	if (gameDetails.isTimerHostWaitDone) {
+	if (gameDetails.isTimerNotHostWaiting) {
 		moveToWindow(create_window_main);
 	}
 
@@ -654,7 +687,6 @@ void initRendering_selectHero() {
 
 	players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
 	players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
-	//players[0].networkDetails = convertToNodeHelper("10.208.23.254:5000");
 	players[0].team = &angelsTeam;
 	players[0].isFirstPlayerInTeam = true;
 
@@ -670,6 +702,8 @@ void initRendering_selectHero() {
 	players[3].heroType = HERO_SLOWER;
 	players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
 	players[3].team = &demonsTeam;
+
+	//server_port = players[currPlayerId].networkDetails->port;
 
 	t3dInit();
 }
@@ -718,13 +752,11 @@ void processRightClick_selectHero() {
 
 void selectedHero_next() {
 	if (gameDetails.isHost) {
-		createServerThread();
 		moveToWindow(create_window_waiting);
 	}
 
 	else {
-		//TODO: validate hero from server
-		createServerThread();
+		helperValidateHero();//TODO: not yet implemented
 		moveToWindow(create_window_main);
 	}
 }
@@ -854,7 +886,7 @@ void processRightClick_selectTeam() {
 
 void teamSelected_next() {
 	if (!gameDetails.isHost) {
-		//TODO: validate team from server
+		helperValidateTeam();//TODO: not yet implemented
 		moveToWindow(create_window_selectHero);
 	}
 
@@ -1007,7 +1039,6 @@ void initRendering_main() {
 
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
-	server_port = players[currPlayerId].networkDetails->port;
 
 	if (gameDetails.isHost) {
 		createClientBroadcastThread();

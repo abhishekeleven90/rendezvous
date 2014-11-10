@@ -4,7 +4,7 @@
 #define TIMER_ITEM_GLOBAL 8000
 #define TIMER_MAGIC_SPELL 12000
 #define TIMER_CURSE 5000
-#define TIMER_HOST_WAIT 10000
+#define TIMER_HOST_WAIT 180000
 
 #define REFRESH_RATE 100
 
@@ -14,11 +14,13 @@ void timerRefresh(int value) {
 }
 
 void timerItemGlobal(int whichPlayer) {
-	if (!players[whichPlayer].isTimerItemGlobalRunning) {
+	if (!players[whichPlayer].isTimerItemGlobalRunning) { //timer not running
 		cout << "starting timerItemGlobal for player: " << whichPlayer << endl;
 		players[whichPlayer].isTimerItemGlobalRunning = true;
 		glutTimerFunc(TIMER_ITEM_GLOBAL, timerItemGlobal, whichPlayer);
-	} else {
+	}
+
+	else { //timer not running
 		cout << "stopping timerItemGlobal for player: " << whichPlayer << endl;
 		players[whichPlayer].isTimerItemGlobalRunning = false;
 	}
@@ -30,32 +32,22 @@ void timerMagicSpell(int value) {
 	if (!players[currPlayerId].isTimerMagicSpellRunning) {
 		cout << "starting timerMagicSpell" << endl;
 		players[currPlayerId].isTimerMagicSpellRunning = true;
-		players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
+		players[currPlayerId].currPowerMode = POWER_MODE_BASIC; //making powerMode basic since magic spelled
 		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, 0);
-	} else {
+	}
+
+	else {
 		cout << "stopping timerMagicSpell" << endl;
 		players[currPlayerId].isTimerMagicSpellRunning = false;
 	}
 }
 
-bool started = false;
-void timerHostWait(int value) {
-	if (!started) {
-		cout << "started timerHostWait" << endl;
-		started = true;
-		glutTimerFunc(TIMER_HOST_WAIT, timerHostWait, 0);
-	} else {
-		cout << "stopping timerHostWait" << endl;
-		gameDetails.isTimerHostWaitDone = true;
-	}
-}
-
-void timerCurse(int value) {
+void timerCurse(int curseType) {
 
 	if (!players[currPlayerId].isTimerCurseRunning) {
 		cout << "starting timerCurse" << endl;
 
-		switch (value) {
+		switch (curseType) {
 		case CURSE_STUN:
 			players[currPlayerId].speedMoveTemp
 					= players[currPlayerId].speedMove;
@@ -65,7 +57,7 @@ void timerCurse(int value) {
 		case CURSE_DISABLE:
 			//Nothing to be done over here
 			break;
-		case CURSE_SLOW:
+		case CURSE_WEAK:
 			players[currPlayerId].strength -= CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
@@ -74,14 +66,14 @@ void timerCurse(int value) {
 		}
 
 		players[currPlayerId].isTimerCurseRunning = true;
-		glutTimerFunc(TIMER_CURSE, timerCurse, value);
+		glutTimerFunc(TIMER_CURSE, timerCurse, curseType);
 	}
 
 	else {
 		cout << "stopping timerCurse" << endl;
 		players[currPlayerId].isTimerCurseRunning = false;
 
-		switch (value) {
+		switch (curseType) {
 		case CURSE_STUN:
 			players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
 			players[currPlayerId].speedMove
@@ -93,7 +85,7 @@ void timerCurse(int value) {
 		case CURSE_DISABLE:
 			//Nothing to be done over here
 			break;
-		case CURSE_SLOW:
+		case CURSE_WEAK:
 			players[currPlayerId].strength += CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
@@ -102,6 +94,18 @@ void timerCurse(int value) {
 		}
 
 		players[currPlayerId].curseType = CURSE_NONE;
+	}
+}
+
+bool started = false;
+void timerHostWait(int value) {
+	if (!started) {
+		cout << "started timerHostWait" << endl;
+		started = true;
+		glutTimerFunc(TIMER_HOST_WAIT, timerHostWait, 0);
+	} else {
+		cout << "stopping timerHostWait" << endl;
+		gameDetails.isTimerNotHostWaiting = true;
 	}
 }
 

@@ -109,7 +109,7 @@ void loadTeamAttributes() {
 }
 
 void loadPlayerGeneralAttributes(int playerId) {
-	players[playerId].status = CLIENT_ALIVE;
+	players[playerId].status = CLIENT_PRESENT;
 
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
@@ -322,7 +322,7 @@ void putMyAttributes() {
 	case CURSE_DISABLE:
 		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cDisable, 2, 1);
 		break;
-	case CURSE_SLOW:
+	case CURSE_WEAK:
 		putPngToLAttCell(Coordinate_grid(10, 1), texId_att_cSlow, 2, 1);
 		break;
 	case CURSE_BURST:
@@ -522,18 +522,18 @@ void iAmCursed(curse curseType) {
 
 	case CURSE_DISABLE:
 		cout << "disabled" << endl;
-		players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
+		players[currPlayerId].currPowerMode = POWER_MODE_BASIC; //TODO: currPlayer -> which player
 		timerCurse(CURSE_DISABLE);
 		break;
 
-	case CURSE_SLOW:
+	case CURSE_WEAK:
 		cout << "slowed" << endl;
-		timerCurse(CURSE_SLOW);
+		timerCurse(CURSE_WEAK);
 		break;
 
 	case CURSE_BURST:
 		cout << "bursted" << endl;
-		players[currPlayerId].heroHealth -= CURSE_AMT_BURST_DAMAGE;
+		players[currPlayerId].heroHealth -= CURSE_AMT_BURST_DAMAGE; //TODO: currPlayer -> which player
 		break;
 
 	case CURSE_NONE:
@@ -546,8 +546,9 @@ void iAmCursed(curse curseType) {
 
 void requestBasicPower() {
 	cout << "requesting basic_power by player " << currPlayerId << endl;
-	if (players[currPlayerId].currPowerMode != POWER_MODE_BASIC)
+	if (players[currPlayerId].currPowerMode != POWER_MODE_BASIC) {
 		helperSendPowerMode(0);
+	}
 }
 
 void requestMagicPower() {

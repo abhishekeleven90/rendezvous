@@ -24,11 +24,12 @@ enum heroes {
 struct GameDetails {
 	bool isSinglePlayerGame;
 	bool isHost;
-	string hostIp;
-	bool isConnectedToServer;
+	nodeHelper* hostDetails;
+	//bool isConnectedToServer; //TODO: remove
 	bool isIssueConnectingToServer;
-	bool isTimerHostWaitDone;
+	bool isTimerNotHostWaiting;
 
+	int myId;
 	teamName myTeam;
 	heroes myHero;
 };
@@ -52,7 +53,7 @@ enum charCellType {
 
 	CLICK_ANGELS, CLICK_DEMONS, CLICK_PICK_TEAM,
 
-	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT, CLICK_TRY_AGAIN,
+	CLICK_HOST_GAME, CLICK_JOIN_GAME, CLICK_NEXT, CLICK_TRY_AGAIN, CLICK_RESET,
 
 	INPUT
 };
@@ -61,7 +62,7 @@ charCellType itemCharCell[] = { I_SPEED_MOVE, I_HEALTH, I_DAMAGE,
 		I_TEMPLE_HEALER };
 
 enum curse {
-	CURSE_DISABLE, CURSE_SLOW, CURSE_BURST, CURSE_STUN, CURSE_NONE
+	CURSE_DISABLE, CURSE_WEAK, CURSE_BURST, CURSE_STUN, CURSE_NONE
 };
 
 //TODO : check if required
@@ -94,7 +95,15 @@ struct TeamStruct {
 };
 
 enum clientStatus {
-	CLIENT_ALIVE, CLIENT_DEAD, CLIENT_NOT_REACHABLE
+	CLIENT_PRESENT, CLIENT_LEFT,
+
+	CLIENT_NOT_REACHABLE,
+
+	CLIENT_NOT_JOINED, CLIENT_JOINED
+};
+
+enum connectStatus {
+	CONNECTED_NEW, CONNECTED_ALREADY, CONNECTED_NOT
 };
 
 struct Player {

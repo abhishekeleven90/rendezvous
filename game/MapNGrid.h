@@ -238,7 +238,7 @@ void putTextToCell(Coordinate_grid grid, string text) {
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 	float t3dScale = t3dComputeScale("qqqqq");
 	glPushMatrix();
-	glTranslatef(openGl.x, openGl.y, -5.0f);
+	glTranslatef(openGl.x + 0.04, openGl.y + 0.04, -5.0f);
 	//glTranslatef(0, 0, -4.0f);
 	glScalef(t3dScale, t3dScale, t3dScale);
 	glColor3f(1.0f, 0.0f, 0.0f);

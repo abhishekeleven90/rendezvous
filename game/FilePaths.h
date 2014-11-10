@@ -54,6 +54,7 @@
 #define PATH_IMG_INPUT "data/images/input.png"
 #define PATH_IMG_BTN_NEXT "data/images/btn_next.png"
 #define PATH_IMG_TRY_AGAIN "data/images/try_again.png"
+#define PATH_IMG_BTN_RESET "data/images/btn_reset.png"
 
 #define PATH_IMG_BG_WAITING "data/images/bg_waiting.png"
 

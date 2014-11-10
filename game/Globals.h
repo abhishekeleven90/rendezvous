@@ -106,6 +106,7 @@ MyTexture texId_white;
 MyTexture texId_input;
 MyTexture texId_btn_next;
 MyTexture texId_try_again;
+MyTexture texId_btn_reset;
 
 MyTexture texId_pick_team;
 MyTexture texId_pick_hero;
