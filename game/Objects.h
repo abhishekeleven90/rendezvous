@@ -29,7 +29,7 @@ struct GameDetails {
 	bool isIssueConnectingToServer;
 	bool isTimerNotHostWaiting;
 
-	int myId;
+	//int myId; //TODO: remove
 	teamName myTeam;
 	heroes myHero;
 };

@@ -76,10 +76,6 @@ void handleKeypress_first(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_first() {
-	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
-}
-
 void processLeftClick_first() {
 	switch (getGridChar(downGrid_click)) {
 	case CLICK_HELP:
@@ -109,9 +105,7 @@ void myMouseClickHandler_first(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_first();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_first();
 	}
 }
@@ -173,10 +167,6 @@ void handleKeypress_final(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_final() {
-	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
-}
-
 void processLeftClick_final() {
 	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_LEFT_CLICK);
 }
@@ -194,9 +184,7 @@ void myMouseClickHandler_final(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_final();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_final();
 	}
 }
@@ -265,10 +253,6 @@ void handleKeypress_help(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_help() {
-	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
-}
-
 void processLeftClick_help() {
 	switch (getGridChar(downGrid_click)) {
 	case CLICK_BACK:
@@ -290,9 +274,7 @@ void myMouseClickHandler_help(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_help();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_help();
 	}
 }
@@ -438,10 +420,6 @@ void handleKeypress_multiplayer(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_multiplayer() {
-	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
-}
-
 void processClickNext() {
 	if (hostIp == "") {
 		return;
@@ -515,9 +493,7 @@ void myMouseClickHandler_multiplayer(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_multiplayer();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_multiplayer();
 	}
 }
@@ -593,9 +569,6 @@ void handleKeypress_waiting(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_waiting() {
-}
-
 void processLeftClick_waiting() {
 }
 
@@ -612,9 +585,7 @@ void myMouseClickHandler_waiting(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_waiting();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_waiting();
 	}
 }
@@ -637,6 +608,8 @@ void create_window_waiting() {
 /* --------------------------------------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------WINDOW_SELECT_HERO--------------------------------------------
  * --------------------------------------------------------------------------------------------------------------------------------*/
+bool isHeroVisible[4];
+
 void loadTextures_selectHero() {
 	texId_bg = getTextureFromPng(PATH_IMG_BG);
 	texId_pick_hero = getTextureFromPng(PATH_IMG_PICK_HERO);
@@ -685,23 +658,29 @@ void initRendering_selectHero() {
 	loadTextures_selectHero();
 	putGrass();
 
-	players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
-	players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
-	players[0].team = &angelsTeam;
-	players[0].isFirstPlayerInTeam = true;
+	isHeroVisible[HERO_BURSTER] = true;
+	isHeroVisible[HERO_SLOWER] = true;
+	isHeroVisible[HERO_BURSTER] = true;
+	isHeroVisible[HERO_DISABLER] = true;
 
-	players[1].heroType = HERO_STUNNER;
-	players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
-	players[1].team = &angelsTeam;
+	//TODO: remove below
+	/*players[0].heroType = HERO_DISABLER;
+	 players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
+	 players[0].team = &angelsTeam;
+	 players[0].isFirstPlayerInTeam = true;
 
-	players[2].heroType = HERO_BURSTER;
-	players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
-	players[2].team = &demonsTeam;
-	players[2].isFirstPlayerInTeam = true;
+	 players[1].heroType = HERO_STUNNER;
+	 players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
+	 players[1].team = &angelsTeam;
 
-	players[3].heroType = HERO_SLOWER;
-	players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
-	players[3].team = &demonsTeam;
+	 players[2].heroType = HERO_BURSTER;
+	 players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
+	 players[2].team = &demonsTeam;
+	 players[2].isFirstPlayerInTeam = true;
+
+	 players[3].heroType = HERO_SLOWER;
+	 players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
+	 players[3].team = &demonsTeam;*/
 
 	//server_port = players[currPlayerId].networkDetails->port;
 
@@ -728,56 +707,54 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		exit(0);
 		break;
 
-	case 48: //key - '0'
-		currPlayerId = 0;
-		break;
+		/*case 48: //key - '0' //TODO: remove
+		 currPlayerId = 0;
+		 break;
 
-	case 49: //key - '1'
-		currPlayerId = 1;
-		break;
+		 case 49: //key - '1'
+		 currPlayerId = 1;
+		 break;
 
-	case 50: //key - '2'
-		currPlayerId = 2;
-		break;
+		 case 50: //key - '2'
+		 currPlayerId = 2;
+		 break;
 
-	case 51: //key - '3'
-		currPlayerId = 3;
-		break;
+		 case 51: //key - '3'
+		 currPlayerId = 3;
+		 break;*/
 	}
 }
 
-void processRightClick_selectHero() {
-
-}
-
-void selectedHero_next() {
+void heroSelected_next(heroes hero) {
 	if (gameDetails.isHost) {
+		gameDetails.myHero = hero; //setting hero in case of host only
 		moveToWindow(create_window_waiting);
 	}
 
 	else {
-		helperValidateHero();//TODO: not yet implemented
-		moveToWindow(create_window_main);
+		if (helperValidateHero(hero)) {
+			moveToWindow(create_window_main);
+		}
+
+		else {
+			isHeroVisible[hero] == false;
+		}
 	}
 }
 
 void processLeftClick_selectHero() {
 	switch (getGridChar(downGrid_click)) {
 	case H_SLOWER:
-		gameDetails.myHero = HERO_SLOWER;
-		selectedHero_next();
+		heroSelected_next(HERO_SLOWER);
 		break;
 	case H_STUNNER:
-		gameDetails.myHero = HERO_STUNNER;
-		selectedHero_next();
+		heroSelected_next(HERO_STUNNER);
 		break;
 	case H_DISABLER:
-		gameDetails.myHero = HERO_DISABLER;
-		selectedHero_next();
+		heroSelected_next(HERO_DISABLER);
 		break;
 	case H_BURSTER:
-		gameDetails.myHero = HERO_BURSTER;
-		selectedHero_next();
+		heroSelected_next(HERO_BURSTER);
 		break;
 	}
 }
@@ -795,9 +772,7 @@ void myMouseClickHandler_selectHero(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_selectHero();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_selectHero();
 	}
 }
@@ -812,13 +787,15 @@ void create_window_selectHero() {
 	glutReshapeFunc(handleResize);
 	glutMouseFunc(myMouseClickHandler_selectHero);
 
-	//timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
+	timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
 	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
 }
 
 /* --------------------------------------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------WINDOW_SELECT_TEAM--------------------------------------------
  * --------------------------------------------------------------------------------------------------------------------------------*/
+bool isTeamVisible[2];
+
 void loadTextures_selectTeam() {
 	texId_bg = getTextureFromPng(PATH_IMG_BG);
 	texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
@@ -837,10 +814,21 @@ void putImages_selectTeam() {
 
 	putPngWithChar(5, 8, texId_pick_team, CLICK_PICK_TEAM, 9, 2);
 
-	putBmpWithChar(11, 6, texId_t_angels, CLICK_ANGELS, 4, 4);
-	putPngWithChar(13, 6, texId_att_team_angels, CLICK_ANGELS, 4, 2);
-	putBmpWithChar(11, 16, texId_t_demons, CLICK_DEMONS, 4, 4);
-	putPngWithChar(13, 16, texId_att_team_demons, CLICK_DEMONS, 4, 2);
+	if (isTeamVisible[TEAM_ANGELS]) {
+		putBmpWithChar(11, 6, texId_t_angels, CLICK_ANGELS, 4, 4);
+		putPngWithChar(13, 6, texId_att_team_angels, CLICK_ANGELS, 4, 2);
+	} else {
+		putChars(4, 4, 11, 6, BG_GRASS);
+		putChars(4, 2, 13, 6, BG_GRASS);
+	}
+
+	if (isTeamVisible[TEAM_ANGELS]) {
+		putBmpWithChar(11, 16, texId_t_demons, CLICK_DEMONS, 4, 4);
+		putPngWithChar(13, 16, texId_att_team_demons, CLICK_DEMONS, 4, 2);
+	} else {
+		putChars(4, 4, 11, 16, BG_GRASS);
+		putChars(4, 2, 13, 16, BG_GRASS);
+	}
 
 	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20);
 }
@@ -854,6 +842,9 @@ void initRendering_selectTeam() {
 
 	//Loading all the textures from images
 	loadTextures_selectTeam();
+
+	isTeamVisible[TEAM_ANGELS] = true;
+	isTeamVisible[TEAM_DEMONS] = true;
 
 	t3dInit();
 }
@@ -880,18 +871,20 @@ void handleKeypress_selectTeam(unsigned char key, //The key that was pressed
 	}
 }
 
-void processRightClick_selectTeam() {
-	//handleGridCharSwitch(downGrid_click, PROCESS_MOVE_RIGHT_CLICK);
-}
-
-void teamSelected_next() {
-	if (!gameDetails.isHost) {
-		helperValidateTeam();//TODO: not yet implemented
+void teamSelected_next(teamName team) {
+	if (gameDetails.isHost) {
+		gameDetails.myTeam = team; //setting teamName in case of host only
 		moveToWindow(create_window_selectHero);
 	}
 
 	else {
-		moveToWindow(create_window_selectHero);
+		if (helperValidateTeam(team)) {
+			moveToWindow(create_window_selectHero);
+		}
+
+		else {
+			isTeamVisible[team] == false;
+		}
 	}
 }
 
@@ -901,12 +894,10 @@ void processLeftClick_selectTeam() {
 		moveToWindow(create_window_first);
 		break;
 	case CLICK_ANGELS:
-		gameDetails.myTeam = TEAM_ANGELS;
-		teamSelected_next();
+		teamSelected_next(TEAM_ANGELS);
 		break;
 	case CLICK_DEMONS:
-		gameDetails.myTeam = TEAM_DEMONS;
-		teamSelected_next();
+		teamSelected_next(TEAM_DEMONS);
 		break;
 	}
 }
@@ -924,9 +915,7 @@ void myMouseClickHandler_selectTeam(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
-		processRightClick_selectTeam();
-	} else {
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
 		processLeftClick_selectTeam();
 	}
 }
@@ -1136,7 +1125,7 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 		return;
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) { //used for moving...reaches here only if GLUT_UP
+	if (button == GLUT_RIGHT_BUTTON) { //reaches here only if GLUT_UP
 		processRightClick_main();
 	} else {
 		processLeftClick_main();

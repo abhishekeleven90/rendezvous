@@ -31,6 +31,7 @@
 #define MSG_MOVE "m:"
 
 #define MSG_SERVER_ACK "a:"
+#define MSG_SERVER_REJECT "r:"
 #define SERVER_REQ_IGNORED "i:"
 #define MSG_SERVER_WELCOME_BACK "w:"
 
@@ -94,9 +95,11 @@ string dequeMy(list<string> *l);
 void printQueue(list<string> *l);
 void emptyQueue(list<string> *queue);
 
+bool isServerOk();
+
 connectStatus helperSendConnect();
-void helperValidateTeam();
-void helperValidateHero();
+bool helperValidateTeam(teamName team);
+bool helperValidateHero(heroes hero);
 void helperSendServerMove(Coordinate_grid targetCell);
 
 void createServerThread();
@@ -114,9 +117,13 @@ int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
 
 int getIpOfPlayer(clientStatus status);
+bool isTeamFull(teamName team);
+bool isHeroTaken(heroes hero);
 
 void processBroadcast(char *data);
 void processConnect(char *data);
+void processValidateTeam(char *data, int id);
+void processValidateHero(char *data, int id);
 void processGeneral(char *completeData);
 
 //-----TCP Functions-------
@@ -331,7 +338,8 @@ connectStatus helperSendConnect() { //returns true
 	if (strcmp(type, MSG_SERVER_ACK) == 0) {
 		//gameDetails.isConnectedToServer = true;//TODO: remove
 		gameDetails.isIssueConnectingToServer = false;
-		gameDetails.myId = atoi(data);
+		//gameDetails.myId = atoi(data); //TODO: remove
+		currPlayerId = atoi(data);
 		return CONNECTED_NEW;
 	}
 
@@ -342,16 +350,34 @@ connectStatus helperSendConnect() { //returns true
 		return CONNECTED_ALREADY;
 	}
 
+	return CONNECTED_NOT;
 }
 
-void helperValidateTeam() {
+bool isServerOk() {
+	cout << client_recv_data << endl; //TODO: remove
+
+	char *type = substring(client_recv_data, 0, 2);
+	if (strcmp(type, MSG_SERVER_ACK) == 0) {
+		return true;
+	}
+
+	if (strcmp(type, MSG_SERVER_REJECT) == 0) {
+		return false;
+	}
+}
+
+bool helperValidateTeam(teamName team) {
 	strcpy(client_send_data, MSG_VALIDATE_TEAM);
+	strcat(client_send_data, numToChar(team));
 	sendDataAndWaitForResult();
+	return isServerOk();
 }
 
-void helperValidateHero() {
+bool helperValidateHero(heroes hero) {
 	strcpy(client_send_data, MSG_VALIDATE_HERO);
+	strcat(client_send_data, numToChar(hero));
 	sendDataAndWaitForResult();
+	return isServerOk();
 }
 
 void helperSendServerMove() {
@@ -540,16 +566,56 @@ void processConnect(char *data) {
 	}
 }
 
-void processValidateTeam(char *data) {
-	cout << "received validateTeam message: " << data << endl;
-	//TODO: process
-	strcpy(server_send_data, MSG_SERVER_ACK);//TODO: chnage
+bool isTeamFull(teamName team) {
+	int memberCount = 0;
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		if (players[i].status == CLIENT_JOINED && team == players[i].team->name) {
+			memberCount++;
+		}
+	}
+	if (memberCount < 2) {
+		return false;
+	}
+
+	return true;
 }
 
-void processValidateHero(char *data) {
-	cout << "received validateHero message: " << data << endl;
-	//TODO: process
-	strcpy(server_send_data, MSG_SERVER_ACK);//TODO: change
+void processValidateTeam(char *data, int id) {
+	cout << "received validateTeam msg: '" << data << "' from: " << id << endl;
+
+	teamName team = static_cast<teamName> (atoi(data));
+	if (!isTeamFull(team)) {
+		//players[id].team->name = team;
+		strcpy(server_send_data, MSG_SERVER_ACK);
+	}
+
+	else {
+		strcpy(server_send_data, MSG_SERVER_REJECT);
+	}
+}
+
+bool isHeroTaken(heroes hero) {
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		if (players[i].status == CLIENT_JOINED && hero == players[i].heroType) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void processValidateHero(char *data, int id) {
+	cout << "received validateHero msg: " << data << "' from: " << id << endl;
+
+	heroes hero = static_cast<heroes> (atoi(data));
+	if (!isHeroTaken(hero)) {
+		players[id].heroType = hero;
+		strcpy(server_send_data, MSG_SERVER_ACK);
+	}
+
+	else {
+		strcpy(server_send_data, MSG_SERVER_REJECT);
+	}
 }
 
 void processGeneral(char *completeData) {
@@ -891,7 +957,7 @@ void* server(void* arg) {
 		char* reqData = dataValArr[0];
 		int requestingPlayerId = atoi(dataValArr[1]);
 
-		/*	if (!isValidRequest(requestingPlayerId)) { //TODO: check if required
+		/*	if (!isValidRequest(requestingPlayerId)) { //TODO: check if required, else remove
 		 strcpy(server_send_data, SERVER_REQ_IGNORED);
 		 }*/
 
@@ -901,6 +967,14 @@ void* server(void* arg) {
 
 		else if (strcmp(type, MSG_CONNECT) == 0) {
 			processConnect(reqData);
+		}
+
+		else if (strcmp(type, MSG_VALIDATE_TEAM) == 0) {
+			processValidateTeam(reqData, requestingPlayerId);
+		}
+
+		else if (strcmp(type, MSG_VALIDATE_HERO) == 0) {
+			processValidateHero(reqData, requestingPlayerId);
 		}
 
 		else {
