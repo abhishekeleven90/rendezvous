@@ -45,6 +45,8 @@
 #define MSG_VALIDATE_TEAM "y:"
 #define MSG_VALIDATE_HERO "z:"
 
+#define MSG_GAME_OVER "o:"
+
 #define SERVER_BUSY 'x'
 
 //----------Globals---------
@@ -106,7 +108,9 @@ void createServerThread();
 void createClientBroadcastThread();
 void createSendServerDataThread();
 
+void populateClientSendDataForGameOver();
 void populateClientSendDataForBroadcast();
+
 nodeHelper* convertToNodeHelper(char *ipWithPort);
 
 void setRemoteNode(char* ip, unsigned int port);
@@ -153,6 +157,14 @@ void takeUpdateAction(const char* msg) {
 	char* reqData = dataValArr[0];
 	int requestingPlayerId = atoi(dataValArr[1]);
 
+	//since master maintains if player's reborn timer, handle at master
+	//player reborn timer is not being sent to the client nodes.
+	if (players[requestingPlayerId].isHeroRebornTimer) {
+		cout << "At master node: " << "ignoring message as just reborn hero : "
+				<< requestingPlayerId << endl;
+		return;
+	}
+
 	if (strcmp(type, MSG_MOVE) == 0) {
 		char coordinates[2][DATA_SIZE_KILO];
 		split(reqData, ',', coordinates);
@@ -160,7 +172,6 @@ void takeUpdateAction(const char* msg) {
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
 
 		players[requestingPlayerId].atleastOnceAstar = true;
-		//cout << "requesting player for move " << requestingPlayerId << endl; //TODO: remove
 
 		aStarMove(requestingPlayerId, true); //TODO: AStar through
 	}
@@ -270,23 +281,35 @@ void connectServerBroadcast(int playerId) {
 	close(sock);
 }
 
-void* threadClientBroadcast(void* arg) {
-	cout << "Broadcast started" << endl;
-
-	while (1) {
+//type0 - normalbroadcast
+void supportBroadCast(int type) {
+	if (type == 0) {
 		populateClientSendDataForBroadcast();
+	} else {
+		populateClientSendDataForGameOver();
+	}
 
-		int playerId;
+	for (int i = NUM_OF_PLAYERS - 1; i >= 0; i++) { //loop is backwards, since we want to send info to server at last (Don't ask why)
 
-		for (int i = NUM_OF_PLAYERS - 1; i >= 0; i++) { //loop is backwards, since we want to send info to server at last (Don't ask why)
-
-			if (players[i].status == CLIENT_PRESENT) {
-				strcpy(broadIp2Join, players[i].networkDetails->ip);
-				broadRemote_port = players[i].networkDetails->port;
-				connectServerBroadcast(i);
-			}
+		if (players[i].status == CLIENT_PRESENT) {
+			strcpy(broadIp2Join, players[i].networkDetails->ip);
+			broadRemote_port = players[i].networkDetails->port;
+			connectServerBroadcast(i);
 		}
 	}
+}
+
+void* threadClientBroadcast(void* arg) {
+	cout << "Broadcast Client Thread started" << endl;
+
+	while (!isGameOver) {
+		supportBroadCast(0);
+	}
+
+	cout << "Master node: Game over!!!" << endl;
+	cout << "Winning Team: " << winningTeam << endl;
+	cout << "Stopping broadcast!!" << endl;
+	supportBroadCast(1);
 
 	return NULL;
 }
@@ -400,7 +423,6 @@ void helperSendServerMove() {
 	setRemoteNode(primaryNodeIp, primaryNodePort);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
-	//cout << "sending move data to remote node " << client_send_data << endl; //TODO:remove
 	sendDataDontWaitForResult();
 }
 
@@ -466,6 +488,15 @@ void helperSendAttackHero(int enemyPlayer) {
 	sendDataDontWaitForResult();
 }
 
+//for non-primary nodes
+void processGameOver(char* data) {
+	cout << "At non-primary node: gameover received" << endl;
+	cout << "At non-primary node: winningTeam " << data << endl;
+	//this is where you switch the screen //TODO: SCREEN WIN
+	//data == 0 angels won
+}
+
+//used by non-primary nodes
 void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
 
@@ -618,6 +649,7 @@ void processValidateHero(char *data, int id) {
 	}
 }
 
+//used by master/primary node and no one else
 void processGeneral(char *completeData) {
 	pthread_mutex_lock(&mutexQueuePrimary);
 	enqueMy(&queuePrimary, completeData);
@@ -638,6 +670,12 @@ void createSendServerDataThread() {
 
 void createUpdateServerThread() {
 	createThread(&updateServerThreadId, threadUpdateServer);
+}
+
+void populateClientSendDataForGameOver() {
+	cout << "At master node: called me!! game over!!" << endl;
+	strcpy(broad_send_data, MSG_GAME_OVER);
+	strcat(broad_send_data, numToStr(winningTeam).c_str());
 }
 
 void populateClientSendDataForBroadcast() {
@@ -977,6 +1015,12 @@ void* server(void* arg) {
 			processValidateHero(reqData, requestingPlayerId);
 		}
 
+		//for non-primary nodes
+		else if (strcmp(type, MSG_GAME_OVER) == 0) {
+			processGameOver(reqData);
+		}
+
+		//for primary node
 		else {
 			processGeneral(server_recv_data);
 		}

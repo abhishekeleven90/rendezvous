@@ -213,9 +213,12 @@ void loadTextures_help() {
 	texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
 }
 
+//TODO: Abhishek help page
 void putImages_help() {
 	putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
 
+	putTextToCell(Coordinate_grid(10, 10), "hi my name");
+	//putPngToCell();
 	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20);
 }
 
@@ -672,6 +675,14 @@ void initRendering_selectHero() {
 	 players[1].heroType = HERO_STUNNER;
 	 players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
 	 players[1].team = &angelsTeam;
+	 =======
+	 players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
+	 players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
+	 //players[0].networkDetails = convertToNodeHelper("10.208.23.254:5000");
+	 //players[0].networkDetails = convertToNodeHelper("10.250.215.195:5000");
+	 players[0].team = &angelsTeam;
+	 players[0].isFirstPlayerInTeam = true;
+	 >>>>>>> dddb99732ac3e89f9f45bc43b3185e8ebabdb9d4
 
 	 players[2].heroType = HERO_BURSTER;
 	 players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
@@ -1029,7 +1040,8 @@ void initRendering_main() {
 	strcpy(primaryNodeIp, players[0].networkDetails->ip);
 	primaryNodePort = players[0].networkDetails->port;
 
-	if (gameDetails.isHost) {
+	if (gameDetails.isHost) { //primaryNode
+		isGameOver = false;
 		createClientBroadcastThread();
 		createUpdateServerThread();
 	}
@@ -1094,7 +1106,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 51: //key - '3' : curse //TODO: case may not be required later
-		iAmCursed(CURSE_STUN);
+		//iAmCursed(CURSE_STUN);
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose

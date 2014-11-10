@@ -17,6 +17,14 @@ void giveBirthToPlayer(int playerId, bool reborn) {
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;
+
+	players[playerId].isHeroRebornTimer =false;
+	//TODO: remove logic to be handled by Timer.h
+	/*if(reborn)
+		players[playerId].isHeroRebornTimer = true;
+	else
+		players[playerId].isHeroRebornTimer = false;*/
+
 	players[playerId].atleastOnceAstar = false;
 	players[playerId].toAttackTemple = false;
 	players[playerId].whichEnemyPlayerToAttack = -1;
@@ -90,7 +98,7 @@ void giveBirthToPlayer(int playerId, bool reborn) {
 
 	int row = players[playerId].location.row;
 	int col = players[playerId].location.col;
-	putChar2Grid(row, col, players[playerId].charType, true, false);//it works with only false :(
+	putChar2Grid(row, col, players[playerId].charType, true, reborn);//it works with only false :(
 
 
 	//if reborn, no need to set the enemy and friend ids again

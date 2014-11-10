@@ -243,7 +243,6 @@ void moveHero(int whichPlayer) {
 				//first option has a problem that, the player may not find any area to move
 				//due to some player blocking, then!!!
 				//but can't save all clicks that way someone can cheat -->
-				//
 			}
 		}
 		return; //nothing to move
@@ -513,37 +512,6 @@ void renderGrid() {
 	}
 }
 
-void iAmCursed(curse curseType) {
-	switch (curseType) {
-	case CURSE_STUN:
-		cout << "stunned" << endl;
-		timerCurse(CURSE_STUN);
-		break;
-
-	case CURSE_DISABLE:
-		cout << "disabled" << endl;
-		players[currPlayerId].currPowerMode = POWER_MODE_BASIC; //TODO: currPlayer -> which player
-		timerCurse(CURSE_DISABLE);
-		break;
-
-	case CURSE_WEAK:
-		cout << "slowed" << endl;
-		timerCurse(CURSE_WEAK);
-		break;
-
-	case CURSE_BURST:
-		cout << "bursted" << endl;
-		players[currPlayerId].heroHealth -= CURSE_AMT_BURST_DAMAGE; //TODO: currPlayer -> which player
-		break;
-
-	case CURSE_NONE:
-		cout << "---Inside cursePlayer: shall not come here---" << endl;
-		return;
-	}
-
-	players[currPlayerId].curseType = curseType;
-}
-
 void requestBasicPower() {
 	cout << "requesting basic_power by player " << currPlayerId << endl;
 	if (players[currPlayerId].currPowerMode != POWER_MODE_BASIC) {
@@ -553,7 +521,8 @@ void requestBasicPower() {
 
 void requestMagicPower() {
 	if (players[currPlayerId].curseType != CURSE_DISABLE
-			&& players[currPlayerId].currPowerMode != POWER_MODE_MAGIC) {
+			&& players[currPlayerId].currPowerMode != POWER_MODE_MAGIC
+			&& !players[currPlayerId].isTimerMagicSpellRunning) { //filter at client
 		cout << "requesting power_magic by player " << currPlayerId << endl;
 		helperSendPowerMode(1);
 	} else {

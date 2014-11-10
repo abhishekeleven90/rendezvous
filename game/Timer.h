@@ -3,7 +3,9 @@
 
 #define TIMER_ITEM_GLOBAL 8000
 #define TIMER_MAGIC_SPELL 12000
-#define TIMER_CURSE 5000
+#define TIMER_CURSE 6000
+#define TIMER_HERO_REBORN 10000
+
 #define TIMER_HOST_WAIT 180000
 
 #define REFRESH_RATE 100
@@ -26,74 +28,87 @@ void timerItemGlobal(int whichPlayer) {
 	}
 }
 
-//TODO : to be called when actually using magic power on hero (not implemented yet)
-void timerMagicSpell(int value) {
-
-	if (!players[currPlayerId].isTimerMagicSpellRunning) {
-		cout << "starting timerMagicSpell" << endl;
-		players[currPlayerId].isTimerMagicSpellRunning = true;
-		players[currPlayerId].currPowerMode = POWER_MODE_BASIC; //making powerMode basic since magic spelled
-		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, 0);
-	}
-
-	else {
-		cout << "stopping timerMagicSpell" << endl;
-		players[currPlayerId].isTimerMagicSpellRunning = false;
+void timerHeroBorn(int whichPlayer) {
+	if (!players[whichPlayer].isHeroRebornTimer) {
+		cout << "starting timerHeroBorn for player: " << whichPlayer << endl;
+		players[whichPlayer].isHeroRebornTimer = true;
+		glutTimerFunc(TIMER_HERO_REBORN, timerHeroBorn, whichPlayer);
+	} else {
+		cout << "stopping timerHeroBorn for player: " << whichPlayer << endl;
+		players[whichPlayer].isHeroRebornTimer = false;
 	}
 }
 
-void timerCurse(int curseType) {
+void timerMagicSpell(int whichPlayer) {
+	if (!players[whichPlayer].isTimerMagicSpellRunning) {
+		cout << "starting timerMagicSpell for player: " << whichPlayer << endl;
+		players[whichPlayer].isTimerMagicSpellRunning = true;
+		players[whichPlayer].currPowerMode = POWER_MODE_BASIC;
+		glutTimerFunc(TIMER_MAGIC_SPELL, timerMagicSpell, whichPlayer);
+	} else {
+		cout << "stopping timerMagicSpell for player: " << whichPlayer << endl;
+		players[whichPlayer].isTimerMagicSpellRunning = false;
+	}
+}
 
-	if (!players[currPlayerId].isTimerCurseRunning) {
-		cout << "starting timerCurse" << endl;
+void timerCurse(int whichPlayer) {
 
-		switch (curseType) {
+	if (!players[whichPlayer].isTimerCurseRunning) {
+		cout << "starting timerCurse for player " << whichPlayer << endl; //TODO: remove
+		switch (players[whichPlayer].curseType) {
 		case CURSE_STUN:
-			players[currPlayerId].speedMoveTemp
-					= players[currPlayerId].speedMove;
-			players[currPlayerId].speedMove = 0;
-			players[currPlayerId].currPowerMode = POWER_MODE_STUN;
+			players[whichPlayer].speedMoveTemp = players[whichPlayer].speedMove;
+			players[whichPlayer].speedMove = SPEED_MIN;
+			players[whichPlayer].currPowerMode = POWER_MODE_STUN;
 			break;
 		case CURSE_DISABLE:
+			players[whichPlayer].currPowerMode = POWER_MODE_BASIC;
 			//Nothing to be done over here
 			break;
-		case CURSE_WEAK:
-			players[currPlayerId].strength -= CURSE_AMT_SLOW_STRENGTH;
+		case CURSE_WEAK: //decrease strength
+			players[whichPlayer].strength -= CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
 			//Nothing to be done over here
 			break;
+		case CURSE_NONE:
+			cout << "timerCurse should not reach here" << endl;
+			break;
 		}
 
-		players[currPlayerId].isTimerCurseRunning = true;
-		glutTimerFunc(TIMER_CURSE, timerCurse, curseType);
+		players[whichPlayer].isTimerCurseRunning = true;
+		glutTimerFunc(TIMER_CURSE, timerCurse, whichPlayer);
 	}
 
 	else {
-		cout << "stopping timerCurse" << endl;
-		players[currPlayerId].isTimerCurseRunning = false;
+		cout << "stopping timerCurse for player " << whichPlayer << endl; //TODO: remove
+		players[whichPlayer].isTimerCurseRunning = false;
 
-		switch (curseType) {
+		switch (players[whichPlayer].curseType) {
 		case CURSE_STUN:
-			players[currPlayerId].currPowerMode = POWER_MODE_BASIC;
-			players[currPlayerId].speedMove
-					+= players[currPlayerId].speedMoveTemp;
-			if (players[currPlayerId].speedMove > SPEED_MAX) {
-				players[currPlayerId].speedMove = SPEED_MAX;
+			players[whichPlayer].currPowerMode = POWER_MODE_BASIC;
+			players[whichPlayer].speedMove
+					+= players[whichPlayer].speedMoveTemp;
+			if (players[whichPlayer].speedMove > SPEED_MAX) {
+				players[whichPlayer].speedMove = SPEED_MAX;
 			}
 			break;
 		case CURSE_DISABLE:
 			//Nothing to be done over here
 			break;
 		case CURSE_WEAK:
-			players[currPlayerId].strength += CURSE_AMT_SLOW_STRENGTH;
+			players[whichPlayer].strength += CURSE_AMT_SLOW_STRENGTH;
 			break;
 		case CURSE_BURST:
 			//Nothing to be done over here
 			break;
+		case CURSE_NONE:
+			cout << "timerCurse should not reach here" << endl;
+			break;
+
 		}
 
-		players[currPlayerId].curseType = CURSE_NONE;
+		players[whichPlayer].curseType = CURSE_NONE;
 	}
 }
 
