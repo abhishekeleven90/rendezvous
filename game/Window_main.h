@@ -164,7 +164,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 51: //key - '3' : curse //TODO: case may not be required later
-		iAmCursed(CURSE_STUN);
+		//iAmCursed(CURSE_STUN);
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose

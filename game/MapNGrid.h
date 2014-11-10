@@ -143,24 +143,6 @@ void copyPrimaryGrid() {
 	}
 }
 
-void copyPrimaryPlayers() {
-	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		players[i].currPowerMode = players[i].currPowerMode;
-
-		players[i].heroHealth = players[i].heroHealth;
-		players[i].strength = players[i].strength;
-		players[i].speedMove = players[i].speedMove;
-
-		players[i].curseType = players[i].curseType;
-
-		players[i].isTimerItemGlobalRunning
-				= players[i].isTimerItemGlobalRunning;
-		players[i].isTimerMagicSpellRunning
-				= players[i].isTimerMagicSpellRunning;
-		players[i].isTimerCurseRunning = players[i].isTimerCurseRunning;
-	}
-}
-
 //copies the state of the initial map to another array
 //not modifiable now, as discussed
 void copyInit() {
@@ -234,14 +216,14 @@ float t3dComputeScale(const char* str) {
 	return CELL_LENGTH / width;
 }
 
-void putTextToCell(Coordinate_grid grid, string text) {
+void putTextToCell(Coordinate_grid grid, string text, float r=1.0f, float g=0.0f, float b=0.0f) {
 	Coordinate_openGl openGl = getOpenGlCoordinatesFromGrid(grid);
 	float t3dScale = t3dComputeScale("qqqqq");
 	glPushMatrix();
 	glTranslatef(openGl.x, openGl.y, -5.0f);
 	//glTranslatef(0, 0, -4.0f);
 	glScalef(t3dScale, t3dScale, t3dScale);
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(r, g, b);
 	//glTranslatef(0, 0, 1.5f / _scale);
 	t3dDraw3D(text, -1, 1, 0.2f);
 	glPopMatrix();

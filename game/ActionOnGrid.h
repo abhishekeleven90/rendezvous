@@ -48,7 +48,7 @@ Coordinate_grid getRandomCoordinatesForItem(teamName name, bool isPrimary) {
 			continue;
 		}
 
-		if (getGridChar(randomRow, randomCol,true, isPrimary) == BG_GRASS) { //assuming that items can come only on 'grass'
+		if (getGridChar(randomRow, randomCol, true, isPrimary) == BG_GRASS) { //assuming that items can come only on 'grass'
 			break;
 		}
 	}
@@ -230,9 +230,11 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 
 	enemyTeam->templeHealth -= players[whichPlayer].strength;
 
-	////TODO: ABHISHEK win lose logic
-	if (enemyTeam->templeHealth <= 0)
+	if (enemyTeam->templeHealth <= 0) {
 		enemyTeam->templeHealth = 0;
+		isGameOver = true;
+		winningTeam = players[whichPlayer].team->name;
+	}
 	setAttackTemple(whichPlayer, false);
 	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
 			<< enemyTeam->templeHealth << endl;
@@ -241,27 +243,93 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 
 }
 
-//only to be called by server, moveHero()
-void decreaseEnemyPlayerHealth(int whichPlayer) { //this is ok, use it
+void decreaseEnemyPlayerHealthHelper(int whichPlayer, bool burstDamage) {
+
 	int enemyPlayer = players[whichPlayer].whichEnemyPlayerToAttack;
-	players[enemyPlayer].heroHealth -= players[whichPlayer].strength;
+
+	if (!burstDamage)
+		players[enemyPlayer].heroHealth -= players[whichPlayer].strength;
+	else
+		players[enemyPlayer].heroHealth -= CURSE_AMT_BURST_DAMAGE;
+
 	if (players[enemyPlayer].heroHealth <= 0) {
 		//reborn logic
 		players[enemyPlayer].heroHealth = 0;
 		giveBirthToPlayer(enemyPlayer, true);//reborn
 		//reborn
+		timerHeroBorn(enemyPlayer);
 	}
 	setAttackEnemyPlayer(whichPlayer, -1);
 	cout << "Yayy " << whichPlayer << " decreased health of " << enemyPlayer
 			<< " to " << players[enemyPlayer].heroHealth << endl;
-	//TODO: Abhishek play temple attack sound
+	//TODO: Abhishek play enemy attack sound
 	//TODO: Abhishek gif attack animation
 
+}
+
+//used only by master node
+void curseThePlayer(int byWhichPlayer, int onWhichPlayer) {
+	switch (players[byWhichPlayer].heroType) {
+	case HERO_STUNNER:
+		cout << byWhichPlayer << " stunned " << onWhichPlayer << endl;
+		players[onWhichPlayer].curseType = CURSE_STUN;
+		timerCurse(onWhichPlayer);
+		break;
+
+	case HERO_DISABLER:
+		cout << byWhichPlayer << " disabled " << onWhichPlayer << endl;
+		players[onWhichPlayer].curseType = CURSE_DISABLE;
+		timerCurse(onWhichPlayer);
+		break;
+
+	case HERO_SLOWER:
+		cout << byWhichPlayer << " slowed " << onWhichPlayer << endl;
+		players[onWhichPlayer].curseType = CURSE_SLOW;
+		timerCurse(onWhichPlayer);
+		break;
+
+	case HERO_BURSTER:
+		cout << byWhichPlayer << " bursted " << onWhichPlayer << endl;
+		players[onWhichPlayer].curseType = CURSE_BURST;
+		//TODO: Abhishek may be redundant code
+		players[byWhichPlayer].whichEnemyPlayerToAttack = onWhichPlayer;
+		decreaseEnemyPlayerHealthHelper(byWhichPlayer, true);
+		break;
+
+	default:
+		cout << "---Inside curseThePlayer: shall not come here---" << endl;
+		return;
+	}
+}
+
+//only to be called by server, moveHero()
+void decreaseEnemyPlayerHealth(int whichPlayer) { //this is ok, use it
+	int enemyPlayer = players[whichPlayer].whichEnemyPlayerToAttack;
+
+	//magic logic, should be near and left clicked, and magic mode on
+	bool toApplyCurse = false;
+	if (players[whichPlayer].currPowerMode == POWER_MODE_MAGIC) {
+		if (!players[whichPlayer].isTimerMagicSpellRunning)
+			toApplyCurse = true;
+	}
+
+	if (toApplyCurse) {
+		timerMagicSpell(whichPlayer);
+		setAttackEnemyPlayer(whichPlayer, -1);
+		curseThePlayer(whichPlayer, enemyPlayer);
+		//TODO: here!!!
+	} else {
+		decreaseEnemyPlayerHealthHelper(whichPlayer, false);
+	}
+	cout << "at master node: at end of decrease health" << endl;
 }
 
 //to be called by client
 void attackAngelsTemple() {
 	//note: validation is done itself at the client side
+	if (players[currPlayerId].curseType == CURSE_STUN)
+		return;
+
 	if (players[currPlayerId].team->name == TEAM_DEMONS) {
 		helperSendAttackTemple();
 	}
@@ -270,13 +338,19 @@ void attackAngelsTemple() {
 //to be called by client
 void attackDemonsTemple() {
 	//note: validation is done itself at the client side
+	if (players[currPlayerId].curseType == CURSE_STUN)
+		return;
+
 	if (players[currPlayerId].team->name == TEAM_ANGELS) {
 		helperSendAttackTemple();
 	}
 }
 
-//to be called by client, currentPlayer
+//to be called by client, currentPlayer, non-primary node
 void attackEnemy() {
+	if (players[currPlayerId].curseType == CURSE_STUN)
+		return;
+
 	cout << "requesting to attack enemy" << endl;
 	//note: validation is done itself at the client side
 	charCellType toAttackHeroCellType =

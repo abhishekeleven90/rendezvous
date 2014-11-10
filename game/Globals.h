@@ -120,4 +120,7 @@ Coordinate_grid downGrid_click; //used for clickHandler
 pthread_mutex_t mutexQueuePrimary;
 pthread_mutex_t mutexTargetCell;
 
+bool isGameOver=false;
+teamName winningTeam;
+
 #endif

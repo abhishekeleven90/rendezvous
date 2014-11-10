@@ -128,6 +128,7 @@ struct Player {
 	int isTimerItemGlobalRunning;
 	int isTimerMagicSpellRunning;
 	int isTimerCurseRunning;
+	bool isHeroRebornTimer;
 
 	//some extra info to help
 	bool isFirstPlayerInTeam; //denotes whether I am the first player in my team to join..right now required for location

@@ -223,9 +223,12 @@ void loadTextures_help() {
 	texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
 }
 
+//TODO: Abhishek help page
 void putImages_help() {
 	putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
 
+	putTextToCell(Coordinate_grid(10,10),"hi my name");
+	//putPngToCell();
 	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20);
 }
 
@@ -891,6 +894,7 @@ void initRendering_main() {
 
 	createServerThread();
 	if (currPlayerId == PLAYER_ID_PRIMARY) { //primaryNode
+		isGameOver = false;
 		createClientBroadcastThread();
 		createUpdateServerThread();
 	}
@@ -955,7 +959,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 51: //key - '3' : curse //TODO: case may not be required later
-		iAmCursed(CURSE_STUN);
+		//iAmCursed(CURSE_STUN);
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose
