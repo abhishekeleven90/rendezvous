@@ -23,7 +23,7 @@
 //----------Constants---------
 #define M 400
 #define QUEUE_LIMIT 5
-#define RETRY_COUNT 5
+#define RETRY_COUNT 60
 
 #define DATA_SIZE_KILO 1024
 
@@ -911,7 +911,7 @@ void getMyIp(char* ip) {
 			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
 			//printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
 			if (strcmp(ifa->ifa_name, "eth0") == 0 || strcmp(ifa->ifa_name,
-					"wlan0") == 0) {
+					"wlan0") == 0 || strcmp(ifa->ifa_name, "p3p1") == 0) {
 				strcpy(ip, addressBuffer);
 			}
 		} else if (ifa->ifa_addr->sa_family == AF_INET6) { // check it is IP6
