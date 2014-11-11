@@ -1222,9 +1222,9 @@ void drawScene_joiningGame() {
 
 		timerPageCreatingGame(0);
 
-		if (!gameDetails.isHost) {
-			helperRequestPlayersDetails();
-		}
+		//if (!gameDetails.isHost) { //TODO: check if req
+		helperRequestPlayersDetails();
+		//}
 
 		setAttributes();
 

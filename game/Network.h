@@ -428,12 +428,15 @@ void helperRequestPlayersDetails() {
 	sendDataAndWaitForResult();
 	cout << "helperRequestPlayersDetails rcvd- " << client_recv_data << endl; //TODO: remove
 
-	split(client_recv_data, ',', DATA_RCVD);
+	char* data = substring(client_recv_data, 3, strlen(client_recv_data));
+
+	split(data, ',', DATA_RCVD);
 	int k = 0, i = 0;
 	for (i = 0; i < NUM_OF_PLAYERS; i++) {
 		players[i].status = STATUS_PRESENT;
 		players[i].heroType = static_cast<heroes> (atoi(DATA_RCVD[k++]));
-		cout << "setting heroType of: " << i << " to- " << k << endl;//TODO: remove
+		cout << "setting heroType of: " << i << " to- " << players[i].heroType
+				<< endl;//TODO: remove
 
 		teamName team = static_cast<teamName> (atoi(DATA_RCVD[k++]));
 		if (team == TEAM_ANGELS) {
@@ -744,6 +747,8 @@ void processReqPlayerDetails(char *data) {
 			break; //breaking since if a client is found not joined, all subsequent shall also not be joined
 		}
 	}
+
+	cout << "processReqPlayerDetails, sending: " << server_send_data << endl; //TODO: remove
 }
 
 //used by master/primary node and no one else
