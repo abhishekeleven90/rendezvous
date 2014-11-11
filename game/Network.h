@@ -159,6 +159,7 @@ bool isAllClientsAlive() {
 }
 
 void takeUpdateAction(const char* msg) {
+	cout << "taking updateAction for msg: " << msg << endl; //TODO: remove
 	char* type = substring(msg, 0, 2);
 	char* data = substring(msg, 3, strlen(msg));
 
@@ -478,6 +479,16 @@ void helperSendServerMove() {
 	strcat(client_send_data, ",");
 	strcat(client_send_data, colChar);
 
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		strcat(client_send_data, "?");
+		strcat(client_send_data, numToStr(currPlayerId).c_str());
+
+		processGeneral(client_send_data);
+		return;
+	}
+	//------------------------------------Change for single player (end)----------
+
 	//setting the remoteNode ip & port
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
@@ -515,6 +526,16 @@ void helperSendAttackTemple() {
 	strcat(client_send_data, ",");
 	strcat(client_send_data, colChar);
 
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		strcat(client_send_data, "?");
+		strcat(client_send_data, numToStr(currPlayerId).c_str());
+
+		processGeneral(client_send_data);
+		return;
+	}
+	//------------------------------------Change for single player (end)----------
+
 	//setting the remoteNode ip & port
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
@@ -539,6 +560,16 @@ void helperSendAttackHero(int enemyPlayer) {
 	strcat(client_send_data, colChar);
 	strcat(client_send_data, ",");
 	strcat(client_send_data, enemyIdChar);
+
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		strcat(client_send_data, "?");
+		strcat(client_send_data, numToStr(currPlayerId).c_str());
+
+		processGeneral(client_send_data);
+		return;
+	}
+	//------------------------------------Change for single player (end)----------
 
 	//setting the remoteNode ip & port
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
@@ -778,6 +809,7 @@ void createSendServerDataThread() {
 }
 
 void createUpdateServerThread() {
+	cout << "createUpdateServerThread" << endl;
 	createThread(&updateServerThreadId, threadUpdateServer);
 }
 

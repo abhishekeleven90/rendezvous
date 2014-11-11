@@ -40,4 +40,12 @@ bool isOponentCellForTeam(Coordinate_grid grid, int whichPlayer) { //returns tru
 
 	return false;
 }
+
+//------------------------------------Change for single player (start)----------
+bool isAttributeSpace(Coordinate_grid grid) {
+	return !isValidRowNColIndex(grid, true);
+
+}
+//------------------------------------Change for single player (end)----------
+
 #endif

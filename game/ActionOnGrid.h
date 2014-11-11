@@ -234,6 +234,12 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 		enemyTeam->templeHealth = 0;
 		isGameOver = true;
 		winningTeam = players[whichPlayer].team->name;
+
+		//------------------------------------Change for single player (start)----------
+		if (gameDetails.isSinglePlayerGame) {
+			processGameOver(numToChar(winningTeam));
+		}
+		//------------------------------------Change for single player (end)----------
 	}
 	setAttackTemple(whichPlayer, false);
 	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
@@ -370,7 +376,31 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 	//players[currPlayerId].targetCell = grid;
 	onClickTargetCell = grid;
 
-	switch (gridChar[grid.row][grid.col]) {
+	//------------------------------------Change for single player (start)----------
+	charCellType charType;
+	int row = grid.row;
+	int col = grid.col;
+
+	if (gameDetails.isSinglePlayerGame) {
+		charType = gridCharPrimary[row][col];
+
+		if (isAttributeSpace(Coordinate_grid(row, col - ATTRIBUTE_WIDTH))) {
+			charType = BG_ATTRIBUTE;
+		}
+
+		else if (isOponentCellForTeam(
+				Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
+			charType = BG_BLOCKED;
+		}
+
+	}
+
+	else {
+		charType = gridChar[row][col];
+	}
+	//------------------------------------Change for single player (end)----------
+
+	switch (charType) {
 	case BG_GRASS:
 		processCase(callType, grid, texId_bg_grass, "Gra",
 				sendServerMoveThrough, wrong, false);

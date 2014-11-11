@@ -3,6 +3,7 @@
 
 #include "text3d.h"
 #include "Network.h"
+#include "AI.h"
 
 void moveToWindow(void f()) {
 	glutDestroyWindow(windowId_current);
@@ -520,8 +521,6 @@ bool isShowInput;
 void loadTextures_multiplayer() {
 	texId_bg = getTextureFromPng(PATH_IMG_BG);
 
-	texId_btn_back = getTextureFromPng(PATH_IMG_BACK);
-
 	texId_join_game = getTextureFromPng(PATH_IMG_JOIN_GAME);
 	texId_host_game = getTextureFromPng(PATH_IMG_HOST_GAME);
 
@@ -532,8 +531,6 @@ void loadTextures_multiplayer() {
 }
 
 void putImages_multiplayer() {
-	putPngWithChar(18, 12, texId_btn_back, CLICK_BACK, 2, 2);
-
 	putPngWithChar(7, 6, texId_host_game, CLICK_HOST_GAME, 4, 2);
 	putPngWithChar(7, 16, texId_join_game, CLICK_JOIN_GAME, 4, 2);
 
@@ -670,10 +667,6 @@ void processClickHost() {
 
 void processLeftClick_multiplayer() {
 	switch (getGridChar(downGrid_click)) {
-	case CLICK_BACK:
-		moveToWindow(create_window_first);
-		break;
-
 	case CLICK_JOIN_GAME:
 		gameDetails.isHost = false;
 		isShowInput = true;
@@ -804,6 +797,16 @@ void handleKeypress_selectTeam(unsigned char key, //The key that was pressed
 }
 
 void teamSelected_next(TeamStruct* team) {
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		gameDetails.isHost = true;
+
+		players[PLAYER_ID_PRIMARY].team = team;
+		cout << "set primary team as: " << team->name << endl;
+		moveToWindow(create_window_selectHero);
+	}
+	//------------------------------------Change for single player (end)----------
+
 	if (gameDetails.isHost) {
 		players[PLAYER_ID_PRIMARY].team = team; //setting teamName in case of host only
 		moveToWindow(create_window_selectHero);
@@ -968,6 +971,16 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 }
 
 void heroSelected_next(heroes hero) {
+
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		players[PLAYER_ID_PRIMARY].heroType = hero;
+		cout << "set primary hero as: " << hero << endl;
+		moveToWindow(create_window_joiningGame);
+	}
+	//------------------------------------Change for single player (end)----------
+
+
 	if (gameDetails.isHost) {
 		players[PLAYER_ID_PRIMARY].heroType = hero; //setting hero in case of host only
 		cout << "setting heroType of: " << PLAYER_ID_PRIMARY << " to- " << hero
@@ -1172,7 +1185,56 @@ void setAttributes() {
 	}
 	copyPrimaryGrid();
 
-	blockOpponentsArea();
+	blockOpponentsArea(); //TODO: remove this check
+}
+
+void processJoinForSinglePlayer() {
+	currPlayerId = PLAYER_ID_PRIMARY;
+	players[currPlayerId].networkDetails = selfNode;
+	gameDetails.hostDetails = selfNode;
+
+	//--selecting teams
+	players[1].team = players[0].team; //my friend
+
+	if (players[0].team->name == TEAM_ANGELS) {
+		players[2].team = &demonsTeam;
+		players[3].team = &demonsTeam;
+	} else {
+		players[2].team = &angelsTeam;
+		players[3].team = &angelsTeam;
+	}
+
+	//--selecting heroes
+	int k = 1;
+	for (int i = 0; i < 4; i++) {
+		if (players[0].heroType != i) {
+			players[k++].heroType = static_cast<heroes> (i);
+		}
+	}
+
+	//---setting is firstPlayerInTeam
+	players[0].isFirstPlayerInTeam = true;
+	players[1].isFirstPlayerInTeam = false;
+	players[2].isFirstPlayerInTeam = true;
+	players[3].isFirstPlayerInTeam = false;
+
+	//---all are present
+	players[0].status = STATUS_PRESENT;
+	players[1].status = STATUS_PRESENT;
+	players[2].status = STATUS_PRESENT;
+	players[3].status = STATUS_PRESENT;
+
+	//TODO: remove below
+	cout << players[0].team->name << endl;
+	cout << players[1].team->name << endl;
+	cout << players[2].team->name << endl;
+	cout << players[3].team->name << endl;
+	cout << players[0].heroType << endl;
+	cout << players[1].heroType << endl;
+	cout << players[2].heroType << endl;
+	cout << players[3].heroType << endl;
+
+	setAttributes();
 }
 
 //Initializes 3D rendering
@@ -1182,10 +1244,16 @@ void initRendering_joiningGame() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	loadTextures_joiningGame();
+
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		processJoinForSinglePlayer();
+	}
+	//------------------------------------Change for single player (end)----------
+
 	gameDetails.isStartJoiningTimer = false;
 	gameDetails.isDoneWithJoining = false;
-
-	loadTextures_joiningGame();
 
 	t3dInit();
 }
@@ -1217,6 +1285,12 @@ void drawScene_joiningGame() {
 	glLoadIdentity(); //Reset the drawing perspective
 
 	putImages_joiningGame();
+
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		moveToWindow(create_window_main);
+	}
+	//------------------------------------Change for single player (end)----------
 
 	if (isFineToCallJoiningFunctions()) {
 		timerPageCreatingGame(0);
@@ -1364,6 +1438,18 @@ void initRendering_main() {
 		//createClientBroadcastThread(); //Created in joining page
 		createUpdateServerThread();
 	}
+
+	//------------------------------------Change for single player (start)----------
+	if (gameDetails.isSinglePlayerGame) {
+		//Creating AI threads
+		ai1 = new AI(1);
+		ai2 = new AI(2);
+		ai3 = new AI(3);
+		createAIThread1();
+		createAIThread2();
+		createAIThread3();
+	}
+	//------------------------------------Change for single player (end)----------
 }
 
 int i = 0;
@@ -1463,8 +1549,11 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 }
 
 void create_window_main() {
+	cout << "rchd1" << endl;
 	windowId_current = glutCreateWindow("Game is on!!!");
+	cout << "rchd2" << endl;
 	initRendering_main(); //Initialize rendering
+	cout << "rchd3" << endl;
 
 	//set handler functions
 	glutDisplayFunc(drawScene_main);
