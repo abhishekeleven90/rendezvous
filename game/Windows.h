@@ -935,7 +935,7 @@ void initRendering_selectHero() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	loadTextures_selectHero();
-	putGrass();
+	//putGrass(); //TODO: remove
 
 	isHeroVisible[HERO_STUNNER] = true;
 	isHeroVisible[HERO_SLOWER] = true;
@@ -970,6 +970,8 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 void heroSelected_next(heroes hero) {
 	if (gameDetails.isHost) {
 		players[PLAYER_ID_PRIMARY].heroType = hero; //setting hero in case of host only
+		cout << "setting heroType of: " << PLAYER_ID_PRIMARY << " to- " << hero
+				<< endl;//TODO: remove
 		moveToWindow(create_window_waiting);
 	}
 
@@ -1065,6 +1067,11 @@ void initRendering_waiting() {
 	gameDetails.hostDetails = selfNode;
 	players[currPlayerId].status = STATUS_PRESENT;
 	players[currPlayerId].isFirstPlayerInTeam = true;
+
+	//Initializing the herotypes to default
+	for (int i = 1; i < NUM_OF_PLAYERS; i++) {
+		players[i].heroType = HERO_NOT_PRESENT;
+	}
 
 	timerHostWait(0);
 	loadTextures_waiting();
@@ -1215,7 +1222,9 @@ void drawScene_joiningGame() {
 
 		timerPageCreatingGame(0);
 
-		helperRequestPlayersDetails();
+		if (!gameDetails.isHost) {
+			helperRequestPlayersDetails();
+		}
 
 		setAttributes();
 

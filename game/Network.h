@@ -433,6 +433,7 @@ void helperRequestPlayersDetails() {
 	for (i = 0; i < NUM_OF_PLAYERS; i++) {
 		players[i].status = STATUS_PRESENT;
 		players[i].heroType = static_cast<heroes> (atoi(DATA_RCVD[k++]));
+		cout << "setting heroType of: " << i << " to- " << k << endl;//TODO: remove
 
 		teamName team = static_cast<teamName> (atoi(DATA_RCVD[k++]));
 		if (team == TEAM_ANGELS) {
@@ -587,7 +588,6 @@ void processBroadcast(char *data) {
 
 	if (currPlayerId != PLAYER_ID_PRIMARY) { //copying the players information only if I am not the primary Node
 		//copying player attributes
-		cout << GLOBAL_ARR[1] << endl; //TODO: remove
 		split(GLOBAL_ARR[1], ',', DATA_RCVD);
 		k = 0;
 		for (int i = 0; i < NUM_OF_PLAYERS; i++) {
@@ -700,8 +700,10 @@ void processValidateTeam(char *data, int id) {
 }
 
 bool isHeroTaken(heroes hero) {
+	cout << players[0].heroType;
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		if (players[i].status == STATUS_PRESENT && hero == players[i].heroType) {
+			cout << "hero: " << hero << " taken by- " << i << endl;
 			return true;
 		}
 	}
@@ -715,6 +717,7 @@ void processValidateHero(char *data, int id) {
 	heroes hero = static_cast<heroes> (atoi(data));
 	if (!isHeroTaken(hero)) {
 		players[id].heroType = hero;
+		cout << "setting heroType of: " << id << " to- " << hero << endl;//TODO: remove
 		strcpy(server_send_data, MSG_SERVER_ACK);
 	}
 
