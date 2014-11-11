@@ -47,6 +47,7 @@
 #define MSG_REQ_PLAYER_DETAILS "l:"
 
 #define MSG_GAME_OVER "o:"
+#define MSG_JOINING "g:"
 
 #define SERVER_BUSY 'x'
 
@@ -84,7 +85,7 @@ nodeHelper* selfNode = new nodeHelper;
 list<string> queuePrimary;
 
 enum broadcastType {
-	BROADCAST_ALL, BROADCAST_GAME_OVER
+	BROADCAST_ALL, BROADCAST_GAME_OVER, BROADCAST_JOINING
 };
 
 //****************Function Declarations*******************
@@ -115,6 +116,7 @@ void createClientBroadcastThread();
 void createSendServerDataThread();
 
 void populateClientSendDataForGameOver();
+void populateClientSendDataForJoining();
 void populateClientSendDataForBroadcast();
 
 nodeHelper* convertToNodeHelper(char *ipWithPort);
@@ -130,6 +132,8 @@ int getIpOfPlayer(playerStatus status);
 bool isTeamFull(teamName team);
 bool isHeroTaken(heroes hero);
 
+void processGameOver(char* data);
+void processJoining(char* data);
 void processBroadcast(char *data);
 void processConnect(char *data);
 void processValidateTeam(char *data, int id);
@@ -295,12 +299,13 @@ void supportBroadCast(broadcastType type) {
 	case BROADCAST_GAME_OVER:
 		populateClientSendDataForGameOver();
 		break;
+	case BROADCAST_JOINING:
+		populateClientSendDataForJoining();
+		break;
 	}
 
 	for (int i = NUM_OF_PLAYERS - 1; i >= 0; i--) { //loop is backwards, since we want to send info to server at last (Don't ask why)
-		cout << "supportBroadCast i: " << i << endl;
 		if (players[i].status == STATUS_PRESENT) {
-			cout << "supportBroadCast i: " << i << endl;
 			strcpy(broadIp2Join, players[i].networkDetails->ip);
 			broadRemote_port = players[i].networkDetails->port;
 			connectServerBroadcast(i);
@@ -541,11 +546,13 @@ void processGameOver(char* data) {
 	//data == 0 angels won
 }
 
+void processJoining(char* data) {
+	gameDetails.isStartJoiningTimer = true;
+}
+
 //used by non-primary nodes
 void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
-
-	gameDetails.isFirstBroadcastReceived = true;
 
 	for (int i = 0; i < M; i++) {
 		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
@@ -762,8 +769,12 @@ void populateClientSendDataForGameOver() {
 	strcat(broad_send_data, numToStr(winningTeam).c_str());
 }
 
+void populateClientSendDataForJoining() {
+	cout << "Broadcast Joining" << endl;
+	strcpy(broad_send_data, MSG_JOINING);
+}
+
 void populateClientSendDataForBroadcast() {
-	cout << "1" << endl;
 	strcpy(broad_send_data, MSG_BROADCAST);
 
 	//populating 'broad_client_send_data' with grid
@@ -775,15 +786,11 @@ void populateClientSendDataForBroadcast() {
 		}
 	}
 
-	cout << "2" << endl;
-
 	strcat(broad_send_data, "+");
 
 	//populating 'broad_client_send_data' with attributes
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		cout << "i: " << i << endl;
 		if (players[i].status != STATUS_NOT_JOINED) {
-			cout << "i: " << i << endl;
 
 			Player player = players[i];
 
@@ -829,10 +836,7 @@ void populateClientSendDataForBroadcast() {
 		else {
 			strcat(broad_send_data, "x");
 			break;
-			cout << "3" << endl;
 		}
-
-		cout << "4" << endl;
 	}
 }
 
@@ -1129,12 +1133,15 @@ void* server(void* arg) {
 			processGameOver(reqData);
 		}
 
+		else if (strcmp(type, MSG_JOINING) == 0) {
+			processJoining(reqData);
+		}
+
 		//for primary node
 		else {
 			processGeneral(server_recv_data);
 		}
 
-		cout << "sending: " << server_send_data << endl; //TODO: remove
 		send(connected, server_send_data, strlen(server_send_data), 0);
 		fflush(stdout);//may be fatal, adding for UI
 

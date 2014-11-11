@@ -570,7 +570,7 @@ void drawScene_waiting() {
 	putImages_waiting();
 
 	if (gameDetails.isTimerNotHostWaiting) {
-
+		supportBroadCast(BROADCAST_JOINING);
 		moveToWindow(create_window_joiningGame);
 	}
 
@@ -637,6 +637,12 @@ void putImages_joiningGame() {
 
 void setAttributes() {
 	initMap();
+
+	//Placing items in the map
+	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
+		initItemAtRandomPos();
+	}
+
 	loadTeamAttributes();
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		if (players[i].status == STATUS_PRESENT) {
@@ -644,12 +650,8 @@ void setAttributes() {
 		}
 	}
 	copyPrimaryGrid();
-	blockOpponentsArea();
 
-	//Placing items in the map
-	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
-		initItemAtRandomPos();
-	}
+	blockOpponentsArea();
 }
 
 //Initializes 3D rendering
@@ -659,19 +661,31 @@ void initRendering_joiningGame() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	gameDetails.isFirstBroadcastReceived = false;
-	gameDetails.isTimerPageCreatingGameRunning = false;
+	gameDetails.isStartJoiningTimer = false;
+	gameDetails.isDoneWithJoining = false;
 
 	loadTextures_joiningGame();
-	helperRequestPlayersDetails();
-
-	setAttributes();
-
-	if (gameDetails.isHost) {
-		createClientBroadcastThread();
-	}
 
 	t3dInit();
+}
+
+bool isCalledJoiningFunctions = false;
+bool isFineToCallJoiningFunctions() {
+	if (isCalledJoiningFunctions) {
+		return false;
+	}
+
+	if (gameDetails.isHost) {
+		isCalledJoiningFunctions = true;
+		return true;
+	}
+
+	if (gameDetails.isStartJoiningTimer) {
+		isCalledJoiningFunctions = true;
+		return true;
+	}
+
+	return false;
 }
 
 //Draws the 3D scene
@@ -683,12 +697,20 @@ void drawScene_joiningGame() {
 
 	putImages_joiningGame();
 
-	if (gameDetails.isFirstBroadcastReceived) {
+	if (isFineToCallJoiningFunctions()) {
+
 		timerPageCreatingGame(0);
+
+		helperRequestPlayersDetails();
+
+		setAttributes();
+
+		if (gameDetails.isHost) {
+			createClientBroadcastThread();
+		}
 	}
 
-	if (gameDetails.isFirstBroadcastReceived
-			&& !gameDetails.isTimerPageCreatingGameRunning) {
+	if (gameDetails.isDoneWithJoining) {
 		moveToWindow(create_window_main);
 	}
 
@@ -846,20 +868,14 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 	}
 }
 
-void initializeAttributes() { //TODO: remove if not required
-
-}
-
 void heroSelected_next(heroes hero) {
 	if (gameDetails.isHost) {
 		players[PLAYER_ID_PRIMARY].heroType = hero; //setting hero in case of host only
-		initializeAttributes();
 		moveToWindow(create_window_waiting);
 	}
 
 	else {
 		if (helperValidateHero(hero)) {
-			initializeAttributes();
 			moveToWindow(create_window_joiningGame);
 		}
 
@@ -1175,7 +1191,6 @@ void drawScene_main() {
 
 	//printGrid();
 	renderGridMainWindow();
-	putTextToLAttCell(Coordinate_grid(3, 1), numToStr(server_port)); //TODO: not req here
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
@@ -1201,7 +1216,7 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		requestMagicPower();
 		break;
 
-	case 52: //key - '4' //TODO: may not be required later : just for testing purpose
+	case 52: //key - '4' //for testing purpose
 		cout << "Printing message queue" << endl;
 		printQueue(&queuePrimary);
 		break;

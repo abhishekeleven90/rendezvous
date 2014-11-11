@@ -18,7 +18,7 @@ enum teamName {
 };
 
 enum heroes {
-	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER, HERO_NOT_PRESENT
+	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
 };
 
 struct GameDetails {
@@ -28,10 +28,9 @@ struct GameDetails {
 	//bool isConnectedToServer; //TODO: remove
 	bool isIssueConnectingToServer;
 	bool isTimerNotHostWaiting;
-	bool isTimerPageCreatingGameRunning;
 
 	bool isStartJoiningTimer;
-	bool isFirstBroadcastReceived;
+	bool isDoneWithJoining;
 };
 
 enum charCellType {

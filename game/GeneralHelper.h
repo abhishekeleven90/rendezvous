@@ -180,6 +180,10 @@ void loadPlayerGeneralAttributes(int playerId) {
 	teamName myTeam = players[currPlayerId].team->name;
 	int k = 0; //used to keep track of enemy index
 
+	players[currPlayerId].idFriend = -1; //Setting default ids
+	players[currPlayerId].idEnemy[0] = -1;
+	players[currPlayerId].idEnemy[1] = -1;
+
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		if (i == currPlayerId || players[i].status == STATUS_NOT_JOINED) {
 			continue;
@@ -364,19 +368,19 @@ void putHealth() {
 	putTextToLAttCell(Coordinate_grid(11, 2),
 			numToStr(players[currPlayerId].heroHealth));
 
-	if (players[idFriend].status != STATUS_NOT_JOINED) {
+	if (idFriend != -1) {
 		putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
 		putTextToLAttCell(Coordinate_grid(17, 2),
 				numToStr(players[idFriend].heroHealth));
 	}
 
-	if (players[idEnemy0].status != STATUS_NOT_JOINED) {
+	if (idEnemy0 != -1) {
 		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_health, 1, 1);
 		putTextToRAttCell(Coordinate_grid(9, 2),
 				numToStr(players[idEnemy0].heroHealth));
 	}
 
-	if (players[idEnemy1].status != STATUS_NOT_JOINED) {
+	if (idEnemy1 != -1) {
 		putPngToRAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
 		putTextToRAttCell(Coordinate_grid(13, 2),
 				numToStr(players[idEnemy1].heroHealth));
@@ -408,84 +412,78 @@ void putHeroes() {
 		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
 		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
 		break;
-
-	case HERO_NOT_PRESENT:
-		break;
 	}
 
-	switch (players[idFriend].heroType) {
-	case HERO_STUNNER:
-		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_stunner, 1, 1);
-		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_stunner, 2, 1);
-		break;
+	if (idFriend != -1) {
+		switch (players[idFriend].heroType) {
+		case HERO_STUNNER:
+			putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_stunner, 1, 1);
+			putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_stunner, 2, 1);
+			break;
 
-	case HERO_DISABLER:
-		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_disabler, 1, 1);
-		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_disabler, 2, 1);
-		break;
+		case HERO_DISABLER:
+			putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_disabler, 1, 1);
+			putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_disabler, 2, 1);
+			break;
 
-	case HERO_SLOWER:
-		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_slower, 1, 1);
-		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_slower, 2, 1);
-		break;
+		case HERO_SLOWER:
+			putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_slower, 1, 1);
+			putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_slower, 2, 1);
+			break;
 
-	case HERO_BURSTER:
-		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_burster, 1, 1);
-		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_burster, 2, 1);
-		break;
-
-	case HERO_NOT_PRESENT:
-		break;
+		case HERO_BURSTER:
+			putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_burster, 1, 1);
+			putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_burster, 2, 1);
+			break;
+		}
 	}
 
-	switch (players[idEnemy0].heroType) {
-	case HERO_STUNNER:
-		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
-		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
-		break;
+	if (idEnemy0 != -1) {
+		switch (players[idEnemy0].heroType) {
+		case HERO_STUNNER:
+			putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_stunner, 1, 1);
+			putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_stunner, 2, 1);
+			break;
 
-	case HERO_DISABLER:
-		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_disabler, 1, 1);
-		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_disabler, 2, 1);
-		break;
+		case HERO_DISABLER:
+			putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_disabler, 1, 1);
+			putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_disabler, 2, 1);
+			break;
 
-	case HERO_SLOWER:
-		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_slower, 1, 1);
-		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_slower, 2, 1);
-		break;
+		case HERO_SLOWER:
+			putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_slower, 1, 1);
+			putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_slower, 2, 1);
+			break;
 
-	case HERO_BURSTER:
-		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
-		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
-		break;
-
-	case HERO_NOT_PRESENT:
-		break;
+		case HERO_BURSTER:
+			putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
+			putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
+			break;
+		}
 	}
 
-	switch (players[idEnemy1].heroType) {
-	case HERO_STUNNER:
-		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_stunner, 1, 1);
-		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_stunner, 2, 1);
-		break;
+	if (idEnemy1 != -1) {
+		switch (players[idEnemy1].heroType) {
+		case HERO_STUNNER:
+			putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_stunner, 1, 1);
+			putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_stunner, 2, 1);
+			break;
 
-	case HERO_DISABLER:
-		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_disabler, 1, 1);
-		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_disabler, 2, 1);
-		break;
+		case HERO_DISABLER:
+			putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_disabler, 1, 1);
+			putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_disabler, 2, 1);
+			break;
 
-	case HERO_SLOWER:
-		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_slower, 1, 1);
-		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_slower, 2, 1);
-		break;
+		case HERO_SLOWER:
+			putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_slower, 1, 1);
+			putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_slower, 2, 1);
+			break;
 
-	case HERO_BURSTER:
-		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_burster, 1, 1);
-		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_burster, 2, 1);
-		break;
-
-	case HERO_NOT_PRESENT:
-		break;
+		case HERO_BURSTER:
+			putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_burster, 1, 1);
+			putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_burster, 2, 1);
+			break;
+		}
 	}
 }
 
