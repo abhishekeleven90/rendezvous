@@ -24,6 +24,7 @@
 #define M 400
 #define QUEUE_LIMIT 5
 #define RETRY_COUNT 5
+#define RETRY_COUNT_BROADCAST 20
 
 #define DATA_SIZE_KILO 1024
 
@@ -308,6 +309,9 @@ void supportBroadCast(broadcastType type) {
 		if (players[i].status == STATUS_PRESENT) {
 			strcpy(broadIp2Join, players[i].networkDetails->ip);
 			broadRemote_port = players[i].networkDetails->port;
+			if (type == BROADCAST_JOINING) {
+				cout << "i:" << broadIp2Join << ":" << broadRemote_port << endl;
+			}
 			connectServerBroadcast(i);
 		}
 	}
@@ -368,7 +372,6 @@ connectStatus helperSendConnect() { //returns true
 
 	if (type[0] == 'x' || strcmp(type, SERVER_REQ_IGNORED) == 0) {
 		//gameDetails.isConnectedToServer = false; //TODO: remove
-		cout << "reached" << endl;
 		gameDetails.isIssueConnectingToServer = true;
 		return CONNECTED_NOT;
 	}
@@ -385,6 +388,7 @@ connectStatus helperSendConnect() { //returns true
 		//gameDetails.isConnectedToServer = true;//TODO: remove
 		gameDetails.isIssueConnectingToServer = false;
 		//TODO: copy details
+		currPlayerId = atoi(data);
 		return CONNECTED_ALREADY;
 	}
 
@@ -552,6 +556,7 @@ void processGameOver(char* data) {
 }
 
 void processJoining(char* data) {
+	cout << "received joining msg" << endl;
 	gameDetails.isStartJoiningTimer = true;
 }
 
@@ -648,18 +653,20 @@ void processConnect(char *data) {
 	}
 
 	else { //host is not waiting (most probably while in the game)
-		int leftIp = getIpOfPlayer(STATUS_LEFT);
-
-		if (leftIp == -1) { //all players are in the game
+		int leftIp = getIpOfPlayer(STATUS_NOT_REACHABLE);
+		if (leftIp == -1) { //all players are in the game or dead
 			strcpy(server_send_data, SERVER_REQ_IGNORED);
 		}
 
 		else { //some player has left
-			players[leftIp].status = STATUS_PRESENT;
 			players[leftIp].networkDetails = convertToNodeHelper(data);
+			//players[leftIp].status = STATUS_PRESENT;//TODO: not required here
+			//supportBroadCast(BROADCAST_JOINING); //TODO: remove if not required
 			strcpy(server_send_data, MSG_SERVER_WELCOME_BACK);
+			strcat(server_send_data, numToChar(leftIp));
 		}
 	}
+
 }
 
 int getMembersInTeam(teamName team) {
@@ -911,7 +918,7 @@ void getMyIp(char* ip) {
 			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
 			//printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
 			if (strcmp(ifa->ifa_name, "eth0") == 0 || strcmp(ifa->ifa_name,
-					"wlan0") == 0) {
+					"wlan0") == 0 || strcmp(ifa->ifa_name, "p3p1") == 0) {
 				strcpy(ip, addressBuffer);
 			}
 		} else if (ifa->ifa_addr->sa_family == AF_INET6) { // check it is IP6
@@ -998,21 +1005,36 @@ bool connectToServer(int & sock) {
 	return true;
 }
 
-bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundant with above fxn
+void helperHelperBroadcast(int & sock, struct sockaddr_in & server_addr) {
 	struct hostent *host;
-	struct sockaddr_in server_addr;
 
 	host = gethostbyname(broadIp2Join);
-
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("Socket");
 		exit(1);
 	}
-
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr = *((struct in_addr *) host->h_addr);
 	server_addr.sin_port = htons(broadRemote_port);
 	bzero(&(server_addr.sin_zero), 8);
+}
+
+void sendJoiningMsgToJoinedNode(int id) {
+	strcpy(client_send_data, MSG_JOINING);
+	char* ip = players[id].networkDetails->ip;
+	int port = players[id].networkDetails->port;
+
+	setRemoteNode(ip, port);
+
+	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
+	sendDataAndWaitForResult();
+}
+
+bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundant with above fxn
+
+	struct sockaddr_in server_addr;
+
+	helperHelperBroadcast(sock, server_addr);
 
 	int retriedCount = 0;
 	while (connect(sock, (struct sockaddr *) &server_addr,
@@ -1020,12 +1042,18 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 
 		players[playerId].status = STATUS_NOT_REACHABLE;
 
+		strcpy(broadIp2Join, players[playerId].networkDetails->ip);
+		broadRemote_port = players[playerId].networkDetails->port;
+		helperHelperBroadcast(sock, server_addr);
+
 		//trying again assuming the server is busy
 		retriedCount++;
-		cout << "BroadCast-playerId: " << playerId << " busy --- retrying("
-				<< retriedCount << "/" << RETRY_COUNT << ")" << endl;
+		cout << "BroadCast-playerId: " << playerId << " with ip- "
+				<< broadIp2Join << ":" << broadRemote_port
+				<< " busy --- retrying(" << retriedCount << "/"
+				<< RETRY_COUNT_BROADCAST << ")" << endl;
 		sleep(1);
-		if (retriedCount == RETRY_COUNT) {
+		if (retriedCount == RETRY_COUNT_BROADCAST) {
 
 			//client is DEAD!!!
 			cout << "playerId: " << playerId
@@ -1040,6 +1068,7 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	if (players[playerId].status == STATUS_NOT_REACHABLE) {
 		players[playerId].status = STATUS_PRESENT;
 		cout << "playerId: " << playerId << " back now" << endl;
+		sendJoiningMsgToJoinedNode(playerId);
 	}
 
 	//cout << "Client successfully connected to server" << endl;

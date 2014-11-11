@@ -1219,15 +1219,11 @@ void drawScene_joiningGame() {
 	putImages_joiningGame();
 
 	if (isFineToCallJoiningFunctions()) {
-
 		timerPageCreatingGame(0);
-
 		//if (!gameDetails.isHost) { //TODO: check if req
 		helperRequestPlayersDetails();
 		//}
-
 		setAttributes();
-
 		if (gameDetails.isHost) {
 			createClientBroadcastThread();
 		}
