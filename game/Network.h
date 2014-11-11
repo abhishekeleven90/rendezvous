@@ -366,8 +366,9 @@ connectStatus helperSendConnect() { //returns true
 	char* type = substring(client_recv_data, 0, 2);
 	char* data = substring(client_recv_data, 3, strlen(client_recv_data));
 
-	if (type[0] == 0 || strcmp(type, SERVER_REQ_IGNORED) == 0) {
+	if (type[0] == 'x' || strcmp(type, SERVER_REQ_IGNORED) == 0) {
 		//gameDetails.isConnectedToServer = false; //TODO: remove
+		cout << "reached" << endl;
 		gameDetails.isIssueConnectingToServer = true;
 		return CONNECTED_NOT;
 	}
@@ -542,8 +543,7 @@ void helperSendAttackHero(int enemyPlayer) {
 void processGameOver(char* data) {
 	cout << "At non-primary node: gameover received" << endl;
 	cout << "At non-primary node: winningTeam " << data << endl;
-	//this is where you switch the screen //TODO: SCREEN WIN
-	//data == 0 angels won
+	gameDetails.isGameOver = true;
 }
 
 void processJoining(char* data) {

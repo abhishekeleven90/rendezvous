@@ -98,8 +98,12 @@ MyTexture texId_att_wall;
 
 MyTexture texId_bg;
 MyTexture texId_logo;
-MyTexture texId_help;
 MyTexture texId_btn_back;
+
+MyTexture texId_icon_about;
+MyTexture texId_icon_controls;
+MyTexture texId_icon_players;
+MyTexture texId_icon_rules;
 
 MyTexture texId_join_game;
 MyTexture texId_host_game;
@@ -113,6 +117,14 @@ MyTexture texId_pick_team;
 MyTexture texId_pick_hero;
 
 MyTexture texId_bg_waiting;
+
+MyTexture texId_page_about;
+MyTexture texId_page_controls;
+MyTexture texId_page_join;
+MyTexture texId_page_players;
+MyTexture texId_page_rules;
+MyTexture texId_page_win_angels;
+MyTexture texId_page_win_demons;
 
 MyTexture texId_player_single;
 MyTexture texId_player_multi;

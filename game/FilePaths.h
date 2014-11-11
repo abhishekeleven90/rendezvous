@@ -41,8 +41,12 @@
 
 #define PATH_IMG_BG "data/images/bg.png"
 #define PATH_IMG_LOGO "data/images/logo.png"
-#define PATH_IMG_HELP "data/images/help.png"
 #define PATH_IMG_BACK "data/images/back.png"
+
+#define PATH_IMG_ICON_ABOUT "data/images/icon_about.png"
+#define PATH_IMG_ICON_CONTROLS "data/images/icon_controls.png"
+#define PATH_IMG_ICON_PLAYERS "data/images/icon_players.png"
+#define PATH_IMG_ICON_RULES "data/images/icon_rules.png"
 
 #define PATH_IMG_PICK_TEAM "data/images/pick_team.png"
 #define PATH_IMG_PICK_HERO "data/images/pick_hero.png"
@@ -57,6 +61,14 @@
 #define PATH_IMG_BTN_RESET "data/images/btn_reset.png"
 
 #define PATH_IMG_BG_WAITING "data/images/bg_waiting.png"
+
+#define PATH_IMG_PAGE_ABOUT "data/images/page_about.png"
+#define PATH_IMG_PAGE_CONTROLS "data/images/page_controls.png"
+#define PATH_IMG_PAGE_JOIN "data/images/page_join.png"
+#define PATH_IMG_PAGE_PLAYERS "data/images/page_players.png"
+#define PATH_IMG_PAGE_RULES "data/images/page_rules.png"
+#define PATH_IMG_PAGE_WIN_ANGELS "data/images/page_win_angels.png"
+#define PATH_IMG_PAGE_WIN_DEMONS "data/images/page_win_demons.png"
 
 #define PATH_IMG_PLAYER_SINGLE "data/images/player_single.png"
 #define PATH_IMG_PLAYER_MULTI "data/images/player_multi.png"
