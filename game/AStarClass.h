@@ -18,7 +18,6 @@ class AStarClass {
 	Node* target = NULL;
 	priority_queue<Node*, vector<Node*> , NodeCompare> openList;
 
-	//TODO: temple work
 public:
 
 	void setTarget(int r, int c) {

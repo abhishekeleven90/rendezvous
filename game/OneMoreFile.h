@@ -19,11 +19,8 @@ void giveBirthToPlayer(int playerId, bool reborn) {
 	players[playerId].isTimerCurseRunning = false;
 
 	players[playerId].isHeroRebornTimer = false;
-	//TODO: remove logic to be handled by Timer.h
-	/*if(reborn)
-	 players[playerId].isHeroRebornTimer = true;
-	 else
-	 players[playerId].isHeroRebornTimer = false;*/
+	//timer reborn logic handled by Timer.h
+
 
 	players[playerId].atleastOnceAstar = false;
 	players[playerId].toAttackTemple = false;
@@ -152,16 +149,6 @@ void aStarMove(int whichPlayer, bool through) {
 	players[whichPlayer].astar->AStar(through);
 }
 
-void aStarMoveThrough() {
-	aStarMove(currPlayerId, true); //TODO: Abhishek, changed for legacy code
-	//for testing with one player
-}
-
-void aStarMoveNotThrough() {
-	aStarMove(currPlayerId, false); //TODO: Abhishek, changed for legacy code
-	//for testing with one player
-}
-
 //used by primary node
 void selectBasicPower(int whichPlayer) {
 	cout << "selected power_basic by player" << whichPlayer << endl;
@@ -169,14 +156,12 @@ void selectBasicPower(int whichPlayer) {
 }
 
 //used by primary node
-//TODO: magic timer
 void selectMagicPower(int whichPlayer) {
 	if (players[whichPlayer].curseType != CURSE_DISABLE) {
 		cout << "selected power_magic by player " << whichPlayer << endl;
 		players[whichPlayer].currPowerMode = POWER_MODE_MAGIC;
 	} else {
 		cout << "Player can not use Magic power, you are cursed!!!" << endl;
-		//TODO: show on player's wall, will have to send through server
 	}
 }
 

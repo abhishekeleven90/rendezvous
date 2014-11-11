@@ -16,7 +16,7 @@ void setItemCell(Coordinate_grid movingToCell, int whichPlayer) {
 	players[whichPlayer].itemCell.col = movingToCell.col;
 }
 
-//TODO: Abhishek: if more items add or try to add to the complex handleGridCharSwitch
+//if more items add or try to add to the complex handleGridCharSwitch
 bool isItem(Coordinate_grid cell) {
 	switch (gridCharPrimary[cell.row][cell.col]) {
 	case I_DAMAGE:
@@ -238,8 +238,8 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 	setAttackTemple(whichPlayer, false);
 	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
 			<< enemyTeam->templeHealth << endl;
-	//TODO: Abhishek play temple attack sound
-	//TODO: Abhishek gif attack animation
+	//TODO: Abhishek play temple attack sound, 	gif attack animation
+
 
 }
 
@@ -262,8 +262,8 @@ void decreaseEnemyPlayerHealthHelper(int whichPlayer, bool burstDamage) {
 	setAttackEnemyPlayer(whichPlayer, -1);
 	cout << "Yayy " << whichPlayer << " decreased health of " << enemyPlayer
 			<< " to " << players[enemyPlayer].heroHealth << endl;
-	//TODO: Abhishek play enemy attack sound
-	//TODO: Abhishek gif attack animation
+	//TODO: Abhishek play enemy attack sound, gif attack animation
+
 
 }
 
@@ -291,7 +291,8 @@ void curseThePlayer(int byWhichPlayer, int onWhichPlayer) {
 	case HERO_BURSTER:
 		cout << byWhichPlayer << " bursted " << onWhichPlayer << endl;
 		players[onWhichPlayer].curseType = CURSE_BURST;
-		//TODO: Abhishek may be redundant code
+		timerCurse(onWhichPlayer);
+		//works so not removing, but seems redundant code
 		players[byWhichPlayer].whichEnemyPlayerToAttack = onWhichPlayer;
 		decreaseEnemyPlayerHealthHelper(byWhichPlayer, true);
 		break;
@@ -317,7 +318,6 @@ void decreaseEnemyPlayerHealth(int whichPlayer) { //this is ok, use it
 		timerMagicSpell(whichPlayer);
 		setAttackEnemyPlayer(whichPlayer, -1);
 		curseThePlayer(whichPlayer, enemyPlayer);
-		//TODO: here!!!
 	} else {
 		decreaseEnemyPlayerHealthHelper(whichPlayer, false);
 	}

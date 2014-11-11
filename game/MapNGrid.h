@@ -374,7 +374,6 @@ void putChar2Grid(int row, int col, charCellType charType, bool isInner,
 
 }
 
-//TODO: Abhishek move to code to ActionOnGrid
 //gray area for second player area handled by Harinder's code
 bool isBlockedSite(int r, int c, int whichPlayer) {
 	if (isOponentCellForTeam(Coordinate_grid(r, c), whichPlayer))

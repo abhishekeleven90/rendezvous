@@ -83,7 +83,6 @@ void initRendering_main() {
 	loadTeamAttributes();
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		//loadPlayerGeneralAttributes(i);//TODO: may be fatal
 		giveBirthToPlayer(i, false);//false as not taking re-birth
 	}
 
@@ -161,10 +160,6 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 50: //key - '2' : select magicPower
 		requestMagicPower();
-		break;
-
-	case 51: //key - '3' : curse //TODO: case may not be required later
-		//iAmCursed(CURSE_STUN);
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose

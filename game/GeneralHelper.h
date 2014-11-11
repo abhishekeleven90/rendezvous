@@ -228,7 +228,7 @@ void moveHero(int whichPlayer) {
 				decreaseEnemyTempleHealth(whichPlayer);
 			else {
 				players[whichPlayer].toAttackTemple = false;
-				//TODO: Abhishek temple attack remove the attack as stooped in between?
+				//Abhishek temple attack remove the attack as stooped in between?
 				//or continue??? //both seem fine
 				//first option has a problem that, the player may not find any area to move
 				//due to some player blocking, then!!!
@@ -239,7 +239,7 @@ void moveHero(int whichPlayer) {
 				decreaseEnemyPlayerHealth(whichPlayer);
 			else {
 				players[whichPlayer].whichEnemyPlayerToAttack = -1;
-				//TODO: Abhishek enemy attack remove the attack as stopped in between?
+				//Abhishek enemy attack remove the attack as stopped in between?
 				//or continue??? //both seem fine
 				//first option has a problem that, the player may not find any area to move
 				//due to some player blocking, then!!!
@@ -540,7 +540,6 @@ void requestMagicPower() {
 		helperSendPowerMode(1);
 	} else {
 		cout << "Player can not use Magic power, you are cursed!!!" << endl;
-		//TODO: show on player's wall, will have to send through server
 	}
 }
 
