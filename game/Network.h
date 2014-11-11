@@ -543,6 +543,7 @@ void helperSendAttackHero(int enemyPlayer) {
 void processGameOver(char* data) {
 	cout << "At non-primary node: gameover received" << endl;
 	cout << "At non-primary node: winningTeam " << data << endl;
+	gameDetails.winningTeam = static_cast<teamName> (atoi(data));
 	gameDetails.isGameOver = true;
 }
 
