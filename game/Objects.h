@@ -18,7 +18,7 @@ enum teamName {
 };
 
 enum heroes {
-	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER
+	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER, HERO_NOT_PRESENT
 };
 
 struct GameDetails {
@@ -28,10 +28,10 @@ struct GameDetails {
 	//bool isConnectedToServer; //TODO: remove
 	bool isIssueConnectingToServer;
 	bool isTimerNotHostWaiting;
+	bool isTimerPageCreatingGameRunning;
 
-	//int myId; //TODO: remove
-	teamName myTeam;
-	heroes myHero;
+	bool isStartJoiningTimer;
+	bool isFirstBroadcastReceived;
 };
 
 enum charCellType {
@@ -94,12 +94,12 @@ struct TeamStruct {
 	int templeHealth;
 };
 
-enum clientStatus {
-	CLIENT_PRESENT, CLIENT_LEFT,
+enum playerStatus {
+	STATUS_PRESENT, STATUS_LEFT,
 
-	CLIENT_NOT_REACHABLE,
+	STATUS_NOT_REACHABLE,
 
-	CLIENT_NOT_JOINED, CLIENT_JOINED
+	STATUS_NOT_JOINED, STATUS_JOINED
 };
 
 enum connectStatus {
@@ -108,7 +108,7 @@ enum connectStatus {
 
 struct Player {
 	//int playerId;
-	clientStatus status;
+	playerStatus status;
 
 	nodeHelper* networkDetails;
 

@@ -12,18 +12,18 @@ bool isNotMyFriend(teamName team, int playerId) {
 //pass true to second argument if taken rebirth
 //called by server only
 void giveBirthToPlayer(int playerId, bool reborn) {
-	players[playerId].status = CLIENT_PRESENT;
+	players[playerId].status = STATUS_PRESENT;
 
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;
 
-	players[playerId].isHeroRebornTimer =false;
+	players[playerId].isHeroRebornTimer = false;
 	//TODO: remove logic to be handled by Timer.h
 	/*if(reborn)
-		players[playerId].isHeroRebornTimer = true;
-	else
-		players[playerId].isHeroRebornTimer = false;*/
+	 players[playerId].isHeroRebornTimer = true;
+	 else
+	 players[playerId].isHeroRebornTimer = false;*/
 
 	players[playerId].atleastOnceAstar = false;
 	players[playerId].toAttackTemple = false;

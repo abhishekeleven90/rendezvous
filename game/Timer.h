@@ -6,7 +6,8 @@
 #define TIMER_CURSE 6000
 #define TIMER_HERO_REBORN 10000
 
-#define TIMER_HOST_WAIT 180000
+#define TIMER_HOST_WAIT 20000
+#define TIMER_PAGE_CREATING_GAME 5000
 
 #define REFRESH_RATE 100
 
@@ -121,6 +122,24 @@ void timerHostWait(int value) {
 	} else {
 		cout << "stopping timerHostWait" << endl;
 		gameDetails.isTimerNotHostWaiting = true;
+	}
+}
+
+int called = false;
+void timerPageCreatingGame(int value) {
+	if (!called || value == 1) {
+		called = true; //used since we want this function to be called only once
+
+		if (!gameDetails.isTimerPageCreatingGameRunning) { //timer not running
+			cout << "starting timerPageCreatingGame" << endl;
+			gameDetails.isTimerPageCreatingGameRunning = true;
+			glutTimerFunc(TIMER_PAGE_CREATING_GAME, timerPageCreatingGame, 1);
+		}
+
+		else { //timer not running
+			cout << "stopping timerPageCreatingGame" << endl;
+			gameDetails.isTimerPageCreatingGameRunning = false;
+		}
 	}
 }
 

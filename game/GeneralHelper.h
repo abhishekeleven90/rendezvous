@@ -101,16 +101,11 @@ void blockOpponentsArea() {
 }
 
 void loadTeamAttributes() {
-	angelsTeam.name = TEAM_ANGELS;
 	angelsTeam.templeHealth = HEALTH_FULL_TEMPLE;
-
-	demonsTeam.name = TEAM_DEMONS;
 	demonsTeam.templeHealth = HEALTH_FULL_TEMPLE;
 }
 
 void loadPlayerGeneralAttributes(int playerId) {
-	players[playerId].status = CLIENT_PRESENT;
-
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
 	players[playerId].isTimerCurseRunning = false;
@@ -123,7 +118,9 @@ void loadPlayerGeneralAttributes(int playerId) {
 
 	players[playerId].currPowerMode = POWER_MODE_BASIC;
 	players[playerId].curseType = CURSE_NONE;
+
 	players[playerId].heroHealth = HEALTH_FULL_HERO;
+
 	switch (players[playerId].heroType) {
 	case HERO_STUNNER:
 		players[playerId].strength = STRENGTH_H_STUNNER;
@@ -154,7 +151,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 	if (players[playerId].team->name == TEAM_ANGELS) {
 		if (players[playerId].isFirstPlayerInTeam) {
 			players[playerId].location = Coordinate_grid(19, 1);
-			//players[playerId].targetCell=Coordinate_grid(19, 1);
+			//players[playerId].targetCell=Coordinate_grid(19, 1); //TODO: remove
 		}
 
 		else {
@@ -184,7 +181,7 @@ void loadPlayerGeneralAttributes(int playerId) {
 	int k = 0; //used to keep track of enemy index
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (i == currPlayerId) {
+		if (i == currPlayerId || players[i].status == STATUS_NOT_JOINED) {
 			continue;
 		}
 
@@ -367,17 +364,23 @@ void putHealth() {
 	putTextToLAttCell(Coordinate_grid(11, 2),
 			numToStr(players[currPlayerId].heroHealth));
 
-	putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
-	putTextToLAttCell(Coordinate_grid(17, 2),
-			numToStr(players[idFriend].heroHealth));
+	if (players[idFriend].status != STATUS_NOT_JOINED) {
+		putPngToLAttCell(Coordinate_grid(17, 1), texId_att_health, 1, 1);
+		putTextToLAttCell(Coordinate_grid(17, 2),
+				numToStr(players[idFriend].heroHealth));
+	}
 
-	putPngToRAttCell(Coordinate_grid(9, 1), texId_att_health, 1, 1);
-	putTextToRAttCell(Coordinate_grid(9, 2),
-			numToStr(players[idEnemy0].heroHealth));
+	if (players[idEnemy0].status != STATUS_NOT_JOINED) {
+		putPngToRAttCell(Coordinate_grid(9, 1), texId_att_health, 1, 1);
+		putTextToRAttCell(Coordinate_grid(9, 2),
+				numToStr(players[idEnemy0].heroHealth));
+	}
 
-	putPngToRAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
-	putTextToRAttCell(Coordinate_grid(13, 2),
-			numToStr(players[idEnemy1].heroHealth));
+	if (players[idEnemy1].status != STATUS_NOT_JOINED) {
+		putPngToRAttCell(Coordinate_grid(13, 1), texId_att_health, 1, 1);
+		putTextToRAttCell(Coordinate_grid(13, 2),
+				numToStr(players[idEnemy1].heroHealth));
+	}
 }
 
 void putHeroes() {
@@ -405,6 +408,9 @@ void putHeroes() {
 		putBmpToLAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
 		putPngToLAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
 		break;
+
+	case HERO_NOT_PRESENT:
+		break;
 	}
 
 	switch (players[idFriend].heroType) {
@@ -426,6 +432,9 @@ void putHeroes() {
 	case HERO_BURSTER:
 		putBmpToLAttCell(Coordinate_grid(15, 1), texId_h_burster, 1, 1);
 		putPngToLAttCell(Coordinate_grid(16, 1), texId_att_h_burster, 2, 1);
+		break;
+
+	case HERO_NOT_PRESENT:
 		break;
 	}
 
@@ -449,6 +458,9 @@ void putHeroes() {
 		putBmpToRAttCell(Coordinate_grid(7, 1), texId_h_burster, 1, 1);
 		putPngToRAttCell(Coordinate_grid(8, 1), texId_att_h_burster, 2, 1);
 		break;
+
+	case HERO_NOT_PRESENT:
+		break;
 	}
 
 	switch (players[idEnemy1].heroType) {
@@ -470,6 +482,9 @@ void putHeroes() {
 	case HERO_BURSTER:
 		putBmpToRAttCell(Coordinate_grid(11, 1), texId_h_burster, 1, 1);
 		putPngToRAttCell(Coordinate_grid(12, 1), texId_att_h_burster, 2, 1);
+		break;
+
+	case HERO_NOT_PRESENT:
 		break;
 	}
 }

@@ -44,6 +44,7 @@
 #define MSG_CONNECT "c:"
 #define MSG_VALIDATE_TEAM "y:"
 #define MSG_VALIDATE_HERO "z:"
+#define MSG_REQ_PLAYER_DETAILS "l:"
 
 #define MSG_GAME_OVER "o:"
 
@@ -82,6 +83,10 @@ nodeHelper* selfNode = new nodeHelper;
 
 list<string> queuePrimary;
 
+enum broadcastType {
+	BROADCAST_ALL, BROADCAST_GAME_OVER
+};
+
 //****************Function Declarations*******************
 //-----Helper Functions----
 bool isAllClientsAlive();
@@ -102,6 +107,7 @@ bool isServerOk();
 connectStatus helperSendConnect();
 bool helperValidateTeam(teamName team);
 bool helperValidateHero(heroes hero);
+void helperRequestPlayersDetails();
 void helperSendServerMove(Coordinate_grid targetCell);
 
 void createServerThread();
@@ -120,7 +126,7 @@ void getMyIp(char* ip);
 int getMyPort(int mySock);
 void fillNodeEntries(struct sockaddr_in server_addr);
 
-int getIpOfPlayer(clientStatus status);
+int getIpOfPlayer(playerStatus status);
 bool isTeamFull(teamName team);
 bool isHeroTaken(heroes hero);
 
@@ -140,7 +146,7 @@ void* server(void* arg);
 //-----Helper Functions----
 bool isAllClientsAlive() {
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (players[i].status == CLIENT_NOT_REACHABLE) {
+		if (players[i].status == STATUS_NOT_REACHABLE) {
 			return false;
 		}
 	}
@@ -214,12 +220,16 @@ void takeUpdateAction(const char* msg) {
 }
 
 void sendDataAndWaitForResult() {
+	memset(client_recv_data, 0, sizeof client_recv_data);
+	client_recv_data[0] = '\0';
 	createSendServerDataThread();
 	while (client_recv_data[0] == '\0')
 		; //wait until data is received
 }
 
 void sendDataDontWaitForResult() {
+	memset(client_recv_data, 0, sizeof client_recv_data);
+	client_recv_data[0] = '\0';
 	createSendServerDataThread();
 }
 
@@ -229,8 +239,6 @@ void sendDataToServer() {
 	//Appending myId in the request
 	strcat(client_send_data, "?");
 	strcat(client_send_data, numToStr(currPlayerId).c_str());
-
-	client_recv_data[0] = '\0';
 
 	if (!connectToServer(sock)) {
 		client_recv_data[0] = SERVER_BUSY;
@@ -242,8 +250,6 @@ void sendDataToServer() {
 
 	bytes_recieved = recv(sock, client_recv_data, DATA_SIZE_KILO, 0);
 	client_recv_data[bytes_recieved] = '\0';
-
-	//cout << "Data successfully received" << client_recv_data << endl;
 
 	close(sock);
 }
@@ -266,7 +272,7 @@ void* threadUpdateServer(void* arg) {
 }
 
 void connectServerBroadcast(int playerId) {
-	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data); //TODO: make generic for all nodes with for loop -- kya likha hai ye?
+	memset(broad_client_recv_data, 0, sizeof broad_client_recv_data);
 	int sock, bytes_recieved;
 	broad_client_recv_data[0] = '\0';
 	if (!connectToServerBroadcast(sock, playerId)) {
@@ -281,17 +287,20 @@ void connectServerBroadcast(int playerId) {
 	close(sock);
 }
 
-//type0 - normalbroadcast
-void supportBroadCast(int type) {
-	if (type == 0) {
+void supportBroadCast(broadcastType type) {
+	switch (type) {
+	case BROADCAST_ALL:
 		populateClientSendDataForBroadcast();
-	} else {
+		break;
+	case BROADCAST_GAME_OVER:
 		populateClientSendDataForGameOver();
+		break;
 	}
 
-	for (int i = NUM_OF_PLAYERS - 1; i >= 0; i++) { //loop is backwards, since we want to send info to server at last (Don't ask why)
-
-		if (players[i].status == CLIENT_PRESENT) {
+	for (int i = NUM_OF_PLAYERS - 1; i >= 0; i--) { //loop is backwards, since we want to send info to server at last (Don't ask why)
+		cout << "supportBroadCast i: " << i << endl;
+		if (players[i].status == STATUS_PRESENT) {
+			cout << "supportBroadCast i: " << i << endl;
 			strcpy(broadIp2Join, players[i].networkDetails->ip);
 			broadRemote_port = players[i].networkDetails->port;
 			connectServerBroadcast(i);
@@ -303,13 +312,13 @@ void* threadClientBroadcast(void* arg) {
 	cout << "Broadcast Client Thread started" << endl;
 
 	while (!isGameOver) {
-		supportBroadCast(0);
+		supportBroadCast(BROADCAST_ALL);
 	}
 
 	cout << "Master node: Game over!!!" << endl;
 	cout << "Winning Team: " << winningTeam << endl;
 	cout << "Stopping broadcast!!" << endl;
-	supportBroadCast(1);
+	supportBroadCast(BROADCAST_GAME_OVER);
 
 	return NULL;
 }
@@ -347,7 +356,7 @@ connectStatus helperSendConnect() { //returns true
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataAndWaitForResult();
 
-	cout << client_recv_data << endl; //TODO: remove
+	cout << "helperSendConnect rcvd- " << client_recv_data << endl; //TODO: remove
 
 	char* type = substring(client_recv_data, 0, 2);
 	char* data = substring(client_recv_data, 3, strlen(client_recv_data));
@@ -377,8 +386,6 @@ connectStatus helperSendConnect() { //returns true
 }
 
 bool isServerOk() {
-	cout << client_recv_data << endl; //TODO: remove
-
 	char *type = substring(client_recv_data, 0, 2);
 	if (strcmp(type, MSG_SERVER_ACK) == 0) {
 		return true;
@@ -387,20 +394,58 @@ bool isServerOk() {
 	if (strcmp(type, MSG_SERVER_REJECT) == 0) {
 		return false;
 	}
+
+	return false;
 }
 
 bool helperValidateTeam(teamName team) {
 	strcpy(client_send_data, MSG_VALIDATE_TEAM);
 	strcat(client_send_data, numToChar(team));
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 	sendDataAndWaitForResult();
+	cout << "helperValidateTeam rcvd- " << client_recv_data << endl; //TODO: remove
 	return isServerOk();
 }
 
 bool helperValidateHero(heroes hero) {
 	strcpy(client_send_data, MSG_VALIDATE_HERO);
 	strcat(client_send_data, numToChar(hero));
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 	sendDataAndWaitForResult();
+	cout << "helperValidateHero rcvd- " << client_recv_data << endl; //TODO: remove
 	return isServerOk();
+}
+
+void helperRequestPlayersDetails() {
+	strcpy(client_send_data, MSG_REQ_PLAYER_DETAILS);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
+	sendDataAndWaitForResult();
+	cout << "helperRequestPlayersDetails rcvd- " << client_recv_data << endl; //TODO: remove
+
+	split(client_recv_data, ',', DATA_RCVD);
+	int k = 0, i = 0;
+	for (i = 0; i < NUM_OF_PLAYERS; i++) {
+		players[i].status = STATUS_PRESENT;
+		players[i].heroType = static_cast<heroes> (atoi(DATA_RCVD[k++]));
+
+		teamName team = static_cast<teamName> (atoi(DATA_RCVD[k++]));
+		if (team == TEAM_ANGELS) {
+			players[i].team = &angelsTeam;
+		} else if (team == TEAM_DEMONS) {
+			players[i].team = &demonsTeam;
+		}
+
+		players[i].isFirstPlayerInTeam = atoi(DATA_RCVD[k++]);
+
+		if (DATA_RCVD[k][0] == 'x') {
+			break; //breaking since all subsequent players must not be joined
+		}
+	}
+
+	i++;
+	while (i < NUM_OF_PLAYERS) {
+		players[i++].status = STATUS_NOT_JOINED;
+	}
 }
 
 void helperSendServerMove() {
@@ -420,7 +465,7 @@ void helperSendServerMove() {
 	strcat(client_send_data, colChar);
 
 	//setting the remoteNode ip & port
-	setRemoteNode(primaryNodeIp, primaryNodePort);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataDontWaitForResult();
@@ -436,7 +481,7 @@ void helperSendPowerMode(int type) {
 		return;//something is wrong
 
 	//setting the remoteNode ip & port
-	setRemoteNode(primaryNodeIp, primaryNodePort);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataDontWaitForResult();
@@ -457,7 +502,7 @@ void helperSendAttackTemple() {
 	strcat(client_send_data, colChar);
 
 	//setting the remoteNode ip & port
-	setRemoteNode(primaryNodeIp, primaryNodePort);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataDontWaitForResult();
@@ -482,7 +527,7 @@ void helperSendAttackHero(int enemyPlayer) {
 	strcat(client_send_data, enemyIdChar);
 
 	//setting the remoteNode ip & port
-	setRemoteNode(primaryNodeIp, primaryNodePort);
+	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataDontWaitForResult();
@@ -499,6 +544,8 @@ void processGameOver(char* data) {
 //used by non-primary nodes
 void processBroadcast(char *data) {
 	//cout << "received: " << data << endl;
+
+	gameDetails.isFirstBroadcastReceived = true;
 
 	for (int i = 0; i < M; i++) {
 		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
@@ -535,6 +582,7 @@ void processBroadcast(char *data) {
 		split(GLOBAL_ARR[1], ',', DATA_RCVD);
 		k = 0;
 		for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+			players[i].isFirstPlayerInTeam = atoi(DATA_RCVD[k++]);
 			players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
 			players[i].currPowerMode = static_cast<powerMode> (atoi(
 					DATA_RCVD[k++]));
@@ -545,13 +593,17 @@ void processBroadcast(char *data) {
 			players[i].isTimerItemGlobalRunning = atoi(DATA_RCVD[k++]);
 			players[i].isTimerMagicSpellRunning = atoi(DATA_RCVD[k++]);
 			players[i].isTimerCurseRunning = atoi(DATA_RCVD[k++]);
+
+			if (DATA_RCVD[k][0] == 'x') {
+				break;
+			}
 		}
 	}
 
 	strcpy(server_send_data, MSG_SERVER_ACK);
 }
 
-int getIpOfPlayer(clientStatus status) {
+int getIpOfPlayer(playerStatus status) {
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 		if (players[i].status == status) {
@@ -567,14 +619,14 @@ void processConnect(char *data) {
 	cout << "received connect message: " << data << endl;
 
 	if (!gameDetails.isTimerNotHostWaiting) { //host waiting
-		int notJoinedIp = getIpOfPlayer(CLIENT_NOT_JOINED);
+		int notJoinedIp = getIpOfPlayer(STATUS_NOT_JOINED);
 
 		if (notJoinedIp == -1) { //all players have joined
 			strcpy(server_send_data, SERVER_REQ_IGNORED);
 		}
 
-		else { //some player has not joined
-			players[notJoinedIp].status = CLIENT_JOINED;
+		else { //some player has not joined, joining now
+			players[notJoinedIp].status = STATUS_JOINED;
 			players[notJoinedIp].networkDetails = convertToNodeHelper(data);
 			strcpy(server_send_data, MSG_SERVER_ACK);
 			strcat(server_send_data, numToChar(notJoinedIp));
@@ -583,51 +635,63 @@ void processConnect(char *data) {
 	}
 
 	else { //host is not waiting (most probably while in the game)
-		int leftIp = getIpOfPlayer(CLIENT_LEFT);
+		int leftIp = getIpOfPlayer(STATUS_LEFT);
 
 		if (leftIp == -1) { //all players are in the game
 			strcpy(server_send_data, SERVER_REQ_IGNORED);
 		}
 
 		else { //some player has left
-			players[leftIp].status = CLIENT_PRESENT;
+			players[leftIp].status = STATUS_PRESENT;
 			players[leftIp].networkDetails = convertToNodeHelper(data);
 			strcpy(server_send_data, MSG_SERVER_WELCOME_BACK);
 		}
 	}
 }
 
-bool isTeamFull(teamName team) {
+int getMembersInTeam(teamName team) {
 	int memberCount = 0;
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (players[i].status == CLIENT_JOINED && team == players[i].team->name) {
+		if (players[i].status == STATUS_PRESENT && team
+				== players[i].team->name) {
 			memberCount++;
 		}
 	}
-	if (memberCount < 2) {
-		return false;
-	}
 
-	return true;
+	return memberCount;
 }
 
 void processValidateTeam(char *data, int id) {
 	cout << "received validateTeam msg: '" << data << "' from: " << id << endl;
 
 	teamName team = static_cast<teamName> (atoi(data));
-	if (!isTeamFull(team)) {
-		//players[id].team->name = team;
-		strcpy(server_send_data, MSG_SERVER_ACK);
+
+	int memberCount = getMembersInTeam(team);
+
+	if (memberCount == 2) {
+		strcpy(server_send_data, MSG_SERVER_REJECT);
+		return;
 	}
 
-	else {
-		strcpy(server_send_data, MSG_SERVER_REJECT);
+	if (team == TEAM_ANGELS) {
+		players[id].team = &angelsTeam;
+	} else {
+		players[id].team = &demonsTeam;
 	}
+
+	players[id].status = STATUS_PRESENT;
+
+	if (memberCount == 0) {
+		players[id].isFirstPlayerInTeam = true;
+	}
+
+	strcpy(server_send_data, MSG_SERVER_ACK);
+
 }
 
 bool isHeroTaken(heroes hero) {
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (players[i].status == CLIENT_JOINED && hero == players[i].heroType) {
+		if (players[i].status == STATUS_PRESENT && hero == players[i].heroType) {
 			return true;
 		}
 	}
@@ -646,6 +710,26 @@ void processValidateHero(char *data, int id) {
 
 	else {
 		strcpy(server_send_data, MSG_SERVER_REJECT);
+	}
+}
+
+void processReqPlayerDetails(char *data) {
+	cout << "received reqPlayerDetails msg: " << data << endl;
+
+	strcpy(server_send_data, MSG_SERVER_ACK);
+
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		if (players[i].status == STATUS_PRESENT) {
+			strcat(server_send_data, numToChar(players[i].heroType));
+			strcat(server_send_data, ",");
+			strcat(server_send_data, numToChar(players[i].team->name));
+			strcat(server_send_data, ",");
+			strcat(server_send_data, numToChar(players[i].isFirstPlayerInTeam));
+			strcat(server_send_data, ",");
+		} else {
+			strcat(server_send_data, "x");
+			break; //breaking since if a client is found not joined, all subsequent shall also not be joined
+		}
 	}
 }
 
@@ -679,6 +763,7 @@ void populateClientSendDataForGameOver() {
 }
 
 void populateClientSendDataForBroadcast() {
+	cout << "1" << endl;
 	strcpy(broad_send_data, MSG_BROADCAST);
 
 	//populating 'broad_client_send_data' with grid
@@ -690,44 +775,64 @@ void populateClientSendDataForBroadcast() {
 		}
 	}
 
+	cout << "2" << endl;
+
 	strcat(broad_send_data, "+");
 
 	//populating 'broad_client_send_data' with attributes
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		Player player = players[i];
+		cout << "i: " << i << endl;
+		if (players[i].status != STATUS_NOT_JOINED) {
+			cout << "i: " << i << endl;
 
-		strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
-		strcat(broad_send_data, ",");
+			Player player = players[i];
 
-		strcat(broad_send_data, numToStr(player.currPowerMode).c_str());
-		strcat(broad_send_data, ",");
+			strcat(broad_send_data,
+					numToStr(player.isFirstPlayerInTeam).c_str());
+			strcat(broad_send_data, ",");
 
-		//attributes
-		strcat(broad_send_data, numToStr(player.heroHealth).c_str());
-		strcat(broad_send_data, ",");
+			strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
+			strcat(broad_send_data, ",");
 
-		strcat(broad_send_data, numToStr(player.strength).c_str());
-		strcat(broad_send_data, ",");
+			strcat(broad_send_data, numToStr(player.currPowerMode).c_str());
+			strcat(broad_send_data, ",");
 
-		strcat(broad_send_data, numToStr(player.speedMove).c_str());
-		strcat(broad_send_data, ",");
+			//attributes
+			strcat(broad_send_data, numToStr(player.heroHealth).c_str());
+			strcat(broad_send_data, ",");
 
-		//related to curse
-		strcat(broad_send_data, numToStr(player.curseType).c_str());
-		strcat(broad_send_data, ",");
+			strcat(broad_send_data, numToStr(player.strength).c_str());
+			strcat(broad_send_data, ",");
 
-		//timers
-		strcat(broad_send_data,
-				numToStr(player.isTimerItemGlobalRunning).c_str());
+			strcat(broad_send_data, numToStr(player.speedMove).c_str());
+			strcat(broad_send_data, ",");
 
-		strcat(broad_send_data, ",");
+			//related to curse
+			strcat(broad_send_data, numToStr(player.curseType).c_str());
+			strcat(broad_send_data, ",");
 
-		strcat(broad_send_data,
-				numToStr(player.isTimerMagicSpellRunning).c_str());
-		strcat(broad_send_data, ",");
+			//timers
+			strcat(broad_send_data,
+					numToStr(player.isTimerItemGlobalRunning).c_str());
 
-		strcat(broad_send_data, numToStr(player.isTimerCurseRunning).c_str());
-		strcat(broad_send_data, ",");
+			strcat(broad_send_data, ",");
+
+			strcat(broad_send_data,
+					numToStr(player.isTimerMagicSpellRunning).c_str());
+			strcat(broad_send_data, ",");
+
+			strcat(broad_send_data,
+					numToStr(player.isTimerCurseRunning).c_str());
+			strcat(broad_send_data, ",");
+		}
+
+		else {
+			strcat(broad_send_data, "x");
+			break;
+			cout << "3" << endl;
+		}
+
+		cout << "4" << endl;
 	}
 }
 
@@ -895,7 +1000,7 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	while (connect(sock, (struct sockaddr *) &server_addr,
 			sizeof(struct sockaddr)) == -1) {
 
-		players[playerId].status = CLIENT_NOT_REACHABLE;
+		players[playerId].status = STATUS_NOT_REACHABLE;
 
 		//trying again assuming the server is busy
 		retriedCount++;
@@ -907,15 +1012,15 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 			//client is DEAD!!!
 			cout << "playerId: " << playerId
 					<< " is no more alive, let's continue" << endl;
-			players[playerId].status = CLIENT_LEFT;
+			players[playerId].status = STATUS_LEFT;
 
 			close(sock);
 			return false;
 		}
 	}
 
-	if (players[playerId].status == CLIENT_NOT_REACHABLE) {
-		players[playerId].status = CLIENT_PRESENT;
+	if (players[playerId].status == STATUS_NOT_REACHABLE) {
+		players[playerId].status = STATUS_PRESENT;
 		cout << "playerId: " << playerId << " back now" << endl;
 	}
 
@@ -928,7 +1033,7 @@ bool isValidRequest(int requestingPlayerId) { //TODO: function not required....c
 		return false;
 	}
 
-	if (players[requestingPlayerId].status == CLIENT_PRESENT) { //this is to ignore requests from dead client
+	if (players[requestingPlayerId].status == STATUS_PRESENT) { //this is to ignore requests from dead client
 		return false;
 	}
 
@@ -1015,6 +1120,10 @@ void* server(void* arg) {
 			processValidateHero(reqData, requestingPlayerId);
 		}
 
+		else if (strcmp(type, MSG_REQ_PLAYER_DETAILS) == 0) {
+			processReqPlayerDetails(reqData);
+		}
+
 		//for non-primary nodes
 		else if (strcmp(type, MSG_GAME_OVER) == 0) {
 			processGameOver(reqData);
@@ -1025,6 +1134,7 @@ void* server(void* arg) {
 			processGeneral(server_recv_data);
 		}
 
+		cout << "sending: " << server_send_data << endl; //TODO: remove
 		send(connected, server_send_data, strlen(server_send_data), 0);
 		fflush(stdout);//may be fatal, adding for UI
 

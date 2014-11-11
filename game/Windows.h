@@ -13,6 +13,7 @@ void moveToWindow(void f()) {
 void create_window_first();
 void create_window_final();
 void create_window_help();
+void create_window_joiningGame();
 void create_window_multiplayer();
 void create_window_selectHero();
 void create_window_selectTeam();
@@ -46,6 +47,8 @@ void initRendering_first() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//gameDetails.isConnectedToServer = false; //TODO: remove
+	angelsTeam.name = TEAM_ANGELS;
+	demonsTeam.name = TEAM_DEMONS;
 
 	//Loading all the textures from images
 	loadTextures_first();
@@ -354,10 +357,10 @@ void initRendering_multiplayer() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//Loading all the textures from images
 	//gameDetails.isHost = true; //TODO: check is required, else remove (intuitively: not required)
 	gameDetails.isIssueConnectingToServer = false;
 	isShowInput = false;
+
 	loadTextures_multiplayer();
 	createServerThread();
 	gameDetails.isTimerNotHostWaiting = true; //making this true over here because we don't want any client to connect
@@ -428,12 +431,13 @@ void processClickNext() {
 		return;
 	}
 	gameDetails.hostDetails = convertToNodeHelper(str2Char(hostIp));
+
 	connectStatus connect = helperSendConnect();
 	switch (connect) {
 	case CONNECTED_NOT:
 		break;
 	case CONNECTED_ALREADY:
-		moveToWindow(create_window_main);
+		moveToWindow(create_window_joiningGame);
 		break;
 	case CONNECTED_NEW:
 		moveToWindow(create_window_selectTeam);
@@ -446,10 +450,9 @@ void processClickHost() {
 	gameDetails.isHost = true;
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		players[i].status = CLIENT_NOT_JOINED;
+		players[i].status = STATUS_NOT_JOINED;
 	}
 
-	players[0].status = CLIENT_JOINED; //Obviously I have joined
 	gameDetails.isIssueConnectingToServer = false;
 	moveToWindow(create_window_selectTeam);
 }
@@ -535,8 +538,20 @@ void initRendering_waiting() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//Loading all the textures from images
 	gameDetails.isTimerNotHostWaiting = false;
+
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		//No player has joined yet
+		players[i].status = STATUS_NOT_JOINED;
+	}
+
+	//setting some details here since else not set anywhere ;)
+	currPlayerId = PLAYER_ID_PRIMARY;
+	players[currPlayerId].networkDetails = selfNode;
+	gameDetails.hostDetails = selfNode;
+	players[currPlayerId].status = STATUS_PRESENT;
+	players[currPlayerId].isFirstPlayerInTeam = true;
+
 	timerHostWait(0);
 	loadTextures_waiting();
 
@@ -555,7 +570,8 @@ void drawScene_waiting() {
 	putImages_waiting();
 
 	if (gameDetails.isTimerNotHostWaiting) {
-		moveToWindow(create_window_main);
+
+		moveToWindow(create_window_joiningGame);
 	}
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
@@ -609,6 +625,125 @@ void create_window_waiting() {
 }
 
 /* --------------------------------------------------------------------------------------------------------------------------------
+ * -----------------------------------------------------------WINDOW_JOINING_GAME---------------------------------------------------
+ * --------------------------------------------------------------------------------------------------------------------------------*/
+void loadTextures_joiningGame() {
+	texId_bg = getTextureFromPng(PATH_IMG_BG);
+}
+
+void putImages_joiningGame() {
+	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20); //TODO: image shall be different
+}
+
+void setAttributes() {
+	initMap();
+	loadTeamAttributes();
+	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
+		if (players[i].status == STATUS_PRESENT) {
+			loadPlayerGeneralAttributes(i);
+		}
+	}
+	copyPrimaryGrid();
+	blockOpponentsArea();
+
+	//Placing items in the map
+	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
+		initItemAtRandomPos();
+	}
+}
+
+//Initializes 3D rendering
+void initRendering_joiningGame() {
+	//Makes 3D drawing work when something is in front of something else
+	glEnable(GL_DEPTH_TEST);
+	glEnable((GL_BLEND));
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	gameDetails.isFirstBroadcastReceived = false;
+	gameDetails.isTimerPageCreatingGameRunning = false;
+
+	loadTextures_joiningGame();
+	helperRequestPlayersDetails();
+
+	setAttributes();
+
+	if (gameDetails.isHost) {
+		createClientBroadcastThread();
+	}
+
+	t3dInit();
+}
+
+//Draws the 3D scene
+void drawScene_joiningGame() {
+	//Clear information from last draw
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity(); //Reset the drawing perspective
+
+	putImages_joiningGame();
+
+	if (gameDetails.isFirstBroadcastReceived) {
+		timerPageCreatingGame(0);
+	}
+
+	if (gameDetails.isFirstBroadcastReceived
+			&& !gameDetails.isTimerPageCreatingGameRunning) {
+		moveToWindow(create_window_main);
+	}
+
+	glutSwapBuffers(); //Send the 3D scene to the screen
+}
+
+//Called when a key is pressed
+void handleKeypress_joiningGame(unsigned char key, //The key that was pressed
+		int x, int y) { //The current mouse coordinates
+	switch (key) {
+	case 27: //key - 'esc' : exits the program
+		t3dCleanup();
+		exit(0);
+		break;
+	}
+}
+
+void processLeftClick_joiningGame() {
+
+}
+
+void myMouseClickHandler_joiningGame(int button, int state, int x, int y) {
+
+	if (state == GLUT_DOWN) { //saving just the state, action is performed on GLUT_UP
+		Coordinate_openGl openGl = getOGLPos(x, y);
+		downGrid_click = getGridCoordinatesFromOpenGl(openGl);
+		return;
+	}
+
+	if (!isValidCell(downGrid_click)) {
+		playEventSound( PATH_SOUND_WRONG_CLICK);
+		return;
+	}
+
+	if (button == GLUT_LEFT_BUTTON) { //reaches here only if GLUT_UP
+		processLeftClick_joiningGame();
+	}
+}
+
+void create_window_joiningGame() {
+	windowId_current = glutCreateWindow("Joining Game!!!");
+	initRendering_joiningGame(); //Initialize rendering
+
+	//set handler functions
+	glutDisplayFunc(drawScene_joiningGame);
+	glutKeyboardFunc(handleKeypress_joiningGame);
+	glutReshapeFunc(handleResize);
+	glutMouseFunc(myMouseClickHandler_joiningGame);
+
+	//timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
+
+	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
+}
+
+/* --------------------------------------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------WINDOW_SELECT_HERO--------------------------------------------
  * --------------------------------------------------------------------------------------------------------------------------------*/
 bool isHeroVisible[4];
@@ -635,17 +770,37 @@ void loadTextures_selectHero() {
 }
 
 void PutImages_selectHero() {
-	putBmpWithChar(9, 6, texId_h_slower, H_SLOWER, 4, 4);
-	putPngWithChar(10, 6, texId_att_h_slower, H_SLOWER, 4, 1);
+	if (isHeroVisible[HERO_SLOWER]) {
+		putBmpWithChar(9, 6, texId_h_slower, H_SLOWER, 4, 4);
+		putPngWithChar(10, 6, texId_att_h_slower, H_SLOWER, 4, 1);
+	} else {
+		putChars(4, 4, 9, 6, BG_GRASS);
+		putChars(4, 1, 10, 6, BG_GRASS);
+	}
 
-	putBmpWithChar(9, 16, texId_h_burster, H_BURSTER, 4, 4);
-	putPngWithChar(10, 16, texId_att_h_burster, H_BURSTER, 4, 1);
+	if (isHeroVisible[HERO_BURSTER]) {
+		putBmpWithChar(9, 16, texId_h_burster, H_BURSTER, 4, 4);
+		putPngWithChar(10, 16, texId_att_h_burster, H_BURSTER, 4, 1);
+	} else {
+		putChars(4, 4, 9, 16, BG_GRASS);
+		putChars(4, 1, 10, 16, BG_GRASS);
+	}
 
-	putBmpWithChar(17, 6, texId_h_stunner, H_STUNNER, 4, 4);
-	putPngWithChar(18, 6, texId_att_h_stunner, H_STUNNER, 4, 1);
+	if (isHeroVisible[HERO_STUNNER]) {
+		putBmpWithChar(17, 6, texId_h_stunner, H_STUNNER, 4, 4);
+		putPngWithChar(18, 6, texId_att_h_stunner, H_STUNNER, 4, 1);
+	} else {
+		putChars(4, 4, 17, 6, BG_GRASS);
+		putChars(4, 1, 18, 6, BG_GRASS);
+	}
 
-	putBmpWithChar(17, 16, texId_h_disabler, H_DISABLER, 4, 4);
-	putPngWithChar(18, 16, texId_att_h_disabler, H_DISABLER, 4, 1);
+	if (isHeroVisible[HERO_DISABLER]) {
+		putBmpWithChar(17, 16, texId_h_disabler, H_DISABLER, 4, 4);
+		putPngWithChar(18, 16, texId_att_h_disabler, H_DISABLER, 4, 1);
+	} else {
+		putChars(4, 4, 17, 16, BG_GRASS);
+		putChars(4, 1, 18, 16, BG_GRASS);
+	}
 
 	putPngToCell(Coordinate_grid(3, 10), texId_pick_hero, 6, 1);
 	putPngToCell(Coordinate_grid(20, 1), texId_bg, 24, 20);
@@ -661,39 +816,10 @@ void initRendering_selectHero() {
 	loadTextures_selectHero();
 	putGrass();
 
-	isHeroVisible[HERO_BURSTER] = true;
+	isHeroVisible[HERO_STUNNER] = true;
 	isHeroVisible[HERO_SLOWER] = true;
 	isHeroVisible[HERO_BURSTER] = true;
 	isHeroVisible[HERO_DISABLER] = true;
-
-	//TODO: remove below
-	/*players[0].heroType = HERO_DISABLER;
-	 players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
-	 players[0].team = &angelsTeam;
-	 players[0].isFirstPlayerInTeam = true;
-
-	 players[1].heroType = HERO_STUNNER;
-	 players[1].networkDetails = convertToNodeHelper("127.0.0.1:5001");
-	 players[1].team = &angelsTeam;
-	 =======
-	 players[0].heroType = HERO_DISABLER; //TODO: check: shall be from server
-	 players[0].networkDetails = convertToNodeHelper("127.0.0.1:5000");
-	 //players[0].networkDetails = convertToNodeHelper("10.208.23.254:5000");
-	 //players[0].networkDetails = convertToNodeHelper("10.250.215.195:5000");
-	 players[0].team = &angelsTeam;
-	 players[0].isFirstPlayerInTeam = true;
-	 >>>>>>> dddb99732ac3e89f9f45bc43b3185e8ebabdb9d4
-
-	 players[2].heroType = HERO_BURSTER;
-	 players[2].networkDetails = convertToNodeHelper("127.0.0.1:5002");
-	 players[2].team = &demonsTeam;
-	 players[2].isFirstPlayerInTeam = true;
-
-	 players[3].heroType = HERO_SLOWER;
-	 players[3].networkDetails = convertToNodeHelper("127.0.0.1:5003");
-	 players[3].team = &demonsTeam;*/
-
-	//server_port = players[currPlayerId].networkDetails->port;
 
 	t3dInit();
 }
@@ -717,38 +843,28 @@ void handleKeypress_selectHero(unsigned char key, //The key that was pressed
 		t3dCleanup();
 		exit(0);
 		break;
-
-		/*case 48: //key - '0' //TODO: remove
-		 currPlayerId = 0;
-		 break;
-
-		 case 49: //key - '1'
-		 currPlayerId = 1;
-		 break;
-
-		 case 50: //key - '2'
-		 currPlayerId = 2;
-		 break;
-
-		 case 51: //key - '3'
-		 currPlayerId = 3;
-		 break;*/
 	}
+}
+
+void initializeAttributes() { //TODO: remove if not required
+
 }
 
 void heroSelected_next(heroes hero) {
 	if (gameDetails.isHost) {
-		gameDetails.myHero = hero; //setting hero in case of host only
+		players[PLAYER_ID_PRIMARY].heroType = hero; //setting hero in case of host only
+		initializeAttributes();
 		moveToWindow(create_window_waiting);
 	}
 
 	else {
 		if (helperValidateHero(hero)) {
-			moveToWindow(create_window_main);
+			initializeAttributes();
+			moveToWindow(create_window_joiningGame);
 		}
 
 		else {
-			isHeroVisible[hero] == false;
+			isHeroVisible[hero] = false;
 		}
 	}
 }
@@ -833,7 +949,7 @@ void putImages_selectTeam() {
 		putChars(4, 2, 13, 6, BG_GRASS);
 	}
 
-	if (isTeamVisible[TEAM_ANGELS]) {
+	if (isTeamVisible[TEAM_DEMONS]) {
 		putBmpWithChar(11, 16, texId_t_demons, CLICK_DEMONS, 4, 4);
 		putPngWithChar(13, 16, texId_att_team_demons, CLICK_DEMONS, 4, 2);
 	} else {
@@ -882,19 +998,19 @@ void handleKeypress_selectTeam(unsigned char key, //The key that was pressed
 	}
 }
 
-void teamSelected_next(teamName team) {
+void teamSelected_next(TeamStruct* team) {
 	if (gameDetails.isHost) {
-		gameDetails.myTeam = team; //setting teamName in case of host only
+		players[PLAYER_ID_PRIMARY].team = team; //setting teamName in case of host only
 		moveToWindow(create_window_selectHero);
 	}
 
 	else {
-		if (helperValidateTeam(team)) {
+		if (helperValidateTeam(team->name)) {
 			moveToWindow(create_window_selectHero);
 		}
 
 		else {
-			isTeamVisible[team] == false;
+			isTeamVisible[team->name] = false;
 		}
 	}
 }
@@ -905,10 +1021,10 @@ void processLeftClick_selectTeam() {
 		moveToWindow(create_window_first);
 		break;
 	case CLICK_ANGELS:
-		teamSelected_next(TEAM_ANGELS);
+		teamSelected_next(&angelsTeam);
 		break;
 	case CLICK_DEMONS:
-		teamSelected_next(TEAM_DEMONS);
+		teamSelected_next(&demonsTeam);
 		break;
 	}
 }
@@ -1017,32 +1133,12 @@ void initRendering_main() {
 
 	//Loading all the textures from images
 	loadTextures_main();
-	initMap();
-
-	//Placing items in the map
-	for (int i = 0; i < ITEMS_ON_MAP_COUNT; i++) {
-		initItemAtRandomPos();
-	}
-
-	//load Attributes
-	loadTeamAttributes();
-
-	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		loadPlayerGeneralAttributes(i);
-	}
-
-	copyPrimaryGrid();
-
-	blockOpponentsArea();
 
 	t3dInit();
 
-	strcpy(primaryNodeIp, players[0].networkDetails->ip);
-	primaryNodePort = players[0].networkDetails->port;
-
-	if (gameDetails.isHost) { //primaryNode
+	if (gameDetails.isHost) {
 		isGameOver = false;
-		createClientBroadcastThread();
+		//createClientBroadcastThread(); //Created in joining page
 		createUpdateServerThread();
 	}
 }
@@ -1103,10 +1199,6 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 50: //key - '2' : select magicPower
 		requestMagicPower();
-		break;
-
-	case 51: //key - '3' : curse //TODO: case may not be required later
-		//iAmCursed(CURSE_STUN);
 		break;
 
 	case 52: //key - '4' //TODO: may not be required later : just for testing purpose

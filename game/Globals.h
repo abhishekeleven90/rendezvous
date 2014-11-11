@@ -28,6 +28,7 @@ int g_item_index_demons = 0;
 
 int currPlayerId;
 TeamStruct angelsTeam, demonsTeam;
+
 Player players[4];
 
 //TextureIds
@@ -125,7 +126,7 @@ Coordinate_grid downGrid_click; //used for clickHandler
 pthread_mutex_t mutexQueuePrimary;
 pthread_mutex_t mutexTargetCell;
 
-bool isGameOver=false;
+bool isGameOver = false;
 teamName winningTeam;
 
 #endif
