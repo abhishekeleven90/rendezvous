@@ -587,11 +587,13 @@ void processBroadcast(char *data) {
 
 	if (currPlayerId != PLAYER_ID_PRIMARY) { //copying the players information only if I am not the primary Node
 		//copying player attributes
+		cout << GLOBAL_ARR[1] << endl; //TODO: remove
 		split(GLOBAL_ARR[1], ',', DATA_RCVD);
 		k = 0;
 		for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 			players[i].isFirstPlayerInTeam = atoi(DATA_RCVD[k++]);
-			players[i].team->templeHealth = atoi(DATA_RCVD[k++]);
+			angelsTeam->templeHealth = atoi(DATA_RCVD[k++]);
+			demonsTeam->templeHealth = atoi(DATA_RCVD[k++]);
 			players[i].currPowerMode = static_cast<powerMode> (atoi(
 					DATA_RCVD[k++]));
 			players[i].heroHealth = atoi(DATA_RCVD[k++]);
@@ -799,7 +801,10 @@ void populateClientSendDataForBroadcast() {
 					numToStr(player.isFirstPlayerInTeam).c_str());
 			strcat(broad_send_data, ",");
 
-			strcat(broad_send_data, numToStr(player.team->templeHealth).c_str());
+			strcat(broad_send_data, numToStr(angelsTeam->templeHealth).c_str());
+			strcat(broad_send_data, ",");
+
+			strcat(broad_send_data, numToStr(demonsTeam->templeHealth).c_str());
 			strcat(broad_send_data, ",");
 
 			strcat(broad_send_data, numToStr(player.currPowerMode).c_str());
