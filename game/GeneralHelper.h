@@ -86,8 +86,28 @@ bool isNearEnemyPlayerArea(int whichPlayer) {
 		}
 	}
 	return false;
-
 }
+
+//------------------------------------Change for single player (start)----------
+Coordinate_grid isNearEnemyPlayerAreaAI(int botAI, int enemyPlayer) {
+
+	Coordinate_grid myLoc = players[botAI].location;
+	Coordinate_grid enemyLoc = players[enemyPlayer].location;
+
+	Coordinate_grid myNeighbours[4];
+	myNeighbours[0] = Coordinate_grid(myLoc.row + 1, myLoc.col);
+	myNeighbours[1] = Coordinate_grid(myLoc.row, myLoc.col + 1);
+	myNeighbours[2] = Coordinate_grid(myLoc.row - 1, myLoc.col);
+	myNeighbours[3] = Coordinate_grid(myLoc.row, myLoc.col - 1);
+
+	for (int i = 0; i <= 3; i++) {
+		if (isSameLocation(enemyLoc, myNeighbours[i])) {
+			return Coordinate_grid(enemyLoc.row, enemyLoc.col + ATTRIBUTE_WIDTH);
+		}
+	}
+	return Coordinate_grid(-1, -1);
+}
+//------------------------------------Change for single player (end)----------
 
 void blockOpponentsArea() {
 	for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
@@ -173,24 +193,24 @@ void loadPlayerGeneralAttributes(int playerId) {
 	putChar2Grid(row, col, players[playerId].charType, true, false);
 
 	//setting myFriend & enemyIds
-	teamName myTeam = players[currPlayerId].team->name;
+	teamName myTeam = players[playerId].team->name;
 	int k = 0; //used to keep track of enemy index
 
-	players[currPlayerId].idFriend = -1; //Setting default ids
-	players[currPlayerId].idEnemy[0] = -1;
-	players[currPlayerId].idEnemy[1] = -1;
+	players[playerId].idFriend = -1; //Setting default ids
+	players[playerId].idEnemy[0] = -1;
+	players[playerId].idEnemy[1] = -1;
 
 	for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-		if (i == currPlayerId || players[i].status == STATUS_NOT_JOINED) {
+		if (i == playerId || players[i].status == STATUS_NOT_JOINED) {
 			continue;
 		}
 
 		if (isMyFriend(myTeam, i)) {
-			players[currPlayerId].idFriend = i;
+			players[playerId].idFriend = i;
 		}
 
 		else if (isNotMyFriend(myTeam, i)) {
-			players[currPlayerId].idEnemy[k++] = i;
+			players[playerId].idEnemy[k++] = i;
 		}
 	}
 }
@@ -527,6 +547,26 @@ void requestBasicPower() {
 		helperSendPowerMode(0);
 	}
 }
+
+//------------------------------------Change for single player (start)----------
+void requestBasicPowerAI(int botId) {
+	cout << "requesting basic_power by player " << botId << endl;
+	if (players[botId].currPowerMode != POWER_MODE_BASIC) {
+		helperSendPowerModeAI(0, botId);
+	}
+}
+
+void requestMagicPowerAI(int botId) {
+	if (players[botId].curseType != CURSE_DISABLE
+			&& players[botId].currPowerMode != POWER_MODE_MAGIC
+			&& !players[botId].isTimerMagicSpellRunning) { //filter at client
+		cout << "requesting power_magic by player " << botId << endl;
+		helperSendPowerModeAI(1, botId);
+	} else {
+		cout << "Player can not use Magic power, you are cursed!!!" << endl;
+	}
+}
+//------------------------------------Change for single player (end)----------
 
 void requestMagicPower() {
 	if (players[currPlayerId].curseType != CURSE_DISABLE

@@ -228,7 +228,7 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 	else
 		enemyTeam = &angelsTeam;
 
-	enemyTeam->templeHealth -= players[whichPlayer].strength;
+	enemyTeam->templeHealth -= players[whichPlayer].strength; //TODO: UNCOMMENT
 
 	if (enemyTeam->templeHealth <= 0) {
 		enemyTeam->templeHealth = 0;
@@ -242,8 +242,6 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 		//------------------------------------Change for single player (end)----------
 	}
 	setAttackTemple(whichPlayer, false);
-	cout << "Yayy " << whichPlayer << " decreased enemy temple health to "
-			<< enemyTeam->templeHealth << endl;
 	//TODO: Abhishek play temple attack sound, 	gif attack animation
 
 
@@ -266,8 +264,6 @@ void decreaseEnemyPlayerHealthHelper(int whichPlayer, bool burstDamage) {
 		timerHeroBorn(enemyPlayer);
 	}
 	setAttackEnemyPlayer(whichPlayer, -1);
-	cout << "Yayy " << whichPlayer << " decreased health of " << enemyPlayer
-			<< " to " << players[enemyPlayer].heroHealth << endl;
 	//TODO: Abhishek play enemy attack sound, gif attack animation
 
 
@@ -327,7 +323,6 @@ void decreaseEnemyPlayerHealth(int whichPlayer) { //this is ok, use it
 	} else {
 		decreaseEnemyPlayerHealthHelper(whichPlayer, false);
 	}
-	cout << "at master node: at end of decrease health" << endl;
 }
 
 //to be called by client
@@ -359,8 +354,21 @@ void attackEnemy() {
 
 	cout << "requesting to attack enemy" << endl;
 	//note: validation is done itself at the client side
-	charCellType toAttackHeroCellType =
-			gridChar[onClickTargetCell.row][onClickTargetCell.col];
+
+	//------------------------------------Change for single player (start)----------
+	charCellType toAttackHeroCellType;
+
+	if (gameDetails.isSinglePlayerGame) {
+		toAttackHeroCellType
+				= gridCharPrimary[onClickTargetCell.row][onClickTargetCell.col];
+	}
+
+	else {
+		toAttackHeroCellType
+				= gridChar[onClickTargetCell.row][onClickTargetCell.col];
+	}
+	//------------------------------------Change for single player (end)----------
+
 	int enemy1 = players[currPlayerId].idEnemy[0];
 	int enemy2 = players[currPlayerId].idEnemy[1];
 	if (players[enemy1].charType == toAttackHeroCellType) {
@@ -388,10 +396,10 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 			charType = BG_ATTRIBUTE;
 		}
 
-		else if (isOponentCellForTeam(
+		/*else if (isOponentCellForTeam(
 				Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
 			charType = BG_BLOCKED;
-		}
+		}*///TODO:uncomment
 
 	}
 

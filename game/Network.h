@@ -477,6 +477,23 @@ void helperSendServerMove() {
 	sendDataDontWaitForResult();
 }
 
+//------------------------------------Change for single player (start)----------
+void helperSendPowerModeAI(int type, int botId) {
+
+	if (type == 0)
+		strcpy(client_send_data, MSG_POWER_BASIC);
+	else if (type == 1)
+		strcpy(client_send_data, MSG_POWER_MAGIC);
+	else
+		return;//something is wrong
+
+	strcat(client_send_data, "?");
+	strcat(client_send_data, numToStr(botId).c_str());
+
+	processGeneral(client_send_data);
+}
+//------------------------------------Change for single player (end)----------
+
 void helperSendPowerMode(int type) {
 
 	if (type == 0)

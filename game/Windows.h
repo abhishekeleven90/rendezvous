@@ -1187,7 +1187,7 @@ void setAttributes() {
 	}
 	copyPrimaryGrid();
 
-	blockOpponentsArea();
+	//blockOpponentsArea();//TODO:uncomment
 }
 
 void processJoinForSinglePlayer() {
@@ -1425,12 +1425,32 @@ void initRendering_main() {
 	//------------------------------------Change for single player (start)----------
 	if (gameDetails.isSinglePlayerGame) {
 		//Creating AI threads
-		ai1 = new AI(1);
-		ai2 = new AI(2);
-		ai3 = new AI(3);
+		ai1 = new AI(1, players[1].location);
+		ai2 = new AI(2, players[2].location);
+		ai3 = new AI(3, players[3].location);
+
+		//TODO: remove, printing enemyIds
+		cout << "0" << endl;
+		cout << players[0].idFriend << endl;
+		cout << players[0].idEnemy[0] << endl;
+		cout << players[0].idEnemy[1] << endl;
+		cout << "1" << endl;
+		cout << players[1].idFriend << endl;
+		cout << players[1].idEnemy[0] << endl;
+		cout << players[1].idEnemy[1] << endl;
+		cout << "2" << endl;
+		cout << players[2].idFriend << endl;
+		cout << players[2].idEnemy[0] << endl;
+		cout << players[2].idEnemy[1] << endl;
+		cout << "3" << endl;
+		cout << players[3].idFriend << endl;
+		cout << players[3].idEnemy[0] << endl;
+		cout << players[3].idEnemy[1] << endl;
+
 		createAIThread1();
 		createAIThread2();
 		createAIThread3();
+
 	}
 	//------------------------------------Change for single player (end)----------
 }
@@ -1489,11 +1509,28 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 		break;
 
 	case 49: //key - '1' : select basicPower
-		requestBasicPower();
+		//------------------------------------Change for single player (start)----------
+		if (gameDetails.isSinglePlayerGame) {
+			requestBasicPowerAI(currPlayerId);
+		}
+		//------------------------------------Change for single player (end)----------
+
+		else {
+			requestBasicPower();
+		}
 		break;
 
 	case 50: //key - '2' : select magicPower
-		requestMagicPower();
+		//------------------------------------Change for single player (start)----------
+		if (gameDetails.isSinglePlayerGame) {
+			requestMagicPowerAI(currPlayerId);
+		}
+		//------------------------------------Change for single player (end)----------
+
+		else {
+			requestMagicPower();
+		}
+
 		break;
 
 	case 52: //key - '4' //for testing purpose
