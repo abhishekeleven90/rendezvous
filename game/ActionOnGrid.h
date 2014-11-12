@@ -352,7 +352,6 @@ void attackEnemy() {
 	if (players[currPlayerId].curseType == CURSE_STUN)
 		return;
 
-	cout << "requesting to attack enemy" << endl;
 	//note: validation is done itself at the client side
 
 	//------------------------------------Change for single player (start)----------

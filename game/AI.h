@@ -23,6 +23,26 @@ public:
 		this->locStart = startLoc;
 		this->isMovingToSpwan = false;
 		this->isMovingToTakeItem = false;
+
+		if (players[id].team->name == TEAM_ANGELS) {
+			myTempleAttackLocs[0] = Coordinate_grid(3, 4);
+			myTempleAttackLocs[1] = Coordinate_grid(3, 5);
+			myTempleAttackLocs[2] = Coordinate_grid(4, 3);
+			myTempleAttackLocs[3] = Coordinate_grid(5, 3);
+			myTempleAttackLocs[4] = Coordinate_grid(4, 6);
+			myTempleAttackLocs[5] = Coordinate_grid(5, 6);
+			myTempleAttackLocs[6] = Coordinate_grid(6, 4);
+			myTempleAttackLocs[7] = Coordinate_grid(6, 5);
+		} else {
+			myTempleAttackLocs[0] = Coordinate_grid(15, 16);
+			myTempleAttackLocs[1] = Coordinate_grid(15, 17);
+			myTempleAttackLocs[2] = Coordinate_grid(16, 15);
+			myTempleAttackLocs[3] = Coordinate_grid(17, 15);
+			myTempleAttackLocs[4] = Coordinate_grid(18, 16);
+			myTempleAttackLocs[5] = Coordinate_grid(18, 17);
+			myTempleAttackLocs[6] = Coordinate_grid(16, 18);
+			myTempleAttackLocs[7] = Coordinate_grid(17, 18);
+		}
 	}
 
 	int getId() {
@@ -215,6 +235,62 @@ public:
 			}
 		}
 		return false;
+	}
+
+	bool isTempleRelativelyCritical() {
+		int idEnemy = players[getId()].idEnemy[0];
+		int enemyTempleHealth = players[idEnemy].team->templeHealth;
+		int myTempleHealth = players[getId()].team->templeHealth;
+
+		if (myTempleHealth <= (enemyTempleHealth - HEALTH_TEMPLE_RELATIVE_DIFF)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	Coordinate_grid isEnemyAttackingMyTemple(int enemyPlayer) {
+
+		Coordinate_grid enemyLoc = players[enemyPlayer].location;
+
+		for (int i = 0; i <= 8; i++) {
+			if (isSameLocation(enemyLoc, this->myTempleAttackLocs[i])) {
+				return Coordinate_grid(enemyLoc.row,
+						enemyLoc.col + ATTRIBUTE_WIDTH);
+			}
+		}
+		return Coordinate_grid(-1, -1);
+	}
+
+	void protectMyTemple() {
+
+		while (1) {
+			if (!isTempleRelativelyCritical()) {
+				return;
+			}
+
+			//refill the health
+			if (isMyHealthBelowCrtical()) {
+				moveToSpawn();
+				break;
+			}
+
+			int enemyId = players[getId()].idEnemy[0];
+			Coordinate_grid grid = isEnemyAttackingMyTemple(enemyId);
+
+			if (grid.row == -1) {
+				enemyId = players[getId()].idEnemy[1];
+				grid = isEnemyAttackingMyTemple(enemyId);
+			}
+
+			if (grid.row != -1) {
+				helperAttackEnemy(grid, enemyId);
+				usleep(LATENCY_HUMAN);
+				continue;
+			}
+
+			break;
+		}
 	}
 
 	void running() {
