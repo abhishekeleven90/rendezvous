@@ -159,7 +159,7 @@ bool isAllClientsAlive() {
 }
 
 void takeUpdateAction(const char* msg) {
-	cout << "taking updateAction for msg: " << msg << endl; //TODO: remove
+	//cout << "taking updateAction for msg: " << msg << endl; //TODO: remove
 	char* type = substring(msg, 0, 2);
 	char* data = substring(msg, 3, strlen(msg));
 

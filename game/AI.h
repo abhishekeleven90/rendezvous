@@ -129,8 +129,7 @@ public:
 		if (!this->isMovingToTakeItem) {
 			return true;
 		}
-		cout << getRowItem() << "," << getColItem() << ";;"
-				<< players[getId()].location.col << endl; //TODO: remove
+
 		Coordinate_grid tempLoc = players[getId()].location;
 		tempLoc.col += ATTRIBUTE_WIDTH;
 		return isSameLocation(this->locItem, tempLoc);
