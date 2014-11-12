@@ -229,7 +229,6 @@ void printGrid() {
 //on the master node, rest will be communicated to others
 void moveHero(int whichPlayer) {
 
-	//TODO: remove for collison detetcion
 	if (!players[whichPlayer].atleastOnceAstar)
 		return;
 
@@ -530,7 +529,7 @@ void loadAttributeSpace() {
 	putHealth();
 
 	putTimers();
-	putWall();
+	//putWall();
 }
 
 void renderGrid() {
@@ -562,9 +561,9 @@ void requestMagicPowerAI(int botId) {
 			&& !players[botId].isTimerMagicSpellRunning) { //filter at client
 		cout << "requesting power_magic by player " << botId << endl;
 		helperSendPowerModeAI(1, botId);
-	} else {
-		cout << "Player can not use Magic power, you are cursed!!!" << endl;
-	}
+	} /*else {
+	 cout << "Player can not use Magic power, you are cursed!!!" << endl;
+	 }*/
 }
 //------------------------------------Change for single player (end)----------
 
@@ -574,9 +573,9 @@ void requestMagicPower() {
 			&& !players[currPlayerId].isTimerMagicSpellRunning) { //filter at client
 		cout << "requesting power_magic by player " << currPlayerId << endl;
 		helperSendPowerMode(1);
-	} else {
-		cout << "Player can not use Magic power, you are cursed!!!" << endl;
-	}
+	} /*else {
+	 cout << "Player can not use Magic power, you are cursed!!!" << endl;
+	 }*/
 }
 
 #endif

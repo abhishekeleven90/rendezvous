@@ -56,7 +56,7 @@
 #define GAIN_ITEM_SPEED_MOVE 1
 #define GAIN_ITEM_TEMPLE_HEALER 50
 
-#define SPEED_MAX 5 //TODO: change to 10
+#define SPEED_MAX 10
 #define SPEED_MIN 0
 
 //Number of Blocks

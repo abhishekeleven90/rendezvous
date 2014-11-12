@@ -230,7 +230,7 @@ void decreaseEnemyTempleHealth(int whichPlayer) { //this is ok, use it
 	else
 		enemyTeam = &angelsTeam;
 
-	enemyTeam->templeHealth -= players[whichPlayer].strength; //TODO: UNCOMMENT
+	enemyTeam->templeHealth -= players[whichPlayer].strength;
 
 	if (enemyTeam->templeHealth <= 0) {
 		enemyTeam->templeHealth = 0;
@@ -397,10 +397,10 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 			charType = BG_ATTRIBUTE;
 		}
 
-		/*else if (isOponentCellForTeam(
-		 Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
-		 charType = BG_BLOCKED;
-		 }*///TODO:uncomment
+		else if (isOponentCellForTeam(
+				Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
+			charType = BG_BLOCKED;
+		}
 
 	}
 

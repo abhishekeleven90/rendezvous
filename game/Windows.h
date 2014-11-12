@@ -1187,7 +1187,7 @@ void setAttributes() {
 	}
 	copyPrimaryGrid();
 
-	//blockOpponentsArea();//TODO:uncomment
+	blockOpponentsArea();
 }
 
 void processJoinForSinglePlayer() {
@@ -1420,6 +1420,7 @@ void initRendering_main() {
 		isGameOver = false;
 		//createClientBroadcastThread(); //Created in joining page
 		createUpdateServerThread();
+		createRectifyItemsThread();
 	}
 
 	//------------------------------------Change for single player (start)----------
@@ -1429,31 +1430,12 @@ void initRendering_main() {
 		ai2 = new AI(2, players[2].location);
 		ai3 = new AI(3, players[3].location);
 
-		//TODO: remove, printing enemyIds
-		cout << "0" << endl;
-		cout << players[0].idFriend << endl;
-		cout << players[0].idEnemy[0] << endl;
-		cout << players[0].idEnemy[1] << endl;
-		cout << "1" << endl;
-		cout << players[1].idFriend << endl;
-		cout << players[1].idEnemy[0] << endl;
-		cout << players[1].idEnemy[1] << endl;
-		cout << "2" << endl;
-		cout << players[2].idFriend << endl;
-		cout << players[2].idEnemy[0] << endl;
-		cout << players[2].idEnemy[1] << endl;
-		cout << "3" << endl;
-		cout << players[3].idFriend << endl;
-		cout << players[3].idEnemy[0] << endl;
-		cout << players[3].idEnemy[1] << endl;
-
 		gameDetails.isBotsPaused = false;
 		gameDetails.modeAi = AI_NORMAL;
 
 		createAIThread1();
 		createAIThread2();
 		createAIThread3();
-
 	}
 	//------------------------------------Change for single player (end)----------
 }

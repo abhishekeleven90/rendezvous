@@ -325,11 +325,6 @@ public:
 
 			helperIsItemReached();
 
-			cout << "isSpawn for id: " << getId() << "--"
-					<< this->isMovingToSpwan << endl;
-			cout << "isItem for id: " << getId() << "--"
-					<< this->isMovingToTakeItem << endl;
-
 			if (!this->isMovingToSpwan && !this->isMovingToTakeItem) { //Abhishek: also call before attackEnemyPlayer
 				usleep(LATENCY_HUMAN);
 				attackEnemyTemple();
@@ -349,6 +344,7 @@ public:
 pthread_t aiThreadId1;
 pthread_t aiThreadId2;
 pthread_t aiThreadId3;
+pthread_t rectifyItemsThread;
 
 AI* ai1;
 AI* ai2;
@@ -369,6 +365,32 @@ void* startMe3(void*) {
 	return NULL;
 }
 
+void* rectifyItems(void*) {
+	while (1) {
+		for (int id = 0; id < NUM_OF_PLAYERS; id++) {
+			int itemsCount = 0;
+
+			for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
+				for (int c = START_INNER_GRID_COL; c <= END_INNER_GRID_COL; c++) {
+					if (!isOponentCellForTeam(Coordinate_grid(r, c), id)) {
+						if (isItem(Coordinate_grid(r, c + ATTRIBUTE_WIDTH))) {
+							itemsCount++;
+						}
+					}
+				}
+			}
+
+			if (itemsCount < ITEMS_ON_MAP_COUNT) {
+				cout << "----rectifying item for: " << id << endl;
+				placeItemAtRandomPos(players[id].team->name);
+			}
+
+		}
+		sleep(1);
+	}
+	return NULL;
+}
+
 void createAIThread1() {
 	createThread(&aiThreadId1, startMe1);
 }
@@ -379,6 +401,10 @@ void createAIThread2() {
 
 void createAIThread3() {
 	createThread(&aiThreadId3, startMe3);
+}
+
+void createRectifyItemsThread() {
+	createThread(&rectifyItemsThread, rectifyItems);
 }
 
 #endif
