@@ -95,6 +95,7 @@ public:
 
 	void moveToSpawn() {
 		this->isMovingToSpwan = true;
+		this->isMovingToTakeItem = false; //clear if wanted to take item
 
 		string msg = "m:";
 		msg = concat(msg, numToStr(getRowStart()));
@@ -166,10 +167,13 @@ public:
 		}
 	}
 
-	void helperIsReached() {
+	void helperIsSpwanReached() {
 		if (isReachedSpawn()) {
 			this->isMovingToSpwan = false;
 		}
+	}
+
+	void helperIsItemReached() {
 
 		if (isReachedItem()) {
 			this->isMovingToTakeItem = false;
@@ -218,16 +222,18 @@ public:
 		while (!gameDetails.isGameOver) {
 			attackEnemyPlayer();
 
-			helperIsReached();
+			helperIsSpwanReached();
 
-			if (isItemNearBy() && isItemTimerOff()) {//Abhi: apply spawn check
+			if (isItemNearBy() && isItemTimerOff() && !isMovingToSpwan) {//Abhi: apply spawn check
 				moveToItem();
 			}
 
-			cout << "isSpawn for id: " << getId() << "--" << isMovingToSpwan
-					<< endl;
-			cout << "isItem for id: " << getId() << "--" << isMovingToTakeItem
-					<< endl;
+			helperIsItemReached();
+
+			cout << "isSpawn for id: " << getId() << "--"
+					<< this->isMovingToSpwan << endl;
+			cout << "isItem for id: " << getId() << "--"
+					<< this->isMovingToTakeItem << endl;
 
 			if (!this->isMovingToSpwan && !this->isMovingToTakeItem) { //Abhishek: also call before attackEnemyPlayer
 				usleep(LATENCY_HUMAN);
