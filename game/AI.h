@@ -1,9 +1,9 @@
 #ifndef AI_H
 #define AI_H
 
-#define LATENCY_HUMAN 1100000
+#define LATENCY_HUMAN 600000
 #define HEALTH_CRITICAL 30
-#define BLOCKS_ITEM 5 //TODO: make it some less
+#define BLOCKS_ITEM 4
 #define HEALTH_TEMPLE_RELATIVE_DIFF 100
 
 class AI {
