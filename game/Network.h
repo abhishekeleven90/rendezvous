@@ -24,7 +24,7 @@
 #define M 400
 #define QUEUE_LIMIT 5
 #define RETRY_COUNT 5
-#define RETRY_COUNT_BROADCAST 20
+#define RETRY_COUNT_BROADCAST 60
 
 #define DATA_SIZE_KILO 1024
 
@@ -71,7 +71,7 @@ char primaryNodeIp[IP_SIZE];
 int primaryNodePort;
 
 pthread_t serverThreadId;
-pthread_t clientThreadId; //TODO: check if not required
+pthread_t clientThreadId;
 pthread_t broadcastThreadId;
 pthread_t sendDataServerThreadId;
 pthread_t updateServerThreadId;
@@ -202,10 +202,6 @@ void takeUpdateAction(const char* msg) {
 		players[requestingPlayerId].targetCell.row = atoi(coordinates[0]);
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
 		players[requestingPlayerId].atleastOnceAstar = true;
-		//TODO: remove attack cout
-		cout << "calling attack enemy temple generic for player "
-				<< requestingPlayerId << " at :  " << coordinates[0] << ","
-				<< coordinates[1] << endl;
 		attackEnemyTempleGeneric(requestingPlayerId);
 	}
 
@@ -216,10 +212,6 @@ void takeUpdateAction(const char* msg) {
 		players[requestingPlayerId].targetCell.col = atoi(coordinates[1]);
 		int enemyPlayerId = atoi(coordinates[2]);
 		players[requestingPlayerId].atleastOnceAstar = true;
-		//TODO: remove attack cout
-		cout << "calling attack hero temple generic for player "
-				<< requestingPlayerId << " at :  " << coordinates[0] << ","
-				<< coordinates[1] << endl;
 		attackHeroEnemyGeneric(requestingPlayerId, enemyPlayerId);
 	}
 
@@ -294,19 +286,20 @@ void connectServerBroadcast(int playerId) {
 }
 
 void supportBroadCast(broadcastType type) {
-	switch (type) {
-	case BROADCAST_ALL:
-		populateClientSendDataForBroadcast();
-		break;
-	case BROADCAST_GAME_OVER:
-		populateClientSendDataForGameOver();
-		break;
-	case BROADCAST_JOINING:
-		populateClientSendDataForJoining();
-		break;
-	}
-
 	for (int i = NUM_OF_PLAYERS - 1; i >= 0; i--) { //loop is backwards, since we want to send info to server at last (Don't ask why)
+
+		switch (type) { //Intentionally populating sendData again & again
+		case BROADCAST_ALL:
+			populateClientSendDataForBroadcast();
+			break;
+		case BROADCAST_GAME_OVER:
+			populateClientSendDataForGameOver();
+			break;
+		case BROADCAST_JOINING:
+			populateClientSendDataForJoining();
+			break;
+		}
+
 		if (players[i].status == STATUS_PRESENT) {
 			strcpy(broadIp2Join, players[i].networkDetails->ip);
 			broadRemote_port = players[i].networkDetails->port;
@@ -366,29 +359,22 @@ connectStatus helperSendConnect() { //returns true
 	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
 	sendDataAndWaitForResult();
 
-	cout << "helperSendConnect rcvd- " << client_recv_data << endl; //TODO: remove
-
 	char* type = substring(client_recv_data, 0, 2);
 	char* data = substring(client_recv_data, 3, strlen(client_recv_data));
 
 	if (type[0] == 'x' || strcmp(type, SERVER_REQ_IGNORED) == 0) {
-		//gameDetails.isConnectedToServer = false; //TODO: remove
 		gameDetails.isIssueConnectingToServer = true;
 		return CONNECTED_NOT;
 	}
 
 	if (strcmp(type, MSG_SERVER_ACK) == 0) {
-		//gameDetails.isConnectedToServer = true;//TODO: remove
 		gameDetails.isIssueConnectingToServer = false;
-		//gameDetails.myId = atoi(data); //TODO: remove
 		currPlayerId = atoi(data);
 		return CONNECTED_NEW;
 	}
 
 	if (strcmp(type, MSG_SERVER_WELCOME_BACK) == 0) {
-		//gameDetails.isConnectedToServer = true;//TODO: remove
 		gameDetails.isIssueConnectingToServer = false;
-		//TODO: copy details
 		currPlayerId = atoi(data);
 		return CONNECTED_ALREADY;
 	}
@@ -414,7 +400,6 @@ bool helperValidateTeam(teamName team) {
 	strcat(client_send_data, numToChar(team));
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 	sendDataAndWaitForResult();
-	cout << "helperValidateTeam rcvd- " << client_recv_data << endl; //TODO: remove
 	return isServerOk();
 }
 
@@ -423,7 +408,6 @@ bool helperValidateHero(heroes hero) {
 	strcat(client_send_data, numToChar(hero));
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 	sendDataAndWaitForResult();
-	cout << "helperValidateHero rcvd- " << client_recv_data << endl; //TODO: remove
 	return isServerOk();
 }
 
@@ -431,7 +415,6 @@ void helperRequestPlayersDetails() {
 	strcpy(client_send_data, MSG_REQ_PLAYER_DETAILS);
 	setRemoteNode(gameDetails.hostDetails->ip, gameDetails.hostDetails->port);
 	sendDataAndWaitForResult();
-	cout << "helperRequestPlayersDetails rcvd- " << client_recv_data << endl; //TODO: remove
 
 	char* data = substring(client_recv_data, 3, strlen(client_recv_data));
 
@@ -440,8 +423,6 @@ void helperRequestPlayersDetails() {
 	for (i = 0; i < NUM_OF_PLAYERS; i++) {
 		players[i].status = STATUS_PRESENT;
 		players[i].heroType = static_cast<heroes> (atoi(DATA_RCVD[k++]));
-		cout << "setting heroType of: " << i << " to- " << players[i].heroType
-				<< endl;//TODO: remove
 
 		teamName team = static_cast<teamName> (atoi(DATA_RCVD[k++]));
 		if (team == TEAM_ANGELS) {
@@ -589,11 +570,14 @@ void processGameOver(char* data) {
 void processJoining(char* data) {
 	cout << "received joining msg" << endl;
 	gameDetails.isStartJoiningTimer = true;
+	strcpy(server_send_data, MSG_SERVER_ACK);
 }
 
 //used by non-primary nodes
 void processBroadcast(char *data) {
-	//cout << "received: " << data << endl;
+	if (!gameDetails.isDoneWithJoining) {
+		return; //I don't want to process broadcast if I am not joined
+	}
 
 	for (int i = 0; i < M; i++) {
 		memset(DATA_RCVD[i], 0, sizeof DATA_RCVD[i]);
@@ -691,8 +675,6 @@ void processConnect(char *data) {
 
 		else { //some player has left
 			players[leftIp].networkDetails = convertToNodeHelper(data);
-			//players[leftIp].status = STATUS_PRESENT;//TODO: not required here
-			//supportBroadCast(BROADCAST_JOINING); //TODO: remove if not required
 			strcpy(server_send_data, MSG_SERVER_WELCOME_BACK);
 			strcat(server_send_data, numToChar(leftIp));
 		}
@@ -737,7 +719,6 @@ void processValidateTeam(char *data, int id) {
 	}
 
 	strcpy(server_send_data, MSG_SERVER_ACK);
-
 }
 
 bool isHeroTaken(heroes hero) {
@@ -758,7 +739,6 @@ void processValidateHero(char *data, int id) {
 	heroes hero = static_cast<heroes> (atoi(data));
 	if (!isHeroTaken(hero)) {
 		players[id].heroType = hero;
-		cout << "setting heroType of: " << id << " to- " << hero << endl;//TODO: remove
 		strcpy(server_send_data, MSG_SERVER_ACK);
 	}
 
@@ -785,8 +765,6 @@ void processReqPlayerDetails(char *data) {
 			break; //breaking since if a client is found not joined, all subsequent shall also not be joined
 		}
 	}
-
-	cout << "processReqPlayerDetails, sending: " << server_send_data << endl; //TODO: remove
 }
 
 //used by master/primary node and no one else
@@ -1051,18 +1029,7 @@ void helperHelperBroadcast(int & sock, struct sockaddr_in & server_addr) {
 	bzero(&(server_addr.sin_zero), 8);
 }
 
-void sendJoiningMsgToJoinedNode(int id) {
-	strcpy(client_send_data, MSG_JOINING);
-	char* ip = players[id].networkDetails->ip;
-	int port = players[id].networkDetails->port;
-
-	setRemoteNode(ip, port);
-
-	//call either of 'sendDataDontWaitForResult' or 'sendDataAndWaitForResult'
-	sendDataAndWaitForResult();
-}
-
-bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundant with above fxn
+bool connectToServerBroadcast(int & sock, int playerId) {
 
 	struct sockaddr_in server_addr;
 
@@ -1100,22 +1067,10 @@ bool connectToServerBroadcast(int & sock, int playerId) { //TODO: a lot redundan
 	if (players[playerId].status == STATUS_NOT_REACHABLE) {
 		players[playerId].status = STATUS_PRESENT;
 		cout << "playerId: " << playerId << " back now" << endl;
-		sendJoiningMsgToJoinedNode(playerId);
+		populateClientSendDataForJoining();
 	}
 
 	//cout << "Client successfully connected to server" << endl;
-	return true;
-}
-
-bool isValidRequest(int requestingPlayerId) { //TODO: function not required....check whether shall be removed
-	if (!isAllClientsAlive()) {
-		return false;
-	}
-
-	if (players[requestingPlayerId].status == STATUS_PRESENT) { //this is to ignore requests from dead client
-		return false;
-	}
-
 	return true;
 }
 
@@ -1178,10 +1133,6 @@ void* server(void* arg) {
 
 		char* reqData = dataValArr[0];
 		int requestingPlayerId = atoi(dataValArr[1]);
-
-		/*	if (!isValidRequest(requestingPlayerId)) { //TODO: check if required, else remove
-		 strcpy(server_send_data, SERVER_REQ_IGNORED);
-		 }*/
 
 		if (strcmp(type, MSG_BROADCAST) == 0) {
 			processBroadcast(reqData);

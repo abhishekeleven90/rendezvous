@@ -25,7 +25,6 @@ struct GameDetails {
 	bool isSinglePlayerGame;
 	bool isHost;
 	nodeHelper* hostDetails;
-	//bool isConnectedToServer; //TODO: remove
 	bool isIssueConnectingToServer;
 	bool isTimerNotHostWaiting;
 
@@ -73,21 +72,6 @@ enum itemType {
 
 enum powerMode {
 	POWER_MODE_BASIC, POWER_MODE_MAGIC, POWER_MODE_STUN
-};
-
-//TODO: check if required
-struct Item {
-public:
-	Item() {
-
-	}
-
-	Item(itemType type) {
-		item_type = type;
-	}
-
-	itemType item_type;
-
 };
 
 struct TeamStruct {

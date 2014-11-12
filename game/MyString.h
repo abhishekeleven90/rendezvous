@@ -146,3 +146,10 @@ int indexOf(char* string, char of) {
 	}
 	return len - 1;
 }
+
+string remLastCharFromStr(string str) {
+	char* strChar = str2Char(str);
+	strChar[strlen(strChar) - 1] = '\0';
+
+	return strChar;
+}

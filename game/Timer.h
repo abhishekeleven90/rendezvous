@@ -6,7 +6,7 @@
 #define TIMER_CURSE 12000
 #define TIMER_HERO_REBORN 10000
 
-#define TIMER_HOST_WAIT 15000
+#define TIMER_HOST_WAIT 20000
 #define TIMER_PAGE_CREATING_GAME 5000
 
 #define REFRESH_RATE 100
@@ -55,7 +55,7 @@ void timerMagicSpell(int whichPlayer) {
 void timerCurse(int whichPlayer) {
 
 	if (!players[whichPlayer].isTimerCurseRunning) {
-		cout << "starting timerCurse for player " << whichPlayer << endl; //TODO: remove
+		cout << "starting timerCurse for player " << whichPlayer << endl;
 		switch (players[whichPlayer].curseType) {
 		case CURSE_STUN:
 			players[whichPlayer].speedMoveTemp = players[whichPlayer].speedMove;
@@ -82,7 +82,7 @@ void timerCurse(int whichPlayer) {
 	}
 
 	else {
-		cout << "stopping timerCurse for player " << whichPlayer << endl; //TODO: remove
+		cout << "stopping timerCurse for player " << whichPlayer << endl;
 		players[whichPlayer].isTimerCurseRunning = false;
 
 		switch (players[whichPlayer].curseType) {

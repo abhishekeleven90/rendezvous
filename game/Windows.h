@@ -61,7 +61,6 @@ void initRendering_first() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//gameDetails.isConnectedToServer = false; //TODO: remove
 	angelsTeam.name = TEAM_ANGELS;
 	demonsTeam.name = TEAM_DEMONS;
 
@@ -565,7 +564,6 @@ void initRendering_multiplayer() {
 	glEnable((GL_BLEND));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//gameDetails.isHost = true; //TODO: check is required, else remove (intuitively: not required)
 	gameDetails.isIssueConnectingToServer = false;
 	isShowInput = false;
 
@@ -585,6 +583,26 @@ void drawScene_multiplayer() {
 
 	putImages_multiplayer();
 	glutSwapBuffers(); //Send the 3D scene to the screen
+}
+
+void processClickNext() {
+	if (hostIp == "") {
+		return;
+	}
+
+	gameDetails.hostDetails = convertToNodeHelper(str2Char(hostIp));
+
+	connectStatus connect = helperSendConnect();
+	switch (connect) {
+	case CONNECTED_NOT:
+		break;
+	case CONNECTED_ALREADY:
+		moveToWindow(create_window_joiningGame);
+		break;
+	case CONNECTED_NEW:
+		moveToWindow(create_window_selectTeam);
+		break;
+	}
 }
 
 //Called when a key is pressed
@@ -631,24 +649,11 @@ void handleKeypress_multiplayer(unsigned char key, //The key that was pressed
 	case 58://':'
 		hostIp = concat(hostIp, ":");
 		break;
-	}
-}
-
-void processClickNext() {
-	if (hostIp == "") {
-		return;
-	}
-	gameDetails.hostDetails = convertToNodeHelper(str2Char(hostIp));
-
-	connectStatus connect = helperSendConnect();
-	switch (connect) {
-	case CONNECTED_NOT:
+	case 8://'backspace'
+		hostIp = remLastCharFromStr(hostIp);
 		break;
-	case CONNECTED_ALREADY:
-		moveToWindow(create_window_joiningGame);
-		break;
-	case CONNECTED_NEW:
-		moveToWindow(create_window_selectTeam);
+	case 13://'enter'
+		processClickNext();
 		break;
 	}
 }
@@ -938,7 +943,6 @@ void initRendering_selectHero() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	loadTextures_selectHero();
-	//putGrass(); //TODO: remove
 
 	isHeroVisible[HERO_STUNNER] = true;
 	isHeroVisible[HERO_SLOWER] = true;
@@ -983,8 +987,6 @@ void heroSelected_next(heroes hero) {
 
 	if (gameDetails.isHost) {
 		players[PLAYER_ID_PRIMARY].heroType = hero; //setting hero in case of host only
-		cout << "setting heroType of: " << PLAYER_ID_PRIMARY << " to- " << hero
-				<< endl;//TODO: remove
 		moveToWindow(create_window_waiting);
 	}
 
@@ -1185,7 +1187,7 @@ void setAttributes() {
 	}
 	copyPrimaryGrid();
 
-	blockOpponentsArea(); //TODO: remove this check
+	blockOpponentsArea();
 }
 
 void processJoinForSinglePlayer() {
@@ -1224,16 +1226,6 @@ void processJoinForSinglePlayer() {
 	players[2].status = STATUS_PRESENT;
 	players[3].status = STATUS_PRESENT;
 
-	//TODO: remove below
-	cout << players[0].team->name << endl;
-	cout << players[1].team->name << endl;
-	cout << players[2].team->name << endl;
-	cout << players[3].team->name << endl;
-	cout << players[0].heroType << endl;
-	cout << players[1].heroType << endl;
-	cout << players[2].heroType << endl;
-	cout << players[3].heroType << endl;
-
 	setAttributes();
 }
 
@@ -1245,16 +1237,13 @@ void initRendering_joiningGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	loadTextures_joiningGame();
-
 	//------------------------------------Change for single player (start)----------
 	if (gameDetails.isSinglePlayerGame) {
 		processJoinForSinglePlayer();
 	}
 	//------------------------------------Change for single player (end)----------
-
 	gameDetails.isStartJoiningTimer = false;
 	gameDetails.isDoneWithJoining = false;
-
 	t3dInit();
 }
 
@@ -1263,17 +1252,14 @@ bool isFineToCallJoiningFunctions() {
 	if (isCalledJoiningFunctions) {
 		return false;
 	}
-
 	if (gameDetails.isHost) {
 		isCalledJoiningFunctions = true;
 		return true;
 	}
-
 	if (gameDetails.isStartJoiningTimer) {
 		isCalledJoiningFunctions = true;
 		return true;
 	}
-
 	return false;
 }
 
@@ -1291,12 +1277,9 @@ void drawScene_joiningGame() {
 		moveToWindow(create_window_main);
 	}
 	//------------------------------------Change for single player (end)----------
-
 	if (isFineToCallJoiningFunctions()) {
 		timerPageCreatingGame(0);
-		//if (!gameDetails.isHost) { //TODO: check if req
 		helperRequestPlayersDetails();
-		//}
 		setAttributes();
 		if (gameDetails.isHost) {
 			createClientBroadcastThread();
@@ -1353,7 +1336,7 @@ void create_window_joiningGame() {
 	glutReshapeFunc(handleResize);
 	glutMouseFunc(myMouseClickHandler_joiningGame);
 
-	//timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
+	timerRefresh(0); //redisplays "glutPostRedisplay()" after every 'REFRESH_RATE' msec
 
 	glutMainLoop(); //Start the main loop.  glutMainLoop doesn't return.
 }
@@ -1549,11 +1532,8 @@ void myMouseClickHandler_main(int button, int state, int x, int y) {
 }
 
 void create_window_main() {
-	cout << "rchd1" << endl;
 	windowId_current = glutCreateWindow("Game is on!!!");
-	cout << "rchd2" << endl;
 	initRendering_main(); //Initialize rendering
-	cout << "rchd3" << endl;
 
 	//set handler functions
 	glutDisplayFunc(drawScene_main);

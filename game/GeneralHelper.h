@@ -151,24 +151,20 @@ void loadPlayerGeneralAttributes(int playerId) {
 	if (players[playerId].team->name == TEAM_ANGELS) {
 		if (players[playerId].isFirstPlayerInTeam) {
 			players[playerId].location = Coordinate_grid(19, 1);
-			//players[playerId].targetCell=Coordinate_grid(19, 1); //TODO: remove
 		}
 
 		else {
 			players[playerId].location = Coordinate_grid(20, 2);
-			//players[playerId].targetCell=Coordinate_grid(20, 2);
 		}
 	}
 
 	if (players[playerId].team->name == TEAM_DEMONS) {
 		if (players[playerId].isFirstPlayerInTeam) {
 			players[playerId].location = Coordinate_grid(1, 19);
-			//players[playerId].targetCell=Coordinate_grid(1, 19);
 		}
 
 		else {
 			players[playerId].location = Coordinate_grid(2, 20);
-			//players[playerId].targetCell=Coordinate_grid(2, 20);
 		}
 	}
 
