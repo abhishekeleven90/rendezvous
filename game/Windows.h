@@ -1447,6 +1447,9 @@ void initRendering_main() {
 		cout << players[3].idEnemy[0] << endl;
 		cout << players[3].idEnemy[1] << endl;
 
+		gameDetails.isBotsPaused = false;
+		gameDetails.modeAi = AI_NORMAL;
+
 		createAIThread1();
 		createAIThread2();
 		createAIThread3();
@@ -1507,6 +1510,35 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 	case 32: //key - 'space' : on/off bgMusic
 		toggleBgMusic();
 		break;
+
+		//------------------------------------Change for single player (start)----------
+	case 112: //key - 'p' : pause game
+		if (gameDetails.isSinglePlayerGame) {
+			if (gameDetails.isBotsPaused) {
+				cout << "Resuming bots" << endl;
+				gameDetails.isBotsPaused = false;
+			} else {
+				cout << "Pausing bots" << endl;
+				gameDetails.isBotsPaused = true;
+			}
+		}
+		break;
+
+	case 113: //key - 'q'
+		if (gameDetails.isSinglePlayerGame) {
+			if (gameDetails.modeAi == AI_NORMAL) {
+				cout << "Changing AI mode to Offensive" << endl;
+				gameDetails.modeAi = AI_OFFENSIVE;
+			}
+
+			else if (gameDetails.modeAi == AI_OFFENSIVE) {
+				cout << "Changing AI mode to Normal" << endl;
+				gameDetails.modeAi = AI_NORMAL;
+			}
+		}
+		break;
+
+		//------------------------------------Change for single player (end)----------
 
 	case 49: //key - '1' : select basicPower
 		//------------------------------------Change for single player (start)----------

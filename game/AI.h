@@ -161,6 +161,12 @@ public:
 		Coordinate_grid grid;
 
 		while (1) {
+			while (gameDetails.isBotsPaused)
+				;
+
+			if (gameDetails.modeAi == AI_OFFENSIVE) {
+				return;
+			}
 
 			//refill the health
 			//Abhishek: there can be a while here to let it move to spawn at any cost
@@ -225,7 +231,10 @@ public:
 					continue;
 				}
 
-				if (isOponentCellForTeam(gridToCheck, getId())) {
+				Coordinate_grid gridTemp = gridToCheck;
+				gridTemp.col -= ATTRIBUTE_WIDTH;
+
+				if (isOponentCellForTeam(gridTemp, getId())) {
 					continue;
 				}
 				if (isItem(gridToCheck)) {
@@ -265,6 +274,13 @@ public:
 	void protectMyTemple() {
 
 		while (1) {
+			while (gameDetails.isBotsPaused)
+				;
+
+			if (gameDetails.modeAi == AI_OFFENSIVE) {
+				return;
+			}
+
 			if (!isTempleRelativelyCritical()) {
 				return;
 			}
@@ -296,6 +312,9 @@ public:
 	void running() {
 		attackEnemyTemple();
 		while (!gameDetails.isGameOver) {
+			while (gameDetails.isBotsPaused)
+				;
+
 			attackEnemyPlayer();
 
 			helperIsSpwanReached();
@@ -315,6 +334,11 @@ public:
 				usleep(LATENCY_HUMAN);
 				attackEnemyTemple();
 			}
+
+			if (!this->isMovingToSpwan && gameDetails.modeAi != AI_OFFENSIVE) {
+				protectMyTemple();
+			}
+
 			usleep(LATENCY_HUMAN);
 
 		}

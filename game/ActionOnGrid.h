@@ -199,6 +199,7 @@ void updateHeroAttributesTakingItem(int playerId) {
 }
 
 void takeItem(int whichPlayer) {
+
 	if (!players[whichPlayer].isTimerItemGlobalRunning) {
 		timerItemGlobal(whichPlayer);
 		updateHeroAttributesTakingItem(whichPlayer);
@@ -216,6 +217,7 @@ void takeItem(int whichPlayer) {
 	if (players[whichPlayer].team->name == TEAM_DEMONS) {
 		placeItemAtRandomPos(TEAM_DEMONS);
 	}
+
 }
 
 //--------------TEMPLE METHODS-------------------
@@ -396,9 +398,9 @@ void handleGridCharSwitch(Coordinate_grid grid, switchCallType callType) {
 		}
 
 		/*else if (isOponentCellForTeam(
-				Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
-			charType = BG_BLOCKED;
-		}*///TODO:uncomment
+		 Coordinate_grid(row, col - ATTRIBUTE_WIDTH), currPlayerId)) {
+		 charType = BG_BLOCKED;
+		 }*///TODO:uncomment
 
 	}
 
