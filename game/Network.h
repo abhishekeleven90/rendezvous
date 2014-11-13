@@ -785,9 +785,9 @@ void processReqPlayerDetails(char *data) {
 //used by master/primary node and no one else
 void processGeneral(char *completeData) {
 	pthread_mutex_lock(&mutexQueuePrimary);
-	usleep(100000);
 	enqueMy(&queuePrimary, completeData);
 	pthread_mutex_unlock(&mutexQueuePrimary);
+	usleep(100000);
 }
 
 void createServerThread() {
