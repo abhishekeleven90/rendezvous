@@ -1149,16 +1149,24 @@ void* server(void* arg) {
 		char* reqData = dataValArr[0];
 		int requestingPlayerId = atoi(dataValArr[1]);
 
-		if (!isAllClientsAlive()) {
+		if (strcmp(type, MSG_CONNECT) == 0) {
+			processConnect(reqData);
+		}
+
+		else if (strcmp(type, MSG_REQ_PLAYER_DETAILS) == 0) {
+			processReqPlayerDetails(reqData);
+		}
+
+		else if (strcmp(type, MSG_JOINING) == 0) {
+			processJoining(reqData);
+		}
+
+		else if (!isAllClientsAlive()) {
 			strcpy(server_send_data, SERVER_REQ_IGNORED);
 		}
 
 		else if (strcmp(type, MSG_BROADCAST) == 0) {
 			processBroadcast(reqData);
-		}
-
-		else if (strcmp(type, MSG_CONNECT) == 0) {
-			processConnect(reqData);
 		}
 
 		else if (strcmp(type, MSG_VALIDATE_TEAM) == 0) {
@@ -1169,17 +1177,9 @@ void* server(void* arg) {
 			processValidateHero(reqData, requestingPlayerId);
 		}
 
-		else if (strcmp(type, MSG_REQ_PLAYER_DETAILS) == 0) {
-			processReqPlayerDetails(reqData);
-		}
-
 		//for non-primary nodes
 		else if (strcmp(type, MSG_GAME_OVER) == 0) {
 			processGameOver(reqData);
-		}
-
-		else if (strcmp(type, MSG_JOINING) == 0) {
-			processJoining(reqData);
 		}
 
 		//for primary node
