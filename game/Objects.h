@@ -21,10 +21,6 @@ enum heroes {
 	HERO_DISABLER, HERO_SLOWER, HERO_BURSTER, HERO_STUNNER, HERO_NOT_PRESENT
 };
 
-enum aiMode {
-	AI_NORMAL, AI_OFFENSIVE
-};
-
 struct GameDetails {
 	bool isSinglePlayerGame;
 	bool isHost;
@@ -39,7 +35,6 @@ struct GameDetails {
 	teamName winningTeam;
 
 	bool isBotsPaused;
-	aiMode modeAi;
 };
 
 enum charCellType {

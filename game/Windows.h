@@ -1426,12 +1426,11 @@ void initRendering_main() {
 	//------------------------------------Change for single player (start)----------
 	if (gameDetails.isSinglePlayerGame) {
 		//Creating AI threads
-		ai1 = new AI(1, players[1].location);
-		ai2 = new AI(2, players[2].location);
-		ai3 = new AI(3, players[3].location);
+		ai1 = new AI(1, players[1].location, AI_NORMAL);
+		ai2 = new AI(2, players[2].location, AI_NORMAL);
+		ai3 = new AI(3, players[3].location, AI_OFFENSIVE);
 
 		gameDetails.isBotsPaused = false;
-		gameDetails.modeAi = AI_NORMAL;
 
 		createAIThread1();
 		createAIThread2();
@@ -1508,14 +1507,14 @@ void handleKeypress_main(unsigned char key, //The key that was pressed
 
 	case 113: //key - 'q'
 		if (gameDetails.isSinglePlayerGame) {
-			if (gameDetails.modeAi == AI_NORMAL) {
+			if (ai1->modeAi == AI_NORMAL) {
 				cout << "Changing AI mode to Offensive" << endl;
-				gameDetails.modeAi = AI_OFFENSIVE;
+				ai1->modeAi = AI_OFFENSIVE;
 			}
 
-			else if (gameDetails.modeAi == AI_OFFENSIVE) {
+			else if (ai1->modeAi == AI_OFFENSIVE) {
 				cout << "Changing AI mode to Normal" << endl;
-				gameDetails.modeAi = AI_NORMAL;
+				ai1->modeAi = AI_NORMAL;
 			}
 		}
 		break;

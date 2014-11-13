@@ -6,6 +6,10 @@
 #define BLOCKS_ITEM 4
 #define HEALTH_TEMPLE_RELATIVE_DIFF 100
 
+enum aiMode {
+	AI_NORMAL, AI_OFFENSIVE
+};
+
 class AI {
 	int id;
 	Coordinate_grid locStart;
@@ -18,9 +22,13 @@ class AI {
 	Coordinate_grid myTempleAttackLocs[8];
 
 public:
-	AI(int id, Coordinate_grid startLoc) {
+	aiMode modeAi;
+
+	AI(int id, Coordinate_grid startLoc, aiMode modeAi) {
 		this->id = id;
 		this->locStart = startLoc;
+		this->modeAi = modeAi;
+
 		this->isMovingToSpwan = false;
 		this->isMovingToTakeItem = false;
 
@@ -164,7 +172,7 @@ public:
 			while (gameDetails.isBotsPaused)
 				;
 
-			if (gameDetails.modeAi == AI_OFFENSIVE) {
+			if (this->modeAi == AI_OFFENSIVE) {
 				return;
 			}
 
@@ -277,7 +285,7 @@ public:
 			while (gameDetails.isBotsPaused)
 				;
 
-			if (gameDetails.modeAi == AI_OFFENSIVE) {
+			if (this->modeAi == AI_OFFENSIVE) {
 				return;
 			}
 
@@ -330,7 +338,7 @@ public:
 				attackEnemyTemple();
 			}
 
-			if (!this->isMovingToSpwan && gameDetails.modeAi != AI_OFFENSIVE) {
+			if (!this->isMovingToSpwan && this->modeAi != AI_OFFENSIVE) {
 				protectMyTemple();
 			}
 
