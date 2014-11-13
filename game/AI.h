@@ -376,6 +376,10 @@ void* startMe3(void*) {
 void* rectifyItems(void*) {
 	while (1) {
 		for (int id = 0; id < NUM_OF_PLAYERS; id++) {
+			if (players[id].status != STATUS_PRESENT) {
+				continue;
+			}
+
 			int itemsCount = 0;
 
 			for (int r = START_GRID_ROW; r <= END_GRID_ROW; r++) {
