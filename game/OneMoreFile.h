@@ -12,7 +12,9 @@ bool isNotMyFriend(teamName team, int playerId) {
 //pass true to second argument if taken rebirth
 //called by server only
 void giveBirthToPlayer(int playerId, bool reborn) {
-	players[playerId].status = STATUS_PRESENT;
+	if (players[playerId].status != STATUS_LEFT) {
+		players[playerId].status = STATUS_PRESENT;
+	}
 
 	players[playerId].isTimerItemGlobalRunning = false;
 	players[playerId].isTimerMagicSpellRunning = false;
