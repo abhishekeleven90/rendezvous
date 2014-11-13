@@ -24,8 +24,7 @@
 #define M 400
 #define QUEUE_LIMIT 5
 #define RETRY_COUNT 5
-#define RETRY_COUNT_BROADCAST 60
-
+#define RETRY_COUNT_BROADCAST 30
 #define DATA_SIZE_KILO 1024
 
 #define MSG_BROADCAST "b:"
@@ -1150,7 +1149,11 @@ void* server(void* arg) {
 		char* reqData = dataValArr[0];
 		int requestingPlayerId = atoi(dataValArr[1]);
 
-		if (strcmp(type, MSG_BROADCAST) == 0) {
+		if (!isAllClientsAlive()) {
+			strcpy(server_send_data, SERVER_REQ_IGNORED);
+		}
+
+		else if (strcmp(type, MSG_BROADCAST) == 0) {
 			processBroadcast(reqData);
 		}
 
