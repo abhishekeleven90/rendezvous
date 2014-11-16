@@ -1,0 +1,15 @@
+\chapter{Running the game}
+
+You can download the source code from ``https://github.com/abhiagar90/rendezvous". To build the code run `make' from inside this directory.
+You should have these commands already ran:
+\begin{enumerate}
+\item sudo apt-get install cmake
+\item sudo apt-get install freeglut3-dev
+\item sudo apt-get install mesa-common-dev
+\item sudo apt-get install xorg-dev libglu1-mesa-dev
+\item sudo apt-get install libpthread-stubs0-dev
+\end{enumerate}
+
+To install audio packages if needed in SoundAll.h, use the command : \\ ``sudo apt-get install libsfml-dev lsfml-audio'' \\
+
+To run, after compiling the code, run `./a.out' from within the terminal in the current directory.

@@ -1,0 +1,44 @@
+\chapter{Screenshots}
+
+\section{Start Page}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.1\textwidth]{Rendezvous.png}
+\caption{\label{fig:start page}Rendezvous}
+\end{figure}
+
+\section{About Game}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.1\textwidth]{About.png}
+\caption{\label{fig:About}About Game}
+\end{figure}
+
+\section{About Heroes}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.1\textwidth]{About_players.png}
+\caption{\label{fig:About_heroes}About Heroes}
+\end{figure}
+
+
+\section{Rules}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.1\textwidth]{Rules.png}
+\caption{\label{fig:rules}Rules of the game}
+\end{figure}
+
+\section{Controls}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.1\textwidth]{Controls.png}
+\caption{\label{fig:controls}Controls}
+\end{figure}
+
+
