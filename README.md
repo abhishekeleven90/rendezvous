@@ -1,7 +1,7 @@
 rendezvous
 ==========
 
-Why this is named as "rendezvous" ?
+Why this is named as "rendezvous" ? <br>
 <i>We are(currently) not able to enjoy Rendezvous(our college's annual cultural fest) because we are working on 'rendezvous'! ;) :| :D</i>
 
 ---
@@ -18,7 +18,7 @@ If a player leaves the game in between, the game is paused for some time to allo
 Else the game is resumed & then the player is not allowed to join.<br>
  
 
-<b><i>To read the complete details, you can go through "Docs/report.pdf"</i></b>
+<i>To read the complete details, you can go through "Docs/report.pdf"</i>
 
 ---
 <b>Running the game: </b><br>
